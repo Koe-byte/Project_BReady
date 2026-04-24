@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
             label4 = new Label();
+            label3 = new Label();
+            label2 = new Label();
+            label1 = new Label();
             label5 = new Label();
             numericUpDown1 = new NumericUpDown();
             button1 = new Button();
@@ -53,27 +53,15 @@
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
             // 
-            // label1
+            // label4
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(11, 27);
-            label1.Name = "label1";
-            label1.Size = new Size(524, 31);
-            label1.TabIndex = 1;
-            label1.Text = "Update Occupancy - Barangay Hall Gymnasium ";
-            label1.Click += label1_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(122, 11);
-            label2.Name = "label2";
-            label2.Size = new Size(209, 31);
-            label2.TabIndex = 0;
-            label2.Text = "Current Occupancy";
-            label2.Click += label2_Click;
+            label4.AutoSize = true;
+            label4.Location = new Point(176, 92);
+            label4.Name = "label4";
+            label4.Size = new Size(83, 20);
+            label4.TabIndex = 2;
+            label4.Text = "of 200 max";
+            label4.Click += label4_Click;
             // 
             // label3
             // 
@@ -86,15 +74,27 @@
             label3.Text = "1";
             label3.Click += label3_Click;
             // 
-            // label4
+            // label2
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(176, 92);
-            label4.Name = "label4";
-            label4.Size = new Size(83, 20);
-            label4.TabIndex = 2;
-            label4.Text = "of 200 max";
-            label4.Click += label4_Click;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Location = new Point(122, 11);
+            label2.Name = "label2";
+            label2.Size = new Size(209, 31);
+            label2.TabIndex = 0;
+            label2.Text = "Current Occupancy";
+            label2.Click += label2_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(11, 27);
+            label1.Name = "label1";
+            label1.Size = new Size(524, 31);
+            label1.TabIndex = 1;
+            label1.Text = "Update Occupancy - Barangay Hall Gymnasium ";
+            label1.Click += label1_Click;
             // 
             // label5
             // 
@@ -124,6 +124,7 @@
             button1.TabIndex = 4;
             button1.Text = "- Remove";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // button2
             // 
@@ -135,8 +136,9 @@
             button2.TabIndex = 5;
             button2.Text = "+ Add";
             button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
             // 
-            // frmUpdateOccupancy
+            // DashboardForm2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -149,7 +151,7 @@
             Controls.Add(label1);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Name = "frmUpdateOccupancy";
+            Name = "DashboardForm2";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Form2";
             panel1.ResumeLayout(false);
