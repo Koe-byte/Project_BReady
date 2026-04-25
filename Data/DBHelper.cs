@@ -8,8 +8,8 @@ namespace ProjectBReady.Data
     public class DBHelper
     {
         // 1. Ang nag-iisang Connection String! Dito lang tayo magpapalit kung kailangan.
-        private static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Data\BReadyDB.mdf;Integrated Security=True;Connect Timeout=30";
-
+        private static string connectionString =
+            @"Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=BReadyDB;Integrated Security=True;Connect Timeout=30";
         // 2. Para sa SELECT (Pagkuha ng data para i-display sa DataGridView)
         public static DataTable GetData(string query)
         {
