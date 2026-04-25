@@ -1,6 +1,6 @@
+using ProjectBReady.Forms;
 using System;
 using System.Windows.Forms;
-using ProjectBReady.Views;
 
 namespace ProjectBReady
 {
