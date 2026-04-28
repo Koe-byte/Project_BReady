@@ -14,6 +14,9 @@ namespace ProjectBReady.Data
 =======
         private static string connectionString =
             @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""C:\Prog Projects\AOOP - Final Project\Project_BReady\Data\BReadyDB.mdf"";Integrated Security=True;Connect Timeout=30";
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         // 2. Para sa SELECT (Pagkuha ng data para i-display sa DataGridView)
         public static DataTable GetData(string query)
