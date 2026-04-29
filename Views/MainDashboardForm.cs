@@ -49,7 +49,9 @@ namespace ProjectBReady.Views
             InitializeComponent();
             InitializeDashboardUI();
 
+            this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
+            this.Bounds = Screen.PrimaryScreen.Bounds;
         }
 
         private void InitializeDashboardUI()
@@ -138,7 +140,9 @@ namespace ProjectBReady.Views
                 Location = new Point(30, 120),
                 Size = new Size(1000, 190),
                 WrapContents = false,
-                AutoScroll = false
+                AutoScroll = false,
+                // ADDED: Allows the container to stretch to the right edge
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
 
             cardsPanel.Controls.Add(CreateSummaryCard("Total Evacuees", "545", "of 780 capacity"));
@@ -150,7 +154,12 @@ namespace ProjectBReady.Views
 
             // 4. Charts Section
             Panel chartPanelLeft = CreateShadowPanel(30, 330, 650, 400);
+            // ADDED: Makes the left panel stretch across the empty space
+            chartPanelLeft.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+
             Panel chartPanelRight = CreateShadowPanel(730, 330, 340, 400);
+            // ADDED: Keeps the right panel anchored to the right side so they don't overlap
+            chartPanelRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
             // Shelter Occupancy Chart (Bar Chart)
             Label lblChart1 = new Label { Text = "Shelter Occupancy", Font = new Font("Segoe UI", 12, FontStyle.Bold), Location = new Point(20, 20), AutoSize = true };
@@ -158,6 +167,8 @@ namespace ProjectBReady.Views
             Chart barChart = CreateBarChart();
             barChart.Location = new Point(20, 60);
             barChart.Size = new Size(610, 320);
+            // ADDED: Forces the actual graph inside the panel to stretch
+            barChart.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             chartPanelLeft.Controls.Add(barChart);
 
             // Shelter Status Chart (Doughnut Chart)
