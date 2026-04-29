@@ -1,153 +1,268 @@
 // ============================================================
 //  ShelterForm.cs  —  ProjectBReady
-//  Feature: Read + Add Shelters
-//  Connects to: DBHelper, Shelter model, SHELTERS table
+//  Features: View/Add/Edit/Delete Shelters, Occupancy Updates,
+//            Admin-only Add/Edit/Delete controls
 // ============================================================
 using System;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
 using ProjectBReady.Data;
-using ProjectBReady.Models.Facilities;
 
 namespace ProjectBReady.Forms
 {
     public partial class ShelterForm : Form
     {
-        // ── Constructor ──────────────────────────────────────────
+        private bool isAdminMode = false;
+        private const string ADMIN_PIN = "1234";
+        private int selectedShelterID = -1;
+
         public ShelterForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
+            this.KeyDown += ShelterForm_KeyDown;
             LoadShelters();
+            SetAdminMode(false);
         }
 
-        // ── READ: Kunin lahat ng shelters mula sa DB ─────────────
+        // ── CTRL+SHIFT+O — Admin Toggle ──────────────────────────
+        private void ShelterForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.Shift && e.KeyCode == Keys.O)
+            {
+                if (isAdminMode)
+                {
+                    SetAdminMode(false);
+                }
+                else
+                {
+                    string pin = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Enter Admin PIN:", "Admin Access", "");
+                    if (pin == ADMIN_PIN)
+                        SetAdminMode(true);
+                    else if (pin != "")
+                        MessageBox.Show("Incorrect PIN.", "Access Denied",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                e.Handled = true;
+            }
+        }
+
+        private void SetAdminMode(bool isAdmin)
+        {
+            isAdminMode = isAdmin;
+            btnAddShelter.Visible = isAdmin;
+            btnEditShelter.Visible = isAdmin;
+            btnDeleteShelter.Visible = isAdmin;
+            btnUpdateOccupancy.Visible = isAdmin;
+
+            if (isAdmin)
+            {
+                toggleText.Text = "🔓 Admin Mode Active  |  Lock: Ctrl+Shift+O";
+                toggleText.ForeColor = Color.FromArgb(255, 125, 40);
+            }
+            else
+            {
+                toggleText.Text = "Ctrl+Shift+O to toggle admin";
+                toggleText.ForeColor = Color.White;
+            }
+        }
+
+        // ── LOAD ALL SHELTERS ────────────────────────────────────
         private void LoadShelters()
         {
-            string query = @"
-                SELECT
-                    ShelterID       AS [ID],
-                    ShelterName     AS [Shelter Name],
-                    MaxCapacity     AS [Max Capacity],
-                    CurrentOccupancy AS [Current Occupancy],
-                    Status
-                FROM SHELTERS
-                ORDER BY ShelterName";
+            try
+            {
+                string query = @"
+                    SELECT ShelterID, ShelterName, MaxCapacity, 
+                           CurrentOccupancy, Status,
+                           CAST(CurrentOccupancy AS FLOAT) / NULLIF(MaxCapacity,0) * 100 AS PctFull
+                    FROM SHELTERS
+                    ORDER BY ShelterName";
 
-            DataTable dt = DBHelper.GetData(query);
-            dgvShelters.DataSource = dt;
+                DataTable dt = DBHelper.GetData(query);
+                dgvShelters.DataSource = dt;
 
-            // Style the DataGridView after loading
-            FormatGrid();
+                // Style the columns
+                if (dgvShelters.Columns.Contains("ShelterID"))
+                    dgvShelters.Columns["ShelterID"].Visible = false;
+
+                lblTotalShelters.Text = $"Total Shelters: {dt.Rows.Count}";
+
+                int totalMax = 0, totalCurr = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    totalMax += Convert.ToInt32(row["MaxCapacity"]);
+                    totalCurr += Convert.ToInt32(row["CurrentOccupancy"]);
+                }
+                lblTotalCapacity.Text = $"Total Capacity: {totalCurr} / {totalMax}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading shelters: {ex.Message}", "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // ── ADD: I-save ang bagong Shelter sa DB ─────────────────
-        private void btnAdd_Click(object sender, EventArgs e)
+        // ── ADD SHELTER ──────────────────────────────────────────
+        private void btnAddShelter_Click(object sender, EventArgs e)
         {
-            // 1. Basic validation
-            if (string.IsNullOrWhiteSpace(txtShelterName.Text))
+            using (ShelterEditForm form = new ShelterEditForm())
             {
-                MessageBox.Show("Please enter a shelter name.", "Validation",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtShelterName.Focus();
-                return;
+                if (form.ShowDialog() == DialogResult.OK)
+                    LoadShelters();
             }
+        }
 
-            if (!int.TryParse(txtMaxCapacity.Text, out int maxCap) || maxCap <= 0)
+        // ── EDIT SHELTER ─────────────────────────────────────────
+        private void btnEditShelter_Click(object sender, EventArgs e)
+        {
+            if (selectedShelterID < 0)
             {
-                MessageBox.Show("Please enter a valid max capacity (positive number).", "Validation",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtMaxCapacity.Focus();
-                return;
-            }
-
-            if (!int.TryParse(txtCurrentOccupancy.Text, out int currOcc) || currOcc < 0)
-            {
-                MessageBox.Show("Please enter a valid current occupancy (0 or more).", "Validation",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtCurrentOccupancy.Focus();
-                return;
-            }
-
-            // 2. Use the Shelter class (OOP!) to validate business rules
-            //    This is ENCAPSULATION in action — logic lives in the model, not the form
-            if (currOcc > maxCap)
-            {
-                MessageBox.Show("Current occupancy cannot exceed max capacity!", "Validation",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // 3. Generate a simple ID (in production, use IDENTITY column or GUID)
-            string shelterID = "SH" + DateTime.Now.ToString("yyyyMMddHHmmss");
-            string shelterName = txtShelterName.Text.Trim().Replace("'", "''"); // basic SQL injection guard
-            string status = cboStatus.SelectedItem?.ToString() ?? "Active";
-
-            // 4. Build and run the INSERT query via DBHelper
-            string insertQuery = $@"
-                INSERT INTO SHELTERS (ShelterID, ShelterName, MaxCapacity, CurrentOccupancy, Status)
-                VALUES ('{shelterID}', '{shelterName}', {maxCap}, {currOcc}, '{status}')";
-
-            bool success = DBHelper.ExecuteQuery(insertQuery);
-
-            if (success)
-            {
-                MessageBox.Show($"Shelter '{txtShelterName.Text}' added successfully!", "Success",
+                MessageBox.Show("Please select a shelter first.", "No Selection",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
-                ClearForm();
-                LoadShelters(); // Refresh the grid
+            using (ShelterEditForm form = new ShelterEditForm(selectedShelterID))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                    LoadShelters();
             }
         }
 
-        // ── CLEAR: I-reset ang form fields ───────────────────────
-        private void btnClear_Click(object sender, EventArgs e)
+        // ── DELETE SHELTER ───────────────────────────────────────
+        private void btnDeleteShelter_Click(object sender, EventArgs e)
         {
-            ClearForm();
+            if (selectedShelterID < 0)
+            {
+                MessageBox.Show("Please select a shelter first.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                "Are you sure you want to delete this shelter?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirm == DialogResult.Yes)
+            {
+                try
+                {
+                    DBHelper.ExecuteNonQuery(
+                        "DELETE FROM SHELTERS WHERE ShelterID = @id",
+                        new System.Collections.Generic.Dictionary<string, object>
+                        { { "@id", selectedShelterID } });
+                    LoadShelters();
+                    selectedShelterID = -1;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error deleting shelter: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
-        private void ClearForm()
+        // ── UPDATE OCCUPANCY ─────────────────────────────────────
+        private void btnUpdateOccupancy_Click(object sender, EventArgs e)
         {
-            txtShelterName.Clear();
-            txtMaxCapacity.Clear();
-            txtCurrentOccupancy.Text = "0";
-            cboStatus.SelectedIndex = 0;
-            txtShelterName.Focus();
+            if (selectedShelterID < 0)
+            {
+                MessageBox.Show("Please select a shelter first.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string input = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter new occupancy count:", "Update Occupancy", "0");
+
+            if (int.TryParse(input, out int newOccupancy) && newOccupancy >= 0)
+            {
+                try
+                {
+                    DBHelper.ExecuteNonQuery(
+                        @"UPDATE SHELTERS SET CurrentOccupancy = @occ,
+                          Status = CASE WHEN @occ >= MaxCapacity THEN 'Full' ELSE 'Open' END
+                          WHERE ShelterID = @id",
+                        new System.Collections.Generic.Dictionary<string, object>
+                        {
+                            { "@occ", newOccupancy },
+                            { "@id", selectedShelterID }
+                        });
+                    LoadShelters();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error updating occupancy: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
-        // ── REFRESH button ───────────────────────────────────────
+        // ── GRID SELECTION ───────────────────────────────────────
+        private void dgvShelters_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvShelters.SelectedRows.Count > 0)
+            {
+                var row = dgvShelters.SelectedRows[0];
+                if (row.Cells["ShelterID"].Value != null)
+                    selectedShelterID = Convert.ToInt32(row.Cells["ShelterID"].Value);
+            }
+        }
+
+        // ── ROW COLORING ─────────────────────────────────────────
+        private void dgvShelters_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (dgvShelters.Rows[e.RowIndex].DataBoundItem is DataRowView drv)
+            {
+                string status = drv["Status"]?.ToString();
+                double pct = 0;
+                if (drv["PctFull"] != DBNull.Value)
+                    pct = Convert.ToDouble(drv["PctFull"]);
+
+                if (status == "Full")
+                    dgvShelters.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 220);
+                else if (pct >= 75)
+                    dgvShelters.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 243, 205);
+                else
+                    dgvShelters.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+            }
+        }
+
+        // ── REFRESH ──────────────────────────────────────────────
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             LoadShelters();
         }
 
-        // ── FORMAT: Style ang DataGridView ───────────────────────
-        private void FormatGrid()
+        // ── BACK TO DASHBOARD ────────────────────────────────────
+        private void btnDashboard_Click(object sender, EventArgs e)
         {
-            if (dgvShelters.Columns.Count == 0) return;
-
-            dgvShelters.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvShelters.RowHeadersVisible = false;
-            dgvShelters.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvShelters.ReadOnly = true;
-
-            // Color-code rows by occupancy status
-            foreach (DataGridViewRow row in dgvShelters.Rows)
-            {
-                if (row.IsNewRow) continue;
-
-                if (int.TryParse(row.Cells["Max Capacity"].Value?.ToString(), out int max) &&
-                    int.TryParse(row.Cells["Current Occupancy"].Value?.ToString(), out int curr))
-                {
-                    double pct = max > 0 ? (double)curr / max : 0;
-
-                    if (pct >= 1.0)
-                        row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255, 220, 220); // red — full
-                    else if (pct >= 0.75)
-                        row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255, 243, 205); // yellow — near full
-                    else
-                        row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(220, 242, 220); // green — ok
-                }
-            }
+            DashboardForm dash = new DashboardForm();
+            dash.Show();
+            this.Close();
         }
+
+        // ── NAVIGATE TO INVENTORY ────────────────────────────────
+        private void btnInventory_Click(object sender, EventArgs e)
+        {
+            InventoryForm inv = new InventoryForm();
+            inv.Show();
+            this.Close();
+        }
+
+        // ── NAVIGATE TO REPORTS ──────────────────────────────────
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+            ReportForm rep = new ReportForm();
+            rep.Show();
+            this.Close();
+        }
+
+        private void label1_Click(object sender, EventArgs e) { }
     }
 }

@@ -12,4 +12,22 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Views\ReportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\InventoryEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ShelterEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\InventoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ShelterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>
