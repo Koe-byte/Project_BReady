@@ -116,7 +116,7 @@ partial class DashboardForm
         // 
         label1.AutoSize = true;
         label1.ForeColor = SystemColors.ButtonFace;
-        label1.Location = new Point(84, 77);
+        label1.Location = new Point(84, 92);
         label1.Name = "label1";
         label1.Size = new Size(155, 20);
         label1.TabIndex = 2;
@@ -126,7 +126,7 @@ partial class DashboardForm
         // pictureBox1
         // 
         pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-        pictureBox1.Location = new Point(-3, -22);
+        pictureBox1.Location = new Point(-3, 0);
         pictureBox1.Name = "pictureBox1";
         pictureBox1.Size = new Size(242, 140);
         pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;

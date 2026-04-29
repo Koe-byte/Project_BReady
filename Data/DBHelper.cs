@@ -7,18 +7,11 @@ namespace ProjectBReady.Data
 {
     public class DBHelper
     {
-        // 1. Ang nag-iisang Connection String! Dito lang tayo magpapalit kung kailangan.
-<<<<<<< Updated upstream
+        // Pinagsama at nilinis na connection string gamit ang |DataDirectory| 
+        // para gumana ito sa lahat ng laptop ng mga ka-team mo.
         private static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Data\BReadyDB.mdf;Integrated Security=True;Connect Timeout=30";
 
-=======
-        private static string connectionString =
-            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""C:\Prog Projects\AOOP - Final Project\Project_BReady\Data\BReadyDB.mdf"";Integrated Security=True;Connect Timeout=30";
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-        // 2. Para sa SELECT (Pagkuha ng data para i-display sa DataGridView)
+        // Para sa SELECT (Pagkuha ng data para i-display sa DataGridView)
         public static DataTable GetData(string query)
         {
             DataTable dt = new DataTable();
@@ -30,7 +23,7 @@ namespace ProjectBReady.Data
                     {
                         using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                         {
-                            da.Fill(dt); // Auto-open at auto-close na ito ng connection!
+                            da.Fill(dt);
                         }
                     }
                 }
@@ -42,7 +35,7 @@ namespace ProjectBReady.Data
             return dt;
         }
 
-        // 3. Para sa INSERT, UPDATE, DELETE (Pang dagdag/bawas inventory o update occupancy)
+        // Para sa INSERT, UPDATE, DELETE
         public static bool ExecuteQuery(string query)
         {
             try
@@ -53,7 +46,7 @@ namespace ProjectBReady.Data
                     {
                         conn.Open();
                         int rowsAffected = cmd.ExecuteNonQuery();
-                        return rowsAffected > 0; // True kapag naging successful ang command
+                        return rowsAffected > 0;
                     }
                 }
             }
