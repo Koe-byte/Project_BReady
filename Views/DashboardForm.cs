@@ -1,175 +1,441 @@
-// ============================================================
-//  DashboardForm.cs  —  ProjectBReady
-//  Features: Kiosk Mode, Ctrl+Shift+O Admin Toggle, 
-//            Shelter navigation, Live DB stats
-// ============================================================
 using System;
-using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using ProjectBReady.Data;
-using ProjectBReady.Forms;
+using ProjectBReady.Models.Users;
+using ProjectBReady.Services;
 
-namespace ProjectBReady
+namespace ProjectBReady.Views
 {
-    public partial class DashboardForm : Form
+    /// <summary>
+    /// Main admin dashboard — only accessible to BarangayOfficials.
+    /// Uses TabControl para sa fluid navigation between modules.
+    /// </summary>
+    public class DashboardForm : Form
     {
-        // ── Admin State ──────────────────────────────────────────
-        private bool isAdminMode = false;
-        private const string ADMIN_PIN = "1234"; // Palitan ng gusto ninyong PIN
+        private readonly AppDbContext      _db;
+        private readonly BarangayOfficial  _currentUser;
+        private readonly ShelterService    _shelterSvc;
+        private readonly InventoryService  _inventorySvc;
 
-        public DashboardForm()
+        private Panel      pnlSidebar;
+        private Panel      pnlContent;
+        private Label      lblWelcome;
+        private TabControl tabMain;
+
+        public DashboardForm(AppDbContext db, BarangayOfficial user)
         {
+            _db           = db;
+            _currentUser  = user;
+            _shelterSvc   = new ShelterService(db);
+            _inventorySvc = new InventoryService(db);
             InitializeComponent();
-            this.KeyPreview = true; // Para makuha ng Form ang keyboard events
-            this.KeyDown += DashboardForm_KeyDown;
-            LoadShelterStats();
-            SetAdminMode(false); // Start as Resident/Kiosk mode
+            LoadSummaryCards();
         }
 
-        // ── CTRL+SHIFT+O — Admin Toggle ──────────────────────────
-        private void DashboardForm_KeyDown(object sender, KeyEventArgs e)
+        private void InitializeComponent()
         {
-            if (e.Control && e.Shift && e.KeyCode == Keys.O)
+            this.Text            = $"ProjectBReady — Dashboard ({_currentUser.Role})";
+            this.Size            = new Size(1100, 700);
+            this.StartPosition   = FormStartPosition.CenterScreen;
+            this.BackColor       = Color.FromArgb(15, 23, 42);
+            this.MinimumSize     = new Size(900, 600);
+
+            // ── Sidebar ───────────────────────────────────────────────────
+            pnlSidebar = new Panel
             {
-                if (isAdminMode)
+                Dock      = DockStyle.Left,
+                Width     = 220,
+                BackColor = Color.FromArgb(30, 41, 59)
+            };
+
+            var lblLogo = new Label
+            {
+                Text      = "🛡 ProjectBReady",
+                Font      = new Font("Segoe UI", 13, FontStyle.Bold),
+                ForeColor = Color.FromArgb(99, 102, 241),
+                Location  = new Point(16, 20),
+                AutoSize  = true
+            };
+
+            lblWelcome = new Label
+            {
+                Text      = $"👤 {_currentUser.UserID}\n{_currentUser.Role}",
+                Font      = new Font("Segoe UI", 9),
+                ForeColor = Color.FromArgb(148, 163, 184),
+                Location  = new Point(16, 60),
+                Size      = new Size(190, 40)
+            };
+
+            // Nav buttons
+            string[] navItems = { "📊 Overview", "🏠 Shelters", "📦 Inventory", "🚚 Dispatch", "📋 Logs" };
+            int yPos = 120;
+            foreach (var nav in navItems)
+            {
+                int tabIdx = Array.IndexOf(navItems, nav);
+                var btn = new Button
                 {
-                    // Kung admin na, i-lock agad
-                    SetAdminMode(false);
-                }
-                else
+                    Text      = nav,
+                    Location  = new Point(10, yPos),
+                    Size      = new Size(200, 38),
+                    Font      = new Font("Segoe UI", 10),
+                    ForeColor = Color.FromArgb(203, 213, 225),
+                    BackColor = Color.Transparent,
+                    FlatStyle = FlatStyle.Flat,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Padding   = new Padding(10, 0, 0, 0),
+                    Cursor    = Cursors.Hand,
+                    Tag       = tabIdx
+                };
+                btn.FlatAppearance.BorderSize    = 0;
+                btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(51, 65, 85);
+                btn.Click += (s, e) =>
                 {
-                    // Kung resident pa, humingi ng PIN
-                    string pin = Microsoft.VisualBasic.Interaction.InputBox(
-                        "Enter Admin PIN:", "Admin Access", "");
-
-                    if (pin == ADMIN_PIN)
-                        SetAdminMode(true);
-                    else if (pin != "") // Hindi blank (hindi cancel)
-                        MessageBox.Show("Incorrect PIN.", "Access Denied",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                e.Handled = true;
+                    tabMain.SelectedIndex = (int)((Button)s).Tag;
+                };
+                pnlSidebar.Controls.Add(btn);
+                yPos += 45;
             }
+
+            var btnLogout = new Button
+            {
+                Text      = "⬅ Logout",
+                Location  = new Point(10, 580),
+                Size      = new Size(200, 38),
+                Font      = new Font("Segoe UI", 10),
+                ForeColor = Color.FromArgb(248, 113, 113),
+                BackColor = Color.Transparent,
+                FlatStyle = FlatStyle.Flat,
+                Cursor    = Cursors.Hand
+            };
+            btnLogout.FlatAppearance.BorderSize = 0;
+            btnLogout.Click += (s, e) => { this.Close(); };
+
+            pnlSidebar.Controls.AddRange(new Control[] { lblLogo, lblWelcome, btnLogout });
+
+            // ── Content area with TabControl ──────────────────────────────
+            tabMain = new TabControl
+            {
+                Dock        = DockStyle.Fill,
+                Appearance  = TabAppearance.FlatButtons,
+                SizeMode    = TabSizeMode.Fixed,
+                ItemSize    = new Size(0, 1),   // hide tab headers (sidebar handles nav)
+                BackColor   = Color.FromArgb(15, 23, 42)
+            };
+
+            tabMain.TabPages.Add(BuildOverviewTab());
+            tabMain.TabPages.Add(BuildSheltersTab());
+            tabMain.TabPages.Add(BuildInventoryTab());
+            tabMain.TabPages.Add(BuildDispatchTab());
+            tabMain.TabPages.Add(BuildLogsTab());
+
+            pnlContent = new Panel { Dock = DockStyle.Fill };
+            pnlContent.Controls.Add(tabMain);
+
+            this.Controls.Add(pnlContent);
+            this.Controls.Add(pnlSidebar);
         }
 
-        // ── SET ADMIN / RESIDENT MODE ────────────────────────────
-        private void SetAdminMode(bool isAdmin)
+        // ── Tab Builders ─────────────────────────────────────────────────
+
+        private TabPage BuildOverviewTab()
         {
-            isAdminMode = isAdmin;
+            var tab = new TabPage { BackColor = Color.FromArgb(15, 23, 42) };
 
-            // Ipakita o itago ang admin-only controls
-            addshelterButton.Visible = isAdmin;
-            ActionButton1.Visible = isAdmin;
+            var lblHead = MakeHeader("📊 Overview");
+            tab.Controls.Add(lblHead);
 
-            // Update yung toggleText sa sidebar (katulad ng base44 design)
-            if (isAdmin)
+            // Summary card area — populated by LoadSummaryCards()
+            var pnlCards = new FlowLayoutPanel
             {
-                toggleText.Text = "🔓 Admin Mode Active  |  Lock: Ctrl+Shift+O";
-                toggleText.ForeColor = Color.FromArgb(255, 125, 40); // Orange
-            }
-            else
+                Location  = new Point(20, 70),
+                Size      = new Size(820, 200),
+                BackColor = Color.Transparent,
+                Name      = "pnlCards"
+            };
+            tab.Controls.Add(pnlCards);
+
+            var lblSummaries = MakeSectionLabel("Shelter Summaries", 290);
+            tab.Controls.Add(lblSummaries);
+
+            var lstSummaries = new ListBox
             {
-                toggleText.Text = "Ctrl+Shift+O to toggle admin";
-                toggleText.ForeColor = Color.White;
-            }
+                Location  = new Point(20, 320),
+                Size      = new Size(820, 200),
+                Font      = new Font("Consolas", 10),
+                BackColor = Color.FromArgb(30, 41, 59),
+                ForeColor = Color.FromArgb(203, 213, 225),
+                BorderStyle = BorderStyle.None,
+                Name      = "lstSummaries"
+            };
+            tab.Controls.Add(lstSummaries);
+
+            return tab;
         }
 
-        // ── LOAD SHELTER STATS mula sa DB ────────────────────────
-        private void LoadShelterStats()
+        private TabPage BuildSheltersTab()
         {
-            try
+            var tab = new TabPage { BackColor = Color.FromArgb(15, 23, 42) };
+            tab.Controls.Add(MakeHeader("🏠 Shelter Management"));
+
+            var grid = MakeDataGrid("gridShelters");
+            grid.Location = new Point(20, 70);
+            grid.Size     = new Size(820, 300);
+            tab.Controls.Add(grid);
+
+            // Occupancy update panel
+            tab.Controls.Add(MakeSectionLabel("Update Occupancy", 390));
+            var lblSID = MakeSmallLabel("Shelter ID:", new Point(20, 420));
+            var txtSID = MakeTextBox(new Point(120, 415), "SH-001");
+            var lblCnt = MakeSmallLabel("Add Count:", new Point(280, 420));
+            var txtCnt = MakeTextBox(new Point(380, 415), "10");
+            var btnUpd = MakeActionButton("Update", new Point(520, 412));
+            btnUpd.Click += (s, e) =>
             {
-                // Kunin ang FIRST shelter para sa panel1 display
-                string query = @"
-                    SELECT TOP 1 
-                        ShelterName, MaxCapacity, CurrentOccupancy, Status
-                    FROM SHELTERS 
-                    ORDER BY ShelterName";
-
-                DataTable dt = DBHelper.GetData(query);
-
-                if (dt.Rows.Count > 0)
+                try
                 {
-                    DataRow row = dt.Rows[0];
-                    int max = Convert.ToInt32(row["MaxCapacity"]);
-                    int curr = Convert.ToInt32(row["CurrentOccupancy"]);
-                    string status = row["Status"].ToString();
-                    int pct = max > 0 ? (int)((double)curr / max * 100) : 0;
-
-                    // Update controls sa panel1
-                    label3.Text = row["ShelterName"].ToString();
-                    LBstatus1.Text = $"{curr} / {max}";
-                    LBstatus2.Text = $"{pct}% occupied";
-                    progressBar1.Maximum = max > 0 ? max : 1;
-                    progressBar1.Value = Math.Min(curr, max);
-                    label4.Text = status;
-
-                    // Color ng status badge
-                    if (status == "Full")
-                    {
-                        label4.BackColor = Color.FromArgb(220, 53, 69);   // Red
-                        progressBar1.ForeColor = Color.FromArgb(220, 53, 69);
-                    }
-                    else if (pct >= 75)
-                    {
-                        label4.BackColor = Color.FromArgb(255, 165, 0);   // Orange
-                        progressBar1.ForeColor = Color.Orange;
-                    }
-                    else
-                    {
-                        label4.BackColor = Color.FromArgb(22, 27, 45);    // Dark (Open)
-                        progressBar1.ForeColor = Color.FromArgb(31, 158, 117);
-                    }
+                    _shelterSvc.UpdateShelterOccupancy(txtSID.Text.Trim(), int.Parse(txtCnt.Text));
+                    RefreshGrid(grid, _shelterSvc.GetAll());
+                    MessageBox.Show("Occupancy updated!", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
-            catch
+                catch (Exception ex) { ShowError(ex.Message); }
+            };
+
+            tab.Controls.AddRange(new Control[] { lblSID, txtSID, lblCnt, txtCnt, btnUpd });
+            tab.Tag = grid;     // so LoadSummaryCards can refresh it
+            return tab;
+        }
+
+        private TabPage BuildInventoryTab()
+        {
+            var tab = new TabPage { BackColor = Color.FromArgb(15, 23, 42) };
+            tab.Controls.Add(MakeHeader("📦 Inventory"));
+
+            var grid = MakeDataGrid("gridInventory");
+            grid.Location = new Point(20, 70);
+            grid.Size     = new Size(820, 300);
+            tab.Controls.Add(grid);
+
+            // Stock-in panel
+            tab.Controls.Add(MakeSectionLabel("Stock In", 390));
+            var lblID  = MakeSmallLabel("Item ID:",  new Point(20, 420));
+            var txtID  = MakeTextBox(new Point(120, 415), "FOOD-001");
+            var lblAmt = MakeSmallLabel("Amount:",   new Point(280, 420));
+            var txtAmt = MakeTextBox(new Point(380, 415), "50");
+            var btnIn  = MakeActionButton("Stock In", new Point(520, 412));
+            btnIn.Click += (s, e) =>
             {
-                // Kung walang DB pa, default values lang — hindi mag-crash
-                label3.Text = "No shelters yet";
-                LBstatus1.Text = "0 / 0";
-                LBstatus2.Text = "0% occupied";
+                try
+                {
+                    _inventorySvc.StockIn(txtID.Text.Trim(), int.Parse(txtAmt.Text));
+                    RefreshGrid(grid, _inventorySvc.GetAll());
+                }
+                catch (Exception ex) { ShowError(ex.Message); }
+            };
+
+            tab.Controls.AddRange(new Control[] { lblID, txtID, lblAmt, txtAmt, btnIn });
+            return tab;
+        }
+
+        private TabPage BuildDispatchTab()
+        {
+            var tab = new TabPage { BackColor = Color.FromArgb(15, 23, 42) };
+            tab.Controls.Add(MakeHeader("🚚 Dispatch Relief Goods"));
+
+            tab.Controls.Add(MakeSectionLabel("Dispatch Form", 70));
+            var lblItem    = MakeSmallLabel("Item ID:",     new Point(20, 110));
+            var txtItem    = MakeTextBox(new Point(130, 105), "FOOD-001");
+            var lblShelter = MakeSmallLabel("Shelter ID:",  new Point(20, 155));
+            var txtShelter = MakeTextBox(new Point(130, 150), "SH-001");
+            var lblQty     = MakeSmallLabel("Quantity:",    new Point(20, 200));
+            var txtQty     = MakeTextBox(new Point(130, 195), "20");
+
+            var btnDispatch = new Button
+            {
+                Text      = "🚚 Dispatch",
+                Location  = new Point(130, 250),
+                Size      = new Size(200, 44),
+                Font      = new Font("Segoe UI", 11, FontStyle.Bold),
+                BackColor = Color.FromArgb(34, 197, 94),    // green-500
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor    = Cursors.Hand
+            };
+            btnDispatch.FlatAppearance.BorderSize = 0;
+            btnDispatch.Click += (s, e) =>
+            {
+                try
+                {
+                    _inventorySvc.Dispatch(
+                        txtItem.Text.Trim(),
+                        txtShelter.Text.Trim(),
+                        int.Parse(txtQty.Text),
+                        _currentUser.UserID);
+                    MessageBox.Show("Relief goods dispatched successfully!", "Dispatch OK",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex) { ShowError(ex.Message); }
+            };
+
+            tab.Controls.AddRange(new Control[]
+                { lblItem, txtItem, lblShelter, txtShelter, lblQty, txtQty, btnDispatch });
+            return tab;
+        }
+
+        private TabPage BuildLogsTab()
+        {
+            var tab = new TabPage { BackColor = Color.FromArgb(15, 23, 42) };
+            tab.Controls.Add(MakeHeader("📋 Dispatch Logs"));
+
+            var grid = MakeDataGrid("gridLogs");
+            grid.Location = new Point(20, 70);
+            grid.Size     = new Size(820, 450);
+            tab.Controls.Add(grid);
+
+            tabMain.SelectedIndexChanged += (s, e) =>
+            {
+                if (tabMain.SelectedIndex == 4)
+                    RefreshGrid(grid, _inventorySvc.GetDispatchLogs());
+            };
+            return tab;
+        }
+
+        // ── Helpers ───────────────────────────────────────────────────────
+
+        private void LoadSummaryCards()
+        {
+            // Populate overview tab
+            var overviewTab = tabMain.TabPages[0];
+            var pnlCards    = overviewTab.Controls["pnlCards"] as FlowLayoutPanel;
+            var lstSumm     = overviewTab.Controls["lstSummaries"] as ListBox;
+
+            var shelters = _shelterSvc.GetAll();
+            foreach (var s in shelters)
+            {
+                var card = new Panel
+                {
+                    Size      = new Size(180, 90),
+                    BackColor = Color.FromArgb(30, 41, 59),
+                    Margin    = new Padding(0, 0, 10, 0)
+                };
+                card.Controls.Add(new Label
+                {
+                    Text      = s.ShelterName,
+                    Font      = new Font("Segoe UI", 9, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(99, 102, 241),
+                    Location  = new Point(10, 10),
+                    Size      = new Size(160, 30)
+                });
+                card.Controls.Add(new Label
+                {
+                    Text      = s.GenerateSummary().Split(':')[1].Trim(),
+                    Font      = new Font("Segoe UI", 11),
+                    ForeColor = Color.White,
+                    Location  = new Point(10, 45),
+                    AutoSize  = true
+                });
+                pnlCards?.Controls.Add(card);
+                lstSumm?.Items.Add(s.GenerateSummary());
             }
+
+            // Grid on shelters tab
+            RefreshGrid(
+                tabMain.TabPages[1].Controls["gridShelters"] as DataGridView,
+                shelters);
+
+            // Inventory grid
+            RefreshGrid(
+                tabMain.TabPages[2].Controls["gridInventory"] as DataGridView,
+                _inventorySvc.GetAll());
         }
 
-        // ── NAVIGATION BUTTONS ───────────────────────────────────
-        private void shelterButton_Click(object sender, EventArgs e)
+        private void RefreshGrid<T>(DataGridView grid, System.Collections.Generic.List<T> data)
         {
-            ShelterForm sf = new ShelterForm();
-            sf.Show();
+            if (grid == null) return;
+            grid.DataSource = null;
+            grid.DataSource = data;
         }
 
-        private void addshelterButton_Click(object sender, EventArgs e)
+        private DataGridView MakeDataGrid(string name)
         {
-            // Admin only — direkta sa ShelterForm
-            ShelterForm sf = new ShelterForm();
-            sf.Show();
+            return new DataGridView
+            {
+                Name                  = name,
+                AutoSizeColumnsMode   = DataGridViewAutoSizeColumnsMode.Fill,
+                BackgroundColor       = Color.FromArgb(30, 41, 59),
+                GridColor             = Color.FromArgb(51, 65, 85),
+                DefaultCellStyle      = new DataGridViewCellStyle
+                {
+                    BackColor = Color.FromArgb(30, 41, 59),
+                    ForeColor = Color.FromArgb(203, 213, 225),
+                    Font      = new Font("Segoe UI", 9)
+                },
+                ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
+                {
+                    BackColor = Color.FromArgb(51, 65, 85),
+                    ForeColor = Color.FromArgb(99, 102, 241),
+                    Font      = new Font("Segoe UI", 9, FontStyle.Bold)
+                },
+                EnableHeadersVisualStyles = false,
+                BorderStyle              = BorderStyle.None,
+                ReadOnly                 = true,
+                AllowUserToAddRows       = false,
+                RowHeadersVisible        = false
+            };
         }
 
-        private void dashboard_Click(object sender, EventArgs e)
+        private Label MakeHeader(string text) => new Label
         {
-            // Nasa dashboard na tayo, i-refresh na lang ang stats
-            LoadShelterStats();
-        }
+            Text      = text,
+            Font      = new Font("Segoe UI", 16, FontStyle.Bold),
+            ForeColor = Color.White,
+            Location  = new Point(20, 20),
+            AutoSize  = true
+        };
 
-        // ── UNUSED EVENT HANDLERS (huwag burahin — kailangan ng Designer) ──
-        private void pictureBox1_Click(object sender, EventArgs e) { }
-        private void button1_Click(object sender, EventArgs e) { }
-        private void textBox1_TextChanged(object sender, EventArgs e) { }
-        private void pictureBox1_Click_1(object sender, EventArgs e) { }
-        private void button1_Click_1(object sender, EventArgs e) { }
-        private void pictureBox1_Click_2(object sender, EventArgs e) { }
-        private void pictureBox1_Click_3(object sender, EventArgs e) { }
-        private void label1_Click(object sender, EventArgs e) { }
-        private void EvacShelLabel_Click(object sender, EventArgs e) { }
-        private void label2_Click(object sender, EventArgs e) { }
-        private void pictureBox2_Click(object sender, EventArgs e) { }
-        private void label3_Click(object sender, EventArgs e) { }
-        private void label4_Click(object sender, EventArgs e) { }
-        private void label5_Click(object sender, EventArgs e) { }
-        private void LBstatus2_Click(object sender, EventArgs e) { }
-        private void label4_Click_1(object sender, EventArgs e) { }
-        private void button2_Click(object sender, EventArgs e) { }
-        private void panel2_Paint(object sender, PaintEventArgs e) { }
+        private Label MakeSectionLabel(string text, int y) => new Label
+        {
+            Text      = text,
+            Font      = new Font("Segoe UI", 11, FontStyle.Bold),
+            ForeColor = Color.FromArgb(148, 163, 184),
+            Location  = new Point(20, y),
+            AutoSize  = true
+        };
+
+        private Label MakeSmallLabel(string text, Point loc) => new Label
+        {
+            Text      = text,
+            Font      = new Font("Segoe UI", 9),
+            ForeColor = Color.FromArgb(148, 163, 184),
+            Location  = loc,
+            AutoSize  = true
+        };
+
+        private TextBox MakeTextBox(Point loc, string placeholder = "") => new TextBox
+        {
+            Location        = loc,
+            Size            = new Size(140, 28),
+            Font            = new Font("Segoe UI", 10),
+            BackColor       = Color.FromArgb(30, 41, 59),
+            ForeColor       = Color.White,
+            BorderStyle     = BorderStyle.FixedSingle,
+            PlaceholderText = placeholder
+        };
+
+        private Button MakeActionButton(string text, Point loc) => new Button
+        {
+            Text      = text,
+            Location  = loc,
+            Size      = new Size(110, 32),
+            Font      = new Font("Segoe UI", 9, FontStyle.Bold),
+            BackColor = Color.FromArgb(99, 102, 241),
+            ForeColor = Color.White,
+            FlatStyle = FlatStyle.Flat,
+            Cursor    = Cursors.Hand
+        };
+
+        private void ShowError(string msg) =>
+            MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
     }
 }

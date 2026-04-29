@@ -1,21 +1,40 @@
-using ProjectBReady.Forms;
 using System;
 using System.Windows.Forms;
+using ProjectBReady.Data;
+using ProjectBReady.Views;
 
 namespace ProjectBReady
 {
-    internal static class Program
+    static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new DashboardForm());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            // ── 1. Boot database ─────────────────────────────────────────
+            using var db = new AppDbContext();
+
+            try
+            {
+                DbInitializer.Initialize(db);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Database initialization failed:\n\n{ex.Message}\n\n" +
+                    "Make sure SQL Server LocalDB is installed.\n" +
+                    "Install via: Visual Studio Installer → SQL Server Express LocalDB",
+                    "DB Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            // ── 2. Launch Resident Kiosk directly (default view for residents) ──
+            //    Ctrl+Shift+O inside that form opens the PIN dialog for officials.
+            Application.Run(new ResidentKioskForm(db));
         }
     }
 }
