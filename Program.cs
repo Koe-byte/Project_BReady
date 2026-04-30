@@ -13,28 +13,11 @@ namespace ProjectBReady
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // ── 1. Boot database ─────────────────────────────────────────
-            using var db = new AppDbContext();
+            // Creates BReadyDB.db + tables + seed data if it doesn't exist yet
+            DBHelper.InitializeDB();
 
-            try
-            {
-                DbInitializer.Initialize(db);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Database initialization failed:\n\n{ex.Message}\n\n" +
-                    "Make sure SQL Server LocalDB is installed.\n" +
-                    "Install via: Visual Studio Installer → SQL Server Express LocalDB",
-                    "DB Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
-
-            // ── 2. Launch Resident Kiosk directly (default view for residents) ──
-            //    Ctrl+Shift+O inside that form opens the PIN dialog for officials.
-            Application.Run(new ResidentKioskForm(db));
+            // Launch kiosk directly — no login needed
+            Application.Run(new ResidentKioskForm());
         }
     }
 }

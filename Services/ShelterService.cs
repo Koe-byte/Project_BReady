@@ -1,90 +1,89 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using ProjectBReady.Data;
 using ProjectBReady.Models.Facilities;
 
 namespace ProjectBReady.Services
 {
-    public class ShelterService
+    public static class ShelterService
     {
-        private readonly AppDbContext _db;
+        // ── READ ─────────────────────────────────────────────────────────
 
-        public ShelterService(AppDbContext db)
+        public static DataTable GetAll()
         {
-            _db = db;
+            return DBHelper.GetData(
+                "SELECT ShelterID, ShelterName, CurrentOccupancy, MaxCapacity, Status " +
+                "FROM SHELTERS ORDER BY ShelterName");
         }
 
-        // ── READ ────────────────────────────────────────────────────────────
-
-        /// <summary>Returns all shelters as a list (used by DataGridView).</summary>
-        public List<Shelter> GetAll()
+        public static DataRow GetByID(string shelterID)
         {
-            return _db.Shelters.ToList();
+            DataTable dt = DBHelper.GetData(
+                $"SELECT * FROM SHELTERS WHERE ShelterID = '{shelterID}'");
+            return dt.Rows.Count > 0 ? dt.Rows[0] : null;
         }
 
-        /// <summary>Find one shelter by ID. Returns null if not found.</summary>
-        public Shelter GetByID(string shelterID)
+        public static int GetTotalAvailableSlots()
         {
-            return _db.Shelters.FirstOrDefault(s => s.ShelterID == shelterID);
+            DataTable dt = DBHelper.GetData(
+                "SELECT COALESCE(SUM(MaxCapacity - CurrentOccupancy), 0) AS Slots " +
+                "FROM SHELTERS WHERE Status != 'Closed'");
+            if (dt == null || dt.Rows.Count == 0) return 0;
+            return Convert.ToInt32(dt.Rows[0]["Slots"]);
         }
 
-        // ── UPDATE ──────────────────────────────────────────────────────────
+        public static DataRow GetMostAvailable()
+        {
+            DataTable dt = DBHelper.GetData(
+                "SELECT ShelterName, (MaxCapacity - CurrentOccupancy) AS AvailableSlots " +
+                "FROM SHELTERS WHERE Status = 'Open' " +
+                "ORDER BY AvailableSlots DESC LIMIT 1");
+            return dt.Rows.Count > 0 ? dt.Rows[0] : null;
+        }
+
+        // ── UPDATE OCCUPANCY ──────────────────────────────────────────────
 
         /// <summary>
-        /// Adds <paramref name="count"/> evacuees to the shelter's CurrentOccupancy.
-        /// Throws if shelter not found or capacity exceeded.
+        /// Adds count to CurrentOccupancy. Auto-sets Status to Full if at max.
+        /// Returns false if shelter not found or count exceeds remaining capacity.
         /// </summary>
-        public void UpdateShelterOccupancy(string shelterID, int count)
+        public static bool AddToOccupancy(string shelterID, int count)
         {
-            var shelter = GetByID(shelterID);
-            if (shelter == null)
-                throw new Exception($"Shelter '{shelterID}' not found.");
+            DataRow row = GetByID(shelterID);
+            if (row == null) return false;
 
-            // Uses the encapsulated method in Shelter.cs (throws if over capacity)
-            shelter.UpdateOccupancy(count);
-            _db.SaveChanges();
+            int current = Convert.ToInt32(row["CurrentOccupancy"]);
+            int max = Convert.ToInt32(row["MaxCapacity"]);
+            int newVal = current + count;
+
+            if (newVal > max) return false;
+
+            string status = newVal >= max ? "Full" : "Open";
+            return DBHelper.ExecuteQuery(
+                $"UPDATE SHELTERS SET CurrentOccupancy = {newVal}, Status = '{status}' " +
+                $"WHERE ShelterID = '{shelterID}'");
         }
 
-        /// <summary>Sets the Status field of a shelter (e.g. "Active", "Full", "Standby").</summary>
-        public void SetStatus(string shelterID, string newStatus)
+        public static bool SetStatus(string shelterID, string status)
         {
-            var shelter = GetByID(shelterID);
-            if (shelter == null)
-                throw new Exception($"Shelter '{shelterID}' not found.");
-
-            shelter.Status = newStatus;
-            _db.SaveChanges();
+            return DBHelper.ExecuteQuery(
+                $"UPDATE SHELTERS SET Status = '{status}' " +
+                $"WHERE ShelterID = '{shelterID}'");
         }
 
-        // ── CREATE ──────────────────────────────────────────────────────────
+        // ── CREATE / DELETE ───────────────────────────────────────────────
 
-        /// <summary>Adds a brand-new shelter to the database.</summary>
-        public void AddShelter(string shelterID, string shelterName, int maxCapacity, string status = "Active")
+        public static bool AddShelter(string shelterID, string shelterName, int maxCapacity)
         {
-            if (_db.Shelters.Any(s => s.ShelterID == shelterID))
-                throw new Exception($"Shelter ID '{shelterID}' already exists.");
-
-            _db.Shelters.Add(new Shelter
-            {
-                ShelterID = shelterID,
-                ShelterName = shelterName,
-                MaxCapacity = maxCapacity,
-                Status = status
-            });
-            _db.SaveChanges();
+            return DBHelper.ExecuteQuery(
+                $"INSERT INTO SHELTERS (ShelterID, ShelterName, MaxCapacity, CurrentOccupancy, Status, DateAdded) " +
+                $"VALUES ('{shelterID}', '{shelterName}', {maxCapacity}, 0, 'Open', GETDATE())");
         }
 
-        // ── DELETE ──────────────────────────────────────────────────────────
-
-        public void DeleteShelter(string shelterID)
+        public static bool DeleteShelter(string shelterID)
         {
-            var shelter = GetByID(shelterID);
-            if (shelter == null)
-                throw new Exception($"Shelter '{shelterID}' not found.");
-
-            _db.Shelters.Remove(shelter);
-            _db.SaveChanges();
+            return DBHelper.ExecuteQuery(
+                $"DELETE FROM SHELTERS WHERE ShelterID = '{shelterID}'");
         }
     }
 }

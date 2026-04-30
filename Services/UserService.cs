@@ -1,31 +1,40 @@
-using System.Linq;
+using System.Data;
 using ProjectBReady.Data;
-using ProjectBReady.Models.Users;
 
 namespace ProjectBReady.Services
 {
-    public class UserService
+    public static class UserService
     {
-        private readonly AppDbContext _db;
-
-        public UserService(AppDbContext db)
-        {
-            _db = db;
-        }
-
         /// <summary>
-        /// Finds a Person by UserID. Returns null if not found.
-        /// Used by the PIN unlock flow to get the BarangayOfficial object.
+        /// Checks the system AdminPIN stored in SETTINGS.
+        /// Returns true if the entered PIN matches.
         /// </summary>
-        public Person Login(string userID)
+        public static bool ValidatePIN(string enteredPIN)
         {
-            return _db.Persons.FirstOrDefault(p => p.UserID == userID);
+            DataTable dt = DBHelper.GetData(
+                "SELECT SettingValue FROM SETTINGS WHERE SettingKey = 'AdminPIN'");
+            if (dt.Rows.Count == 0) return false;
+            return dt.Rows[0]["SettingValue"].ToString() == enteredPIN;
         }
 
-        /// <summary>Returns the first BarangayOfficial found (used as default admin).</summary>
-        public BarangayOfficial GetDefaultOfficial()
+        /// <summary>Returns the first official's UserID and FullName for the dashboard greeting.</summary>
+        public static DataRow GetDefaultOfficial()
         {
-            return _db.BarangayOfficials.FirstOrDefault();
+            DataTable dt = DBHelper.GetData(
+                "SELECT UserID, FullName FROM USERS WHERE Role = 'Official' LIMIT 1");
+            return dt.Rows.Count > 0 ? dt.Rows[0] : null;
+        }
+
+        public static DataTable GetAllUsers()
+        {
+            return DBHelper.GetData(
+                "SELECT UserID, FullName, Role, IsReadOnly FROM dbo.USERS ORDER BY Role, FullName");
+        }
+
+        public static bool UpdatePIN(string newPIN)
+        {
+            return DBHelper.ExecuteQuery(
+                $"UPDATE SETTINGS SET SettingValue = '{newPIN}' WHERE SettingKey = 'AdminPIN'");
         }
     }
 }

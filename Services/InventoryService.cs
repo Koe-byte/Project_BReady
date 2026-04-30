@@ -1,186 +1,121 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Data;
 using ProjectBReady.Data;
-using ProjectBReady.Models.Inventory;
 
 namespace ProjectBReady.Services
 {
-    public class InventoryService
+    public static class InventoryService
     {
-        private readonly AppDbContext _db;
+        // ── READ ──────────────────────────────────────────────────────────
 
-        public InventoryService(AppDbContext db)
+        public static DataTable GetAll()
         {
-            _db = db;
+            return DBHelper.GetData(
+                "SELECT ItemID, ItemName, Quantity, ItemType, ExpirationDate, Dosage, IsPrescriptionRequired " +
+                "FROM dbo.INVENTORY ORDER BY ItemType, ItemName");
         }
 
-        // ── READ ────────────────────────────────────────────────────────────
-
-        /// <summary>All inventory items (food + medical) as a flat list.</summary>
-        public List<InventoryItem> GetAll()
+        public static DataTable GetFoodItems()
         {
-            return _db.InventoryItems.ToList();
+            return DBHelper.GetData(
+                "SELECT ItemID, ItemName, Quantity, ExpirationDate " +
+                "FROM dbo.INVENTORY WHERE ItemType = 'Food' ORDER BY ItemName");
         }
 
-        /// <summary>Food items only.</summary>
-        public List<FoodItem> GetFoodItems()
+        public static DataTable GetMedicalSupplies()
         {
-            return _db.FoodItems.ToList();
+            return DBHelper.GetData(
+                "SELECT ItemID, ItemName, Quantity, Dosage, IsPrescriptionRequired " +
+                "FROM dbo.INVENTORY WHERE ItemType = 'Medical' ORDER BY ItemName");
         }
 
-        /// <summary>Medical supplies only.</summary>
-        public List<MedicalSupply> GetMedicalSupplies()
+        public static DataTable GetExpiredItems()
         {
-            return _db.MedicalSupplies.ToList();
+            return DBHelper.GetData(
+                "SELECT ItemID, ItemName, Quantity, ExpirationDate " +
+                "FROM dbo.INVENTORY " +
+                "WHERE ItemType = 'Food' AND ExpirationDate < GETDATE()");
         }
 
-        /// <summary>Returns FoodItems whose ExpirationDate is already past.</summary>
-        public List<FoodItem> GetExpiredItems()
+        public static DataTable GetDispatchLogs()
         {
-            return _db.FoodItems
-                      .Where(f => f.ExpirationDate < DateTime.Now)
-                      .ToList();
+            return DBHelper.GetData(
+                "SELECT dl.LogID, i.ItemName, s.ShelterName, dl.Quantity, " +
+                "dl.DispatchedAt, dl.DispatchedBy " +
+                "FROM dbo.DISPATCH_LOGS dl " +
+                "JOIN dbo.INVENTORY i ON dl.ItemID = i.ItemID " +
+                "JOIN dbo.SHELTERS s ON dl.ShelterID = s.ShelterID " +
+                "ORDER BY dl.DispatchedAt DESC");
         }
 
-        /// <summary>Find a single item by ID. Returns null if not found.</summary>
-        public InventoryItem GetByID(string itemID)
+        // ── STOCK IN ──────────────────────────────────────────────────────
+
+        /// <summary>Returns false if item not found or amount <= 0.</summary>
+        public static bool StockIn(string itemID, int amount)
         {
-            return _db.InventoryItems.FirstOrDefault(i => i.ItemID == itemID);
+            if (amount <= 0) return false;
+            DataTable dt = DBHelper.GetData(
+                $"SELECT ItemID FROM dbo.INVENTORY WHERE ItemID = '{itemID}'");
+            if (dt.Rows.Count == 0) return false;
+
+            return DBHelper.ExecuteQuery(
+                $"UPDATE dbo.INVENTORY SET Quantity = Quantity + {amount} " +
+                $"WHERE ItemID = '{itemID}'");
         }
 
-        // ── STOCK IN ────────────────────────────────────────────────────────
-
-        /// <summary>Adds stock to an existing item's quantity.</summary>
-        public void StockIn(string itemID, int amount)
-        {
-            var item = GetByID(itemID);
-            if (item == null)
-                throw new Exception($"Item '{itemID}' not found.");
-            if (amount <= 0)
-                throw new Exception("Amount must be greater than zero.");
-
-            item.StockIn(amount);   // calls InventoryItem.StockIn() (virtual)
-            _db.SaveChanges();
-        }
-
-        // ── DISPATCH ────────────────────────────────────────────────────────
+        // ── DISPATCH ──────────────────────────────────────────────────────
 
         /// <summary>
-        /// Deducts <paramref name="qty"/> from the item's stock and writes a DispatchLog.
-        /// Throws if item/shelter not found or insufficient stock.
+        /// Deducts qty from stock and logs to DISPATCH_LOGS.
+        /// Returns false if insufficient stock or item/shelter not found.
         /// </summary>
-        public void Dispatch(string itemID, string shelterID, int qty, string dispatchedByUserID)
+        public static bool Dispatch(string itemID, string shelterID, int qty, string dispatchedByUserID)
         {
-            var item = GetByID(itemID);
-            if (item == null)
-                throw new Exception($"Item '{itemID}' not found.");
+            if (qty <= 0) return false;
 
-            var shelter = _db.Shelters.FirstOrDefault(s => s.ShelterID == shelterID);
-            if (shelter == null)
-                throw new Exception($"Shelter '{shelterID}' not found.");
+            // Check stock
+            DataTable dt = DBHelper.GetData(
+                $"SELECT Quantity FROM dbo.INVENTORY WHERE ItemID = '{itemID}'");
+            if (dt.Rows.Count == 0) return false;
 
-            if (qty <= 0)
-                throw new Exception("Dispatch quantity must be greater than zero.");
+            int current = Convert.ToInt32(dt.Rows[0]["Quantity"]);
+            if (current < qty) return false;
 
-            if (item.Quantity < qty)
-                throw new Exception($"Insufficient stock. Available: {item.Quantity}");
+            // Deduct stock
+            bool deducted = DBHelper.ExecuteQuery(
+                $"UPDATE dbo.INVENTORY SET Quantity = Quantity - {qty} " +
+                $"WHERE ItemID = '{itemID}'");
+            if (!deducted) return false;
 
-            // Deduct stock using the model method (Polymorphism - overrideable)
-            item.Dispatch(qty, shelter);
-
-            // Write dispatch log
-            _db.DispatchLogs.Add(new DispatchLog
-            {
-                ItemID = itemID,
-                ShelterID = shelterID,
-                Quantity = qty,
-                DispatchedAt = DateTime.Now,
-                DispatchedBy = dispatchedByUserID
-            });
-
-            _db.SaveChanges();
+            // Write log
+            return DBHelper.ExecuteQuery(
+                $"INSERT INTO dbo.DISPATCH_LOGS (ItemID, ShelterID, Quantity, DispatchedAt, DispatchedBy) " +
+                $"VALUES ('{itemID}', '{shelterID}', {qty}, GETDATE(), '{dispatchedByUserID}')");
         }
 
-        // ── LOGS ────────────────────────────────────────────────────────────
+        // ── ADD ITEMS ─────────────────────────────────────────────────────
 
-        /// <summary>
-        /// Returns all dispatch logs, newest first, including related Item and Shelter info.
-        /// </summary>
-        public List<DispatchLogView> GetDispatchLogs()
+        public static bool AddFoodItem(string itemID, string name, int qty, DateTime expiration)
         {
-            return _db.DispatchLogs
-                      .Include(d => d.Item)
-                      .Include(d => d.Shelter)
-                      .OrderByDescending(d => d.DispatchedAt)
-                      .Select(d => new DispatchLogView
-                      {
-                          LogID = d.LogID,
-                          ItemName = d.Item.ItemName,
-                          ShelterName = d.Shelter.ShelterName,
-                          Quantity = d.Quantity,
-                          DispatchedAt = d.DispatchedAt,
-                          DispatchedBy = d.DispatchedBy
-                      })
-                      .ToList();
+            return DBHelper.ExecuteQuery(
+                $"INSERT INTO dbo.INVENTORY (ItemID, ItemName, Quantity, ItemType, ExpirationDate) " +
+                $"VALUES ('{itemID}', '{name}', {qty}, 'Food', '{expiration:yyyy-MM-dd}')");
         }
 
-        // ── ADD NEW ITEMS ───────────────────────────────────────────────────
-
-        public void AddFoodItem(string itemID, string name, int qty, DateTime expiration)
+        public static bool AddMedicalSupply(string itemID, string name, int qty, string dosage, bool requiresPrescription)
         {
-            if (_db.InventoryItems.Any(i => i.ItemID == itemID))
-                throw new Exception($"Item ID '{itemID}' already exists.");
-
-            _db.FoodItems.Add(new FoodItem
-            {
-                ItemID = itemID,
-                ItemName = name,
-                Quantity = qty,
-                ExpirationDate = expiration
-            });
-            _db.SaveChanges();
+            int rx = requiresPrescription ? 1 : 0;
+            return DBHelper.ExecuteQuery(
+                $"INSERT INTO dbo.INVENTORY (ItemID, ItemName, Quantity, ItemType, Dosage, IsPrescriptionRequired) " +
+                $"VALUES ('{itemID}', '{name}', {qty}, 'Medical', '{dosage}', {rx})");
         }
 
-        public void AddMedicalSupply(string itemID, string name, int qty, string dosage, bool requiresPrescription)
+        // ── DELETE ────────────────────────────────────────────────────────
+
+        public static bool DeleteItem(string itemID)
         {
-            if (_db.InventoryItems.Any(i => i.ItemID == itemID))
-                throw new Exception($"Item ID '{itemID}' already exists.");
-
-            _db.MedicalSupplies.Add(new MedicalSupply
-            {
-                ItemID = itemID,
-                ItemName = name,
-                Quantity = qty,
-                Dosage = dosage,
-                IsPrescriptionRequired = requiresPrescription
-            });
-            _db.SaveChanges();
+            return DBHelper.ExecuteQuery(
+                $"DELETE FROM dbo.INVENTORY WHERE ItemID = '{itemID}'");
         }
-
-        // ── DELETE ──────────────────────────────────────────────────────────
-
-        public void DeleteItem(string itemID)
-        {
-            var item = GetByID(itemID);
-            if (item == null)
-                throw new Exception($"Item '{itemID}' not found.");
-
-            _db.InventoryItems.Remove(item);
-            _db.SaveChanges();
-        }
-    }
-
-    // ── Flat DTO used by DataGridView (avoids EF navigation property noise) ──
-
-    public class DispatchLogView
-    {
-        public int LogID { get; set; }
-        public string ItemName { get; set; }
-        public string ShelterName { get; set; }
-        public int Quantity { get; set; }
-        public DateTime DispatchedAt { get; set; }
-        public string DispatchedBy { get; set; }
     }
 }
