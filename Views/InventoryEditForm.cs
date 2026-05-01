@@ -1,7 +1,3 @@
-// ============================================================
-//  InventoryItemEditForm.cs  —  ProjectBReady
-//  Add a new Food Item or Medical Supply
-// ============================================================
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,7 +7,7 @@ namespace ProjectBReady.Forms
 {
     public partial class InventoryItemEditForm : Form
     {
-        private string itemType; // "Food" or "Medical"
+        private string itemType;
 
         public InventoryItemEditForm(string type)
         {
@@ -43,41 +39,40 @@ namespace ProjectBReady.Forms
                 return;
             }
 
-            try
-            {
-                if (itemType == "Food")
-                {
-                    DBHelper.ExecuteNonQuery(
-                        @"INSERT INTO FOOD_ITEMS (ItemName, Quantity, ExpirationDate)
-                          VALUES (@name, @qty, @exp)",
-                        new System.Collections.Generic.Dictionary<string, object>
-                        {
-                            { "@name", txtItemName.Text.Trim() },
-                            { "@qty",  (int)numQuantity.Value },
-                            { "@exp",  dtpExpiration.Value }
-                        });
-                }
-                else
-                {
-                    DBHelper.ExecuteNonQuery(
-                        @"INSERT INTO MEDICAL_SUPPLIES (ItemName, Quantity, Dosage, IsPrescriptionRequired)
-                          VALUES (@name, @qty, @dosage, @rx)",
-                        new System.Collections.Generic.Dictionary<string, object>
-                        {
-                            { "@name",   txtItemName.Text.Trim() },
-                            { "@qty",    (int)numQuantity.Value },
-                            { "@dosage", txtDosage.Text.Trim() },
-                            { "@rx",     chkPrescription.Checked }
-                        });
-                }
+            bool success;
 
+            if (itemType == "Food")
+            {
+                // Single INVENTORY table — ItemType = 'Food'
+                success = DBHelper.ExecuteNonQuery(
+                    @"INSERT INTO INVENTORY (ItemName, Quantity, ItemType, ExpirationDate)
+                      VALUES (@name, @qty, 'Food', @exp)",
+                    new System.Collections.Generic.Dictionary<string, object>
+                    {
+                        { "@name", txtItemName.Text.Trim() },
+                        { "@qty",  (int)numQuantity.Value },
+                        { "@exp",  dtpExpiration.Value.ToString("yyyy-MM-dd") }
+                    });
+            }
+            else
+            {
+                // Single INVENTORY table — ItemType = 'Medical'
+                success = DBHelper.ExecuteNonQuery(
+                    @"INSERT INTO INVENTORY (ItemName, Quantity, ItemType, Dosage, IsPrescriptionRequired)
+                      VALUES (@name, @qty, 'Medical', @dosage, @rx)",
+                    new System.Collections.Generic.Dictionary<string, object>
+                    {
+                        { "@name",   txtItemName.Text.Trim() },
+                        { "@qty",    (int)numQuantity.Value },
+                        { "@dosage", txtDosage.Text.Trim() },
+                        { "@rx",     chkPrescription.Checked ? 1 : 0 }
+                    });
+            }
+
+            if (success)
+            {
                 this.DialogResult = DialogResult.OK;
                 this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving item: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

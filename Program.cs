@@ -1,3 +1,4 @@
+using ProjectBReady.Data;
 using ProjectBReady.Forms;
 using System;
 using System.Windows.Forms;
@@ -6,15 +7,14 @@ namespace ProjectBReady
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
+            // Creates BReadyDB.db + tables + seed data kung wala pa
+            DBHelper.InitializeDB();
+
             Application.Run(new DashboardForm());
         }
     }
