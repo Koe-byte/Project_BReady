@@ -328,25 +328,25 @@ namespace ProjectBReady.Views
             label2 = new Label();
             label3 = new Label();
             panel2 = new Panel();
+            panel6 = new Panel();
             label6 = new Label();
             label5 = new Label();
             label4 = new Label();
             panel3 = new Panel();
+            panel7 = new Panel();
             label7 = new Label();
             label8 = new Label();
             label9 = new Label();
             panel4 = new Panel();
+            panel8 = new Panel();
             label10 = new Label();
             label11 = new Label();
             label12 = new Label();
             panel5 = new Panel();
+            panel9 = new Panel();
             label13 = new Label();
             label14 = new Label();
             label15 = new Label();
-            panel6 = new Panel();
-            panel7 = new Panel();
-            panel8 = new Panel();
-            panel9 = new Panel();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
@@ -484,6 +484,14 @@ namespace ProjectBReady.Views
             panel2.Size = new Size(262, 130);
             panel2.TabIndex = 3;
             // 
+            // panel6
+            // 
+            panel6.BackColor = Color.OrangeRed;
+            panel6.Location = new Point(186, 16);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(53, 48);
+            panel6.TabIndex = 6;
+            // 
             // label6
             // 
             label6.AutoSize = true;
@@ -529,6 +537,14 @@ namespace ProjectBReady.Views
             panel3.Size = new Size(262, 130);
             panel3.TabIndex = 6;
             // 
+            // panel7
+            // 
+            panel7.BackColor = Color.OrangeRed;
+            panel7.Location = new Point(190, 13);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(53, 48);
+            panel7.TabIndex = 7;
+            // 
             // label7
             // 
             label7.AutoSize = true;
@@ -572,6 +588,14 @@ namespace ProjectBReady.Views
             panel4.Name = "panel4";
             panel4.Size = new Size(262, 130);
             panel4.TabIndex = 7;
+            // 
+            // panel8
+            // 
+            panel8.BackColor = Color.OrangeRed;
+            panel8.Location = new Point(190, 16);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(53, 48);
+            panel8.TabIndex = 7;
             // 
             // label10
             // 
@@ -617,6 +641,14 @@ namespace ProjectBReady.Views
             panel5.Size = new Size(262, 130);
             panel5.TabIndex = 8;
             // 
+            // panel9
+            // 
+            panel9.BackColor = Color.OrangeRed;
+            panel9.Location = new Point(189, 13);
+            panel9.Name = "panel9";
+            panel9.Size = new Size(53, 48);
+            panel9.TabIndex = 7;
+            // 
             // label13
             // 
             label13.AutoSize = true;
@@ -649,39 +681,7 @@ namespace ProjectBReady.Views
             label15.TabIndex = 4;
             label15.Text = "Dispatches";
             // 
-            // panel6
-            // 
-            panel6.BackColor = Color.OrangeRed;
-            panel6.Location = new Point(186, 16);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(53, 48);
-            panel6.TabIndex = 6;
-            // 
-            // panel7
-            // 
-            panel7.BackColor = Color.OrangeRed;
-            panel7.Location = new Point(190, 13);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(53, 48);
-            panel7.TabIndex = 7;
-            // 
-            // panel8
-            // 
-            panel8.BackColor = Color.OrangeRed;
-            panel8.Location = new Point(190, 16);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(53, 48);
-            panel8.TabIndex = 7;
-            // 
-            // panel9
-            // 
-            panel9.BackColor = Color.OrangeRed;
-            panel9.Location = new Point(189, 13);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(53, 48);
-            panel9.TabIndex = 7;
-            // 
-            // DashboardForm
+            // MainDashboardForm
             // 
             BackColor = Color.White;
             ClientSize = new Size(1626, 1050);
@@ -692,7 +692,8 @@ namespace ProjectBReady.Views
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(panel1);
-            Name = "DashboardForm";
+            Name = "MainDashboardForm";
+            Load += MainDashboardForm_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -816,6 +817,9 @@ namespace ProjectBReady.Views
         {
             Panel card = CreateShadowPanel(x, y, width, 350);
 
+            // 1. ADD THIS LINE: Anchors the outer background card to stretch horizontally
+            card.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+
             Label lblTitle = new Label { Text = "Recent Dispatch Logs", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = textDark, Location = new Point(25, 20), AutoSize = true };
             card.Controls.Add(lblTitle);
 
@@ -823,6 +827,10 @@ namespace ProjectBReady.Views
             {
                 Location = new Point(25, 70),
                 Size = new Size(width - 50, 260),
+
+                // 2. ADD THIS LINE: Anchors the table itself to stretch with the card
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+
                 ColumnCount = 4,
                 RowCount = 6,
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.Single
@@ -864,6 +872,11 @@ namespace ProjectBReady.Views
         }
 
         private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainDashboardForm_Load(object sender, EventArgs e)
         {
 
         }
