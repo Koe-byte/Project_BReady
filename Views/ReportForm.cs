@@ -10,13 +10,13 @@ namespace ProjectBReady.Forms
     {
         private bool isAdminMode = false;
 
-        public ReportForm()
+        public ReportForm(bool adminMode = false)
         {
             InitializeComponent();
             this.KeyPreview = true;
             this.KeyDown += ReportForm_KeyDown;
             LoadAllReports();
-            SetAdminMode(false);
+            SetAdminMode(adminMode);
         }
 
         // ── CTRL+SHIFT+O ──────────────────────────────────────────
@@ -77,18 +77,16 @@ namespace ProjectBReady.Forms
         {
             try
             {
-                string query = @"
+                DataTable dt = DBHelper.GetData(@"
                     SELECT ShelterName AS 'Shelter Name',
                            MaxCapacity AS 'Max Capacity',
                            CurrentOccupancy AS 'Current',
                            MaxCapacity - CurrentOccupancy AS 'Available',
                            CAST(CurrentOccupancy AS REAL) / NULLIF(MaxCapacity, 0) * 100 AS '% Full',
                            Status
-                    FROM SHELTERS ORDER BY ShelterName";
+                    FROM SHELTERS ORDER BY ShelterName");
 
-                DataTable dt = DBHelper.GetData(query);
                 dgvShelterReport.DataSource = dt;
-
                 foreach (DataGridViewRow row in dgvShelterReport.Rows)
                     if (row.Cells["Status"].Value?.ToString() == "Full")
                         row.DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 220);
@@ -100,23 +98,15 @@ namespace ProjectBReady.Forms
         {
             try
             {
-                // Food — from single INVENTORY table
-                DataTable foodDt = DBHelper.GetData(@"
+                dgvFoodReport.DataSource = DBHelper.GetData(@"
                     SELECT ItemName AS 'Item', Quantity AS 'Qty',
                            ExpirationDate AS 'Expires', 'Food' AS Type
-                    FROM INVENTORY WHERE ItemType = 'Food'
-                    ORDER BY ExpirationDate");
+                    FROM INVENTORY WHERE ItemType = 'Food' ORDER BY ExpirationDate");
 
-                // Medical — from single INVENTORY table
-                DataTable medDt = DBHelper.GetData(@"
+                dgvMedReport.DataSource = DBHelper.GetData(@"
                     SELECT ItemName AS 'Item', Quantity AS 'Qty', Dosage,
-                           CASE WHEN IsPrescriptionRequired = 1 THEN 'Yes' ELSE 'No' END AS 'Rx Required',
-                           'Medical' AS Type
-                    FROM INVENTORY WHERE ItemType = 'Medical'
-                    ORDER BY ItemName");
-
-                dgvFoodReport.DataSource = foodDt;
-                dgvMedReport.DataSource = medDt;
+                           CASE WHEN IsPrescriptionRequired = 1 THEN 'Yes' ELSE 'No' END AS 'Rx Required'
+                    FROM INVENTORY WHERE ItemType = 'Medical' ORDER BY ItemName");
             }
             catch { }
         }
@@ -125,25 +115,18 @@ namespace ProjectBReady.Forms
         {
             try
             {
-                // SQLite: date('now', '+30 days') instead of DATEADD
-                //         julianday for days difference
-                string query = @"
-                    SELECT ItemName AS 'Food Item',
-                           Quantity AS 'Qty',
+                DataTable dt = DBHelper.GetData(@"
+                    SELECT ItemName AS 'Food Item', Quantity AS 'Qty',
                            ExpirationDate AS 'Expires On',
                            CAST(julianday(ExpirationDate) - julianday('now') AS INTEGER) AS 'Days Left'
                     FROM INVENTORY
-                    WHERE ItemType = 'Food'
-                      AND ExpirationDate <= date('now', '+30 days')
-                    ORDER BY ExpirationDate";
+                    WHERE ItemType = 'Food' AND ExpirationDate <= date('now', '+30 days')
+                    ORDER BY ExpirationDate");
 
-                DataTable dt = DBHelper.GetData(query);
                 dgvExpiring.DataSource = dt;
-
                 lblExpiringCount.Text = $"⚠ {dt.Rows.Count} item(s) expiring within 30 days";
                 lblExpiringCount.ForeColor = dt.Rows.Count > 0
-                    ? Color.FromArgb(220, 53, 69)
-                    : Color.FromArgb(31, 158, 117);
+                    ? Color.FromArgb(220, 53, 69) : Color.FromArgb(31, 158, 117);
 
                 foreach (DataGridViewRow row in dgvExpiring.Rows)
                 {
@@ -164,42 +147,38 @@ namespace ProjectBReady.Forms
         {
             try
             {
-                DataTable shelterData = DBHelper.GetData(@"
+                DataTable s = DBHelper.GetData(@"
                     SELECT COUNT(*) AS Total,
                            COALESCE(SUM(CurrentOccupancy), 0) AS TotalOcc,
                            COALESCE(SUM(MaxCapacity), 0) AS TotalCap,
                            SUM(CASE WHEN Status = 'Full' THEN 1 ELSE 0 END) AS FullCount
                     FROM SHELTERS");
 
-                if (shelterData.Rows.Count > 0)
+                if (s.Rows.Count > 0)
                 {
-                    var r = shelterData.Rows[0];
-                    int total = Convert.ToInt32(r["Total"]);
-                    int occ = Convert.ToInt32(r["TotalOcc"]);
-                    int cap = Convert.ToInt32(r["TotalCap"]);
-                    int full = Convert.ToInt32(r["FullCount"]);
+                    int occ = Convert.ToInt32(s.Rows[0]["TotalOcc"]);
+                    int cap = Convert.ToInt32(s.Rows[0]["TotalCap"]);
                     int pct = cap > 0 ? (int)((double)occ / cap * 100) : 0;
-
-                    lblCardShelters.Text = total.ToString();
+                    lblCardShelters.Text = Convert.ToInt32(s.Rows[0]["Total"]).ToString();
                     lblCardOccupancy.Text = $"{occ} / {cap}";
                     lblCardPct.Text = $"{pct}% Full";
-                    lblCardFull.Text = $"{full} Shelter(s) Full";
+                    lblCardFull.Text = $"{Convert.ToInt32(s.Rows[0]["FullCount"])} Shelter(s) Full";
                 }
 
-                DataTable foodData = DBHelper.GetData(
+                DataTable f = DBHelper.GetData(
                     "SELECT COUNT(*) AS Cnt, COALESCE(SUM(Quantity), 0) AS Total FROM INVENTORY WHERE ItemType = 'Food'");
-                DataTable medData = DBHelper.GetData(
+                DataTable m = DBHelper.GetData(
                     "SELECT COUNT(*) AS Cnt, COALESCE(SUM(Quantity), 0) AS Total FROM INVENTORY WHERE ItemType = 'Medical'");
 
-                if (foodData.Rows.Count > 0)
+                if (f.Rows.Count > 0)
                 {
-                    lblCardFoodTypes.Text = Convert.ToInt32(foodData.Rows[0]["Cnt"]).ToString();
-                    lblCardFoodUnits.Text = $"{Convert.ToInt32(foodData.Rows[0]["Total"]):N0} units";
+                    lblCardFoodTypes.Text = Convert.ToInt32(f.Rows[0]["Cnt"]).ToString();
+                    lblCardFoodUnits.Text = $"{Convert.ToInt32(f.Rows[0]["Total"]):N0} units";
                 }
-                if (medData.Rows.Count > 0)
+                if (m.Rows.Count > 0)
                 {
-                    lblCardMedTypes.Text = Convert.ToInt32(medData.Rows[0]["Cnt"]).ToString();
-                    lblCardMedUnits.Text = $"{Convert.ToInt32(medData.Rows[0]["Total"]):N0} units";
+                    lblCardMedTypes.Text = Convert.ToInt32(m.Rows[0]["Cnt"]).ToString();
+                    lblCardMedUnits.Text = $"{Convert.ToInt32(m.Rows[0]["Total"]):N0} units";
                 }
             }
             catch { }
@@ -218,32 +197,28 @@ namespace ProjectBReady.Forms
                     try
                     {
                         var sb = new System.Text.StringBuilder();
-
                         sb.AppendLine("=== SHELTER REPORT ===");
                         sb.AppendLine("ShelterName,MaxCapacity,CurrentOccupancy,Available,Status");
-                        DataTable shelters = DBHelper.GetData(
-                            "SELECT ShelterName, MaxCapacity, CurrentOccupancy, MaxCapacity - CurrentOccupancy AS Available, Status FROM SHELTERS");
-                        foreach (DataRow row in shelters.Rows)
+                        foreach (DataRow row in DBHelper.GetData(
+                            "SELECT ShelterName, MaxCapacity, CurrentOccupancy, MaxCapacity - CurrentOccupancy, Status FROM SHELTERS").Rows)
                             sb.AppendLine(string.Join(",", row.ItemArray));
 
                         sb.AppendLine();
                         sb.AppendLine("=== FOOD INVENTORY ===");
                         sb.AppendLine("ItemName,Quantity,ExpirationDate");
-                        DataTable food = DBHelper.GetData(
-                            "SELECT ItemName, Quantity, ExpirationDate FROM INVENTORY WHERE ItemType = 'Food'");
-                        foreach (DataRow row in food.Rows)
+                        foreach (DataRow row in DBHelper.GetData(
+                            "SELECT ItemName, Quantity, ExpirationDate FROM INVENTORY WHERE ItemType = 'Food'").Rows)
                             sb.AppendLine(string.Join(",", row.ItemArray));
 
                         sb.AppendLine();
                         sb.AppendLine("=== MEDICAL INVENTORY ===");
                         sb.AppendLine("ItemName,Quantity,Dosage,PrescriptionRequired");
-                        DataTable med = DBHelper.GetData(
-                            "SELECT ItemName, Quantity, Dosage, IsPrescriptionRequired FROM INVENTORY WHERE ItemType = 'Medical'");
-                        foreach (DataRow row in med.Rows)
+                        foreach (DataRow row in DBHelper.GetData(
+                            "SELECT ItemName, Quantity, Dosage, IsPrescriptionRequired FROM INVENTORY WHERE ItemType = 'Medical'").Rows)
                             sb.AppendLine(string.Join(",", row.ItemArray));
 
                         System.IO.File.WriteAllText(sfd.FileName, sb.ToString());
-                        MessageBox.Show("Report exported successfully!", "Export Complete",
+                        MessageBox.Show("Report exported!", "Export Complete",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
@@ -255,10 +230,22 @@ namespace ProjectBReady.Forms
             }
         }
 
+        // ── NAVIGATION ────────────────────────────────────────────
+        private void Navigate(Form destination)
+        {
+            destination.FormClosed += (s, e) => { this.Show(); LoadAllReports(); };
+            this.Hide();
+            destination.Show();
+        }
+
         private void btnRefresh_Click(object sender, EventArgs e) => LoadAllReports();
 
-        private void btnDashboard_Click(object sender, EventArgs e) { new DashboardForm().Show(); this.Close(); }
-        private void btnShelter_Click(object sender, EventArgs e) { new ShelterForm().Show(); this.Close(); }
-        private void btnInventory_Click(object sender, EventArgs e) { new InventoryForm().Show(); this.Close(); }
+        private void btnDashboard_Click(object sender, EventArgs e) => this.Close();
+
+        private void btnShelter_Click(object sender, EventArgs e)
+            => Navigate(new ShelterForm(isAdminMode));
+
+        private void btnInventory_Click(object sender, EventArgs e)
+            => Navigate(new InventoryForm(isAdminMode));
     }
 }

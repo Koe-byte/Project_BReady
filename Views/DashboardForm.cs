@@ -31,15 +31,12 @@ namespace ProjectBReady
                 }
                 else
                 {
-                    // Validate PIN from SETTINGS table
                     string pin = Microsoft.VisualBasic.Interaction.InputBox(
                         "Enter Admin PIN:", "Admin Access", "");
-
-                    if (pin == "") return; // cancelled
+                    if (pin == "") return;
 
                     DataTable dt = DBHelper.GetData(
                         "SELECT SettingValue FROM SETTINGS WHERE SettingKey = 'AdminPIN'");
-
                     string storedPIN = dt.Rows.Count > 0
                         ? dt.Rows[0]["SettingValue"].ToString() : "1234";
 
@@ -71,19 +68,13 @@ namespace ProjectBReady
             }
         }
 
-        // ── LOAD SHELTER STATS ────────────────────────────────────
         private void LoadShelterStats()
         {
             try
             {
-                // LIMIT 1 — SQLite (hindi TOP 1)
-                string query = @"
+                DataTable dt = DBHelper.GetData(@"
                     SELECT ShelterName, MaxCapacity, CurrentOccupancy, Status
-                    FROM SHELTERS
-                    ORDER BY ShelterName
-                    LIMIT 1";
-
-                DataTable dt = DBHelper.GetData(query);
+                    FROM SHELTERS ORDER BY ShelterName LIMIT 1");
 
                 if (dt.Rows.Count > 0)
                 {
@@ -125,28 +116,40 @@ namespace ProjectBReady
             }
         }
 
-        // ── NAVIGATION ────────────────────────────────────────────
-        private void shelterButton_Click(object sender, EventArgs e)
+        // ── NAVIGATION — Hide/Show instead of new Form + Close ───
+        private void Navigate(Form destination)
         {
-            new ShelterForm().Show();
+            destination.FormClosed += (s, e) =>
+            {
+                this.Show();
+                LoadShelterStats(); // refresh kapag bumalik
+            };
+            this.Hide();
+            destination.Show();
         }
+
+        private void shelterButton_Click(object sender, EventArgs e)
+            => Navigate(new ShelterForm(isAdminMode));
 
         private void addshelterButton_Click(object sender, EventArgs e)
-        {
-            new ShelterForm().Show();
-        }
+            => Navigate(new ShelterForm(isAdminMode));
 
         private void dashboard_Click(object sender, EventArgs e)
-        {
-            LoadShelterStats();
-        }
+            => LoadShelterStats();
 
-        // ── UNUSED EVENT HANDLERS ─────────────────────────────────
+        // inventoryButton at button1 (Reports) — nasa Designer pero
+        // hindi pa naka-wire sa event — i-add sa Designer or gamitin ito:
+        private void inventoryButton_Click(object sender, EventArgs e)
+            => Navigate(new InventoryForm(isAdminMode));
+
+        private void button1_Click_1(object sender, EventArgs e)
+            => Navigate(new ReportForm(isAdminMode));
+
+        // ── UNUSED ────────────────────────────────────────────────
         private void pictureBox1_Click(object sender, EventArgs e) { }
         private void button1_Click(object sender, EventArgs e) { }
         private void textBox1_TextChanged(object sender, EventArgs e) { }
         private void pictureBox1_Click_1(object sender, EventArgs e) { }
-        private void button1_Click_1(object sender, EventArgs e) { }
         private void pictureBox1_Click_2(object sender, EventArgs e) { }
         private void pictureBox1_Click_3(object sender, EventArgs e) { }
         private void label1_Click(object sender, EventArgs e) { }

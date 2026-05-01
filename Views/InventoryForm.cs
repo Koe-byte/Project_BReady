@@ -12,7 +12,7 @@ namespace ProjectBReady.Forms
         private int selectedFoodID = -1;
         private int selectedMedID = -1;
 
-        public InventoryForm()
+        public InventoryForm(bool adminMode = false)
         {
             InitializeComponent();
             this.KeyPreview = true;
@@ -20,7 +20,7 @@ namespace ProjectBReady.Forms
             LoadFoodItems();
             LoadMedicalSupplies();
             LoadInventorySummary();
-            SetAdminMode(false);
+            SetAdminMode(adminMode);
         }
 
         // ── CTRL+SHIFT+O ──────────────────────────────────────────
@@ -78,61 +78,43 @@ namespace ProjectBReady.Forms
         }
 
         // ── LOAD DATA ─────────────────────────────────────────────
-        // Single INVENTORY table — ItemType = 'Food' or 'Medical'
-        // SQLite: datetime('now') instead of GETDATE()
-        //         date(ExpirationDate, '+7 days') instead of DATEADD
-
         private void LoadFoodItems()
         {
             try
             {
-                string query = @"
+                DataTable dt = DBHelper.GetData(@"
                     SELECT ItemID, ItemName, Quantity, ExpirationDate,
                            CASE
                                WHEN ExpirationDate < date('now') THEN 'Expired'
                                WHEN ExpirationDate < date('now', '+7 days') THEN 'Expiring Soon'
                                ELSE 'Good'
                            END AS ExpiryStatus
-                    FROM INVENTORY
-                    WHERE ItemType = 'Food'
-                    ORDER BY ItemName";
+                    FROM INVENTORY WHERE ItemType = 'Food'
+                    ORDER BY ItemName");
 
-                DataTable dt = DBHelper.GetData(query);
                 dgvFood.DataSource = dt;
-
                 if (dgvFood.Columns.Contains("ItemID"))
                     dgvFood.Columns["ItemID"].Visible = false;
-
                 lblFoodCount.Text = $"Food Items: {dt.Rows.Count} types";
             }
-            catch
-            {
-                lblFoodCount.Text = "Food Items: N/A";
-            }
+            catch { lblFoodCount.Text = "Food Items: N/A"; }
         }
 
         private void LoadMedicalSupplies()
         {
             try
             {
-                string query = @"
+                DataTable dt = DBHelper.GetData(@"
                     SELECT ItemID, ItemName, Quantity, Dosage, IsPrescriptionRequired
-                    FROM INVENTORY
-                    WHERE ItemType = 'Medical'
-                    ORDER BY ItemName";
+                    FROM INVENTORY WHERE ItemType = 'Medical'
+                    ORDER BY ItemName");
 
-                DataTable dt = DBHelper.GetData(query);
                 dgvMedical.DataSource = dt;
-
                 if (dgvMedical.Columns.Contains("ItemID"))
                     dgvMedical.Columns["ItemID"].Visible = false;
-
                 lblMedCount.Text = $"Medical Supplies: {dt.Rows.Count} types";
             }
-            catch
-            {
-                lblMedCount.Text = "Medical Supplies: N/A";
-            }
+            catch { lblMedCount.Text = "Medical Supplies: N/A"; }
         }
 
         private void LoadInventorySummary()
@@ -158,13 +140,7 @@ namespace ProjectBReady.Forms
         private void btnAddFood_Click(object sender, EventArgs e)
         {
             using (InventoryItemEditForm form = new InventoryItemEditForm("Food"))
-            {
-                if (form.ShowDialog() == DialogResult.OK)
-                {
-                    LoadFoodItems();
-                    LoadInventorySummary();
-                }
-            }
+                if (form.ShowDialog() == DialogResult.OK) { LoadFoodItems(); LoadInventorySummary(); }
         }
 
         private void btnDeleteFood_Click(object sender, EventArgs e)
@@ -173,41 +149,29 @@ namespace ProjectBReady.Forms
             if (ConfirmDelete())
             {
                 DBHelper.ExecuteNonQuery("DELETE FROM INVENTORY WHERE ItemID = @id",
-                    new System.Collections.Generic.Dictionary<string, object>
-                    { { "@id", selectedFoodID } });
+                    new System.Collections.Generic.Dictionary<string, object> { { "@id", selectedFoodID } });
                 selectedFoodID = -1;
-                LoadFoodItems();
-                LoadInventorySummary();
+                LoadFoodItems(); LoadInventorySummary();
             }
         }
 
         private void btnDispatchFood_Click(object sender, EventArgs e)
         {
             if (selectedFoodID < 0) { ShowNoSelection(); return; }
-            ShowDispatchDialog(selectedFoodID);
-            LoadFoodItems();
-            LoadInventorySummary();
+            ShowDispatchDialog(selectedFoodID); LoadFoodItems(); LoadInventorySummary();
         }
 
         private void btnStockInFood_Click(object sender, EventArgs e)
         {
             if (selectedFoodID < 0) { ShowNoSelection(); return; }
-            ShowStockInDialog(selectedFoodID);
-            LoadFoodItems();
-            LoadInventorySummary();
+            ShowStockInDialog(selectedFoodID); LoadFoodItems(); LoadInventorySummary();
         }
 
         // ── MEDICAL ACTIONS ───────────────────────────────────────
         private void btnAddMed_Click(object sender, EventArgs e)
         {
             using (InventoryItemEditForm form = new InventoryItemEditForm("Medical"))
-            {
-                if (form.ShowDialog() == DialogResult.OK)
-                {
-                    LoadMedicalSupplies();
-                    LoadInventorySummary();
-                }
-            }
+                if (form.ShowDialog() == DialogResult.OK) { LoadMedicalSupplies(); LoadInventorySummary(); }
         }
 
         private void btnDeleteMed_Click(object sender, EventArgs e)
@@ -216,28 +180,22 @@ namespace ProjectBReady.Forms
             if (ConfirmDelete())
             {
                 DBHelper.ExecuteNonQuery("DELETE FROM INVENTORY WHERE ItemID = @id",
-                    new System.Collections.Generic.Dictionary<string, object>
-                    { { "@id", selectedMedID } });
+                    new System.Collections.Generic.Dictionary<string, object> { { "@id", selectedMedID } });
                 selectedMedID = -1;
-                LoadMedicalSupplies();
-                LoadInventorySummary();
+                LoadMedicalSupplies(); LoadInventorySummary();
             }
         }
 
         private void btnDispatchMed_Click(object sender, EventArgs e)
         {
             if (selectedMedID < 0) { ShowNoSelection(); return; }
-            ShowDispatchDialog(selectedMedID);
-            LoadMedicalSupplies();
-            LoadInventorySummary();
+            ShowDispatchDialog(selectedMedID); LoadMedicalSupplies(); LoadInventorySummary();
         }
 
         private void btnStockInMed_Click(object sender, EventArgs e)
         {
             if (selectedMedID < 0) { ShowNoSelection(); return; }
-            ShowStockInDialog(selectedMedID);
-            LoadMedicalSupplies();
-            LoadInventorySummary();
+            ShowStockInDialog(selectedMedID); LoadMedicalSupplies(); LoadInventorySummary();
         }
 
         // ── HELPERS ───────────────────────────────────────────────
@@ -246,12 +204,10 @@ namespace ProjectBReady.Forms
             string input = Microsoft.VisualBasic.Interaction.InputBox(
                 "Enter quantity to dispatch:", "Dispatch", "0");
             if (int.TryParse(input, out int qty) && qty > 0)
-            {
                 DBHelper.ExecuteNonQuery(
                     "UPDATE INVENTORY SET Quantity = Quantity - @qty WHERE ItemID = @id AND Quantity >= @qty",
                     new System.Collections.Generic.Dictionary<string, object>
                     { { "@qty", qty }, { "@id", itemId } });
-            }
         }
 
         private void ShowStockInDialog(int itemId)
@@ -259,12 +215,10 @@ namespace ProjectBReady.Forms
             string input = Microsoft.VisualBasic.Interaction.InputBox(
                 "Enter quantity to add:", "Stock In", "0");
             if (int.TryParse(input, out int qty) && qty > 0)
-            {
                 DBHelper.ExecuteNonQuery(
                     "UPDATE INVENTORY SET Quantity = Quantity + @qty WHERE ItemID = @id",
                     new System.Collections.Generic.Dictionary<string, object>
                     { { "@qty", qty }, { "@id", itemId } });
-            }
         }
 
         private void ShowNoSelection() =>
@@ -288,7 +242,6 @@ namespace ProjectBReady.Forms
                 selectedMedID = Convert.ToInt32(dgvMedical.SelectedRows[0].Cells["ItemID"].Value);
         }
 
-        // ── ROW COLORING ──────────────────────────────────────────
         private void dgvFood_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             if (dgvFood.Rows[e.RowIndex].DataBoundItem is DataRowView drv)
@@ -304,15 +257,24 @@ namespace ProjectBReady.Forms
         }
 
         // ── NAVIGATION ────────────────────────────────────────────
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void Navigate(Form destination)
         {
-            LoadFoodItems();
-            LoadMedicalSupplies();
-            LoadInventorySummary();
+            destination.FormClosed += (s, e) => { this.Show(); LoadFoodItems(); LoadMedicalSupplies(); LoadInventorySummary(); };
+            this.Hide();
+            destination.Show();
         }
 
-        private void btnDashboard_Click(object sender, EventArgs e) { new DashboardForm().Show(); this.Close(); }
-        private void btnShelter_Click(object sender, EventArgs e) { new ShelterForm().Show(); this.Close(); }
-        private void btnReports_Click(object sender, EventArgs e) { new ReportForm().Show(); this.Close(); }
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            LoadFoodItems(); LoadMedicalSupplies(); LoadInventorySummary();
+        }
+
+        private void btnDashboard_Click(object sender, EventArgs e) => this.Close();
+
+        private void btnShelter_Click(object sender, EventArgs e)
+            => Navigate(new ShelterForm(isAdminMode));
+
+        private void btnReports_Click(object sender, EventArgs e)
+            => Navigate(new ReportForm(isAdminMode));
     }
 }

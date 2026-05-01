@@ -11,13 +11,14 @@ namespace ProjectBReady.Forms
         private bool isAdminMode = false;
         private int selectedShelterID = -1;
 
-        public ShelterForm()
+        // Tinatanggap ang admin state mula sa DashboardForm
+        public ShelterForm(bool adminMode = false)
         {
             InitializeComponent();
             this.KeyPreview = true;
             this.KeyDown += ShelterForm_KeyDown;
             LoadShelters();
-            SetAdminMode(false);
+            SetAdminMode(adminMode);
         }
 
         // ── CTRL+SHIFT+O ──────────────────────────────────────────
@@ -75,15 +76,12 @@ namespace ProjectBReady.Forms
         {
             try
             {
-                // SQLite: CAST at NULLIF ay supported, okay ang query na ito
-                string query = @"
+                DataTable dt = DBHelper.GetData(@"
                     SELECT ShelterID, ShelterName, MaxCapacity,
                            CurrentOccupancy, Status,
                            CAST(CurrentOccupancy AS REAL) / NULLIF(MaxCapacity, 0) * 100 AS PctFull
-                    FROM SHELTERS
-                    ORDER BY ShelterName";
+                    FROM SHELTERS ORDER BY ShelterName");
 
-                DataTable dt = DBHelper.GetData(query);
                 dgvShelters.DataSource = dt;
 
                 if (dgvShelters.Columns.Contains("ShelterID"))
@@ -106,40 +104,27 @@ namespace ProjectBReady.Forms
             }
         }
 
-        // ── ADD ───────────────────────────────────────────────────
+        // ── CRUD ──────────────────────────────────────────────────
         private void btnAddShelter_Click(object sender, EventArgs e)
         {
             using (ShelterEditForm form = new ShelterEditForm())
-            {
-                if (form.ShowDialog() == DialogResult.OK)
-                    LoadShelters();
-            }
+                if (form.ShowDialog() == DialogResult.OK) LoadShelters();
         }
 
-        // ── EDIT ──────────────────────────────────────────────────
         private void btnEditShelter_Click(object sender, EventArgs e)
         {
             if (selectedShelterID < 0) { ShowNoSelection(); return; }
             using (ShelterEditForm form = new ShelterEditForm(selectedShelterID))
-            {
-                if (form.ShowDialog() == DialogResult.OK)
-                    LoadShelters();
-            }
+                if (form.ShowDialog() == DialogResult.OK) LoadShelters();
         }
 
-        // ── DELETE ────────────────────────────────────────────────
         private void btnDeleteShelter_Click(object sender, EventArgs e)
         {
             if (selectedShelterID < 0) { ShowNoSelection(); return; }
-
-            var confirm = MessageBox.Show(
-                "Are you sure you want to delete this shelter?",
-                "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-            if (confirm == DialogResult.Yes)
+            if (MessageBox.Show("Delete this shelter?", "Confirm",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                DBHelper.ExecuteNonQuery(
-                    "DELETE FROM SHELTERS WHERE ShelterID = @id",
+                DBHelper.ExecuteNonQuery("DELETE FROM SHELTERS WHERE ShelterID = @id",
                     new System.Collections.Generic.Dictionary<string, object>
                     { { "@id", selectedShelterID } });
                 selectedShelterID = -1;
@@ -147,17 +132,13 @@ namespace ProjectBReady.Forms
             }
         }
 
-        // ── UPDATE OCCUPANCY ──────────────────────────────────────
         private void btnUpdateOccupancy_Click(object sender, EventArgs e)
         {
             if (selectedShelterID < 0) { ShowNoSelection(); return; }
-
             string input = Microsoft.VisualBasic.Interaction.InputBox(
                 "Enter new occupancy count:", "Update Occupancy", "0");
-
             if (int.TryParse(input, out int newOcc) && newOcc >= 0)
             {
-                // SQLite: walang inline CASE sa UPDATE na ganito, pero supported naman
                 DBHelper.ExecuteNonQuery(
                     @"UPDATE SHELTERS SET CurrentOccupancy = @occ,
                       Status = CASE WHEN @occ >= MaxCapacity THEN 'Full' ELSE 'Open' END
@@ -168,18 +149,15 @@ namespace ProjectBReady.Forms
             }
         }
 
-        // ── GRID SELECTION ────────────────────────────────────────
+        // ── GRID ──────────────────────────────────────────────────
         private void dgvShelters_SelectionChanged(object sender, EventArgs e)
         {
-            if (dgvShelters.SelectedRows.Count > 0)
-            {
-                var row = dgvShelters.SelectedRows[0];
-                if (row.Cells["ShelterID"].Value != null)
-                    selectedShelterID = Convert.ToInt32(row.Cells["ShelterID"].Value);
-            }
+            if (dgvShelters.SelectedRows.Count > 0 &&
+                dgvShelters.SelectedRows[0].Cells["ShelterID"].Value != null)
+                selectedShelterID = Convert.ToInt32(
+                    dgvShelters.SelectedRows[0].Cells["ShelterID"].Value);
         }
 
-        // ── ROW COLORING ──────────────────────────────────────────
         private void dgvShelters_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             if (dgvShelters.Rows[e.RowIndex].DataBoundItem is DataRowView drv)
@@ -197,26 +175,23 @@ namespace ProjectBReady.Forms
             }
         }
 
-        // ── NAVIGATION ────────────────────────────────────────────
+        // ── NAVIGATION — Close lang, DashboardForm ang bahala sa Show ──
+        private void Navigate(Form destination)
+        {
+            destination.FormClosed += (s, e) => { this.Show(); LoadShelters(); };
+            this.Hide();
+            destination.Show();
+        }
+
         private void btnRefresh_Click(object sender, EventArgs e) => LoadShelters();
 
-        private void btnDashboard_Click(object sender, EventArgs e)
-        {
-            new DashboardForm().Show();
-            this.Close();
-        }
+        private void btnDashboard_Click(object sender, EventArgs e) => this.Close();
 
         private void btnInventory_Click(object sender, EventArgs e)
-        {
-            new InventoryForm().Show();
-            this.Close();
-        }
+            => Navigate(new InventoryForm(isAdminMode));
 
         private void btnReports_Click(object sender, EventArgs e)
-        {
-            new ReportForm().Show();
-            this.Close();
-        }
+            => Navigate(new ReportForm(isAdminMode));
 
         private void ShowNoSelection() =>
             MessageBox.Show("Please select a shelter first.", "No Selection",
