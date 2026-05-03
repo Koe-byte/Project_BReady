@@ -1,0 +1,8 @@
+<UserControl x:Class="ProjectBReadyWPF.Frontend.Views.Inventory.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+    <Grid>
+        <TextBlock Text="Inventory View Loaded" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+    </Grid>
+</UserControl>
