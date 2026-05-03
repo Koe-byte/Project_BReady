@@ -1,0 +1,28 @@
+# ==========================================
+# C# / .NET / Visual Studio Ignore Rules
+# ==========================================
+
+# 1. Compiled Output (Wag isama kasi mabigat at nag-iiba per PC)
+[Bb]in/
+[Oo]bj/
+out/
+
+# 2. Visual Studio specific files (Mga personal settings ng IDE niyo)
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# 3. Mac/Linux specific (Kung may kagrupo kang naka-Mac)
+.DS_Store
+
+# ==========================================
+# PROJECT B-READY SPECIFIC SECRETS
+# ==========================================
+
+# 4. App Settings (DITO NAKATAGO YUNG SUPABASE PASSWORD NIYO!)
+appsettings.json
+appsettings.Development.json
+
+# (Note: Gumawa ng appsettings.Example.json at ilagay doon ang 
+# blankong format para may guide ang mga kagrupo niyo, at 'yon ang i-push sa Git)
