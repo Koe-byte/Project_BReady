@@ -1,0 +1,22 @@
+﻿<Window x:Class="ProjectBReadyWPF.Frontend.Views.MainDashboard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:components="clr-namespace:ProjectBReadyWPF.Frontend.Components"
+        Title="Project B-Ready Dashboard" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <components:SidebarComponent Grid.Column="0" 
+                                    ShelterClick="NavShelter_Click" 
+                                    InventoryClick="NavInventory_Click" 
+                                    ReportClick="NavReport_Click" 
+                                    LogoutClick="Logout_Click"/>
+
+        <ContentControl x:Name="MainContentArea" Grid.Column="1" Margin="20"/>
+    </Grid>
+</Window>
