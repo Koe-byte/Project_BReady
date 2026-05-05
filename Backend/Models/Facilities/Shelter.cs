@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ProjectBReadyWPF.Backend.Models.Facilities
 {
-    public class Shelter : IReportable
+    public class Shelter : IReportable, ITrackable
     {
         public int ShelterID { get; set; }
         public string ShelterName { get; set; } = string.Empty;
@@ -20,10 +20,23 @@ namespace ProjectBReadyWPF.Backend.Models.Facilities
             if (CurrentOccupancy + count <= MaxCapacity)
             {
                 CurrentOccupancy += count;
+                UpdateStatus();
             }
             else
             {
                 throw new Exception("Shelter is at full capacity!");
+            }
+        }
+
+        public void UpdateStatus()
+        {
+            if (CurrentOccupancy >= MaxCapacity)
+            {
+                Status = "Full";
+            }
+            else
+            {
+                Status = "Open";
             }
         }
 

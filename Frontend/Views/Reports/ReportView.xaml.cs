@@ -7,6 +7,8 @@ using System.Windows.Media;
 using ProjectBReadyWPF.Backend.Services;
 using ProjectBReadyWPF.Frontend.Views.Shelter;
 using ProjectBReadyWPF.Frontend.Views.Inventory;
+using ProjectBReadyWPF.Backend.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectBReadyWPF.Frontend.Views.Reports
 {
@@ -101,16 +103,16 @@ namespace ProjectBReadyWPF.Frontend.Views.Reports
 
     public partial class ReportView : UserControl
     {
-        private readonly DashboardService _dashboardService;
-        private readonly ShelterService _shelterService;
-        private readonly InventoryService _inventoryService;
+        private readonly IDashboardService _dashboardService;
+        private readonly IShelterService _shelterService;
+        private readonly IInventoryService _inventoryService;
 
         public ReportView()
         {
             InitializeComponent();
-            _dashboardService = new DashboardService();
-            _shelterService = new ShelterService();
-            _inventoryService = new InventoryService();
+            _dashboardService = App.ServiceProvider.GetRequiredService<IDashboardService>();
+            _shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
+            _inventoryService = App.ServiceProvider.GetRequiredService<IInventoryService>();
             LoadData();
         }
 

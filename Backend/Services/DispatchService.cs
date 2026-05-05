@@ -4,9 +4,11 @@ using ProjectBReadyWPF.Backend.Models.Inventory;
 using ProjectBReadyWPF.Database.DataAccess;
 using Npgsql;
 
+using ProjectBReadyWPF.Backend.Interfaces;
+
 namespace ProjectBReadyWPF.Backend.Services
 {
-    public class DispatchService
+    public class DispatchService : IDispatchService
     {
         private readonly DBHelper _dbHelper;
 

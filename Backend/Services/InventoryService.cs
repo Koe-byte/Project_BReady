@@ -4,9 +4,11 @@ using ProjectBReadyWPF.Backend.Models.Inventory;
 using ProjectBReadyWPF.Database.DataAccess;
 using Npgsql;
 
+using ProjectBReadyWPF.Backend.Interfaces;
+
 namespace ProjectBReadyWPF.Backend.Services
 {
-    public class InventoryService
+    public class InventoryService : IInventoryService
     {
         private readonly DBHelper _dbHelper;
 

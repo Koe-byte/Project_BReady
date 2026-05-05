@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ProjectBReadyWPF.Backend.Services;
+using ProjectBReadyWPF.Backend.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectBReadyWPF.Backend.Models.Facilities;
 
 namespace ProjectBReadyWPF.Frontend.Views.Shelter
@@ -58,14 +60,14 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
     // ── View ─────────────────────────────────────────────────────────
     public partial class ShelterView : UserControl
     {
-        private readonly ShelterService _shelterService;
+        private readonly IShelterService _shelterService;
         private List<ShelterRowItem> _allShelters = new();
         private int _selectedShelterId = -1;
 
         public ShelterView()
         {
             InitializeComponent();
-            _shelterService = new ShelterService();
+            _shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
             LoadData();
         }
 

@@ -3,19 +3,21 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ProjectBReadyWPF.Backend.Services;
+using ProjectBReadyWPF.Backend.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectBReadyWPF.Backend.Models.Inventory;
 
 namespace ProjectBReadyWPF.Frontend.Views.Inventory
 {
     public partial class InventoryAddView : UserControl
     {
-        private readonly InventoryService _inventoryService;
+        private readonly IInventoryService _inventoryService;
         private bool _isFoodSelected = true;
 
         public InventoryAddView()
         {
             InitializeComponent();
-            _inventoryService = new InventoryService();
+            _inventoryService = App.ServiceProvider.GetRequiredService<IInventoryService>();
             ExpDatePicker.SelectedDate = DateTime.Now.AddMonths(6); // Default 6 months from now
         }
 

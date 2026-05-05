@@ -4,9 +4,11 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
+using ProjectBReadyWPF.Backend.Interfaces;
+
 namespace ProjectBReadyWPF.Backend.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly string _storedHash;
 

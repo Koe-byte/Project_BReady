@@ -4,9 +4,11 @@ using ProjectBReadyWPF.Backend.Models.Facilities;
 using ProjectBReadyWPF.Database.DataAccess;
 using Npgsql;
 
+using ProjectBReadyWPF.Backend.Interfaces;
+
 namespace ProjectBReadyWPF.Backend.Services
 {
-    public class ShelterService
+    public class ShelterService : IShelterService
     {
         private readonly DBHelper _dbHelper;
 

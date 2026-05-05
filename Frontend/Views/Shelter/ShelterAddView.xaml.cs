@@ -1,18 +1,20 @@
 using System.Windows;
 using System.Windows.Controls;
 using ProjectBReadyWPF.Backend.Services;
+using ProjectBReadyWPF.Backend.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectBReadyWPF.Backend.Models.Facilities;
 
 namespace ProjectBReadyWPF.Frontend.Views.Shelter
 {
     public partial class ShelterAddView : UserControl
     {
-        private readonly ShelterService _shelterService;
+        private readonly IShelterService _shelterService;
 
         public ShelterAddView()
         {
             InitializeComponent();
-            _shelterService = new ShelterService();
+            _shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
         }
 
         private void OnSaveShelter(object sender, RoutedEventArgs e)

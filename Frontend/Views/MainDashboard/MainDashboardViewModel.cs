@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 using ProjectBReadyWPF.Backend.Services;
+using ProjectBReadyWPF.Backend.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectBReadyWPF.Backend.Models.Facilities;
 
 namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
@@ -99,7 +101,7 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             try
             {
                 // ── Dashboard Stats (aggregated counts) ──
-                var dashService = new DashboardService();
+                var dashService = App.ServiceProvider.GetRequiredService<IDashboardService>();
                 var stats = dashService.GetDashboardStats();
 
                 TotalEvacuees = stats.TotalEvacuees;
@@ -112,7 +114,7 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 ExpiringFoodCount = stats.ExpiringFoodCount;
 
                 // ── Shelter list (for bar chart + table) ──
-                var shelterService = new ShelterService();
+                var shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
                 var dbShelters = shelterService.GetAllShelters();
 
                 Shelters = new List<ShelterDisplayItem>();
@@ -127,7 +129,7 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 }
 
                 // ── Recent Dispatches (for table) ──
-                var dispatchService = new DispatchService();
+                var dispatchService = App.ServiceProvider.GetRequiredService<IDispatchService>();
                 var dbDispatches = dispatchService.GetRecentDispatches(5);
 
                 RecentDispatches = new List<DispatchDisplayItem>();

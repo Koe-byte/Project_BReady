@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ProjectBReadyWPF.Backend.Services;
+using ProjectBReadyWPF.Backend.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectBReadyWPF.Backend.Models.Inventory;
 
 namespace ProjectBReadyWPF.Frontend.Views.Inventory
@@ -75,7 +77,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Inventory
 
     public partial class InventoryView : UserControl
     {
-        private readonly InventoryService _inventoryService;
+        private readonly IInventoryService _inventoryService;
         private List<FoodDisplayItem> _allFood = new();
         private List<MedDisplayItem> _allMed = new();
         private int _selectedFoodId = -1;
@@ -85,7 +87,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Inventory
         public InventoryView()
         {
             InitializeComponent();
-            _inventoryService = new InventoryService();
+            _inventoryService = App.ServiceProvider.GetRequiredService<IInventoryService>();
             LoadData();
         }
 

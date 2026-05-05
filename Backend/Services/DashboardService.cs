@@ -2,13 +2,15 @@ using System;
 using ProjectBReadyWPF.Database.DataAccess;
 using Npgsql;
 
+using ProjectBReadyWPF.Backend.Interfaces;
+
 namespace ProjectBReadyWPF.Backend.Services
 {
     /// <summary>
     /// Service para sa Dashboard stat cards — aggregated queries.
     /// Isa lang ang DB call sa GetDashboardStats() para mabilis ang load.
     /// </summary>
-    public class DashboardService
+    public class DashboardService : IDashboardService
     {
         private readonly DBHelper _dbHelper;
 
