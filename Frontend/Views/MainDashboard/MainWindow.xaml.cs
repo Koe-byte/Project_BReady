@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using ProjectBReadyWPF.Database.DataAccess;
+
 using ProjectBReadyWPF.Frontend.Views.Shelter;
 using ProjectBReadyWPF.Frontend.Views.Reports;
 using ProjectBReadyWPF.Frontend.Views.Inventory;
@@ -36,9 +36,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             AppSidebar.SetAdminMode(_isAdmin);
             MainContentArea.Content = new MainDashboardView();
 
-            // TESTING LANG: I-run ang connection test pagkabukas ng app
-            DBHelper db = new DBHelper();
-            db.TestConnection();
 
             // Setup Inactivity Timer
             _inactivityTimer = new DispatcherTimer();
@@ -46,14 +43,13 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             _inactivityTimer.Tick += OnInactivityTimeout;
             _inactivityTimer.Start();
 
-            // Hook up global input events to reset timer
-            this.PreviewMouseMove += ResetTimerEvent;
-            this.PreviewMouseDown += ResetTimerEvent;
-            this.PreviewKeyDown += ResetTimerEvent;
-            this.PreviewTouchDown += ResetTimerEvent;
+            this.PreviewMouseMove += (s, e) => ResetTimer();
+            this.PreviewMouseDown += (s, e) => ResetTimer();
+            this.PreviewKeyDown += (s, e) => ResetTimer();
+            this.PreviewTouchDown += (s, e) => ResetTimer();
         }
 
-        private void ResetTimerEvent(object sender, EventArgs e)
+        private void ResetTimer()
         {
             _inactivityTimer.Stop();
             _inactivityTimer.Start();
