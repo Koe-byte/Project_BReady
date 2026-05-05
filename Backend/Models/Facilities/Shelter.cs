@@ -11,8 +11,8 @@ namespace ProjectBReadyWPF.Backend.Models.Facilities
         public string ShelterName { get; set; } = string.Empty;
         public int MaxCapacity { get; set; }
 
-        // Private set para Encapsulated. Method lang ang pwedeng magbago.
-        public int CurrentOccupancy { get; private set; }
+        // Public set para mabasa ng DB reader. Business validation nasa UpdateOccupancy().
+        public int CurrentOccupancy { get; set; }
         public string Status { get; set; } = string.Empty;
 
         public void UpdateOccupancy(int count)

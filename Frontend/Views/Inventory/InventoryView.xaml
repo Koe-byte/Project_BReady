@@ -1,8 +1,263 @@
 <UserControl x:Class="ProjectBReadyWPF.Frontend.Views.Inventory.InventoryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="White">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="800"
+             Background="{StaticResource MainBg}">
     <Grid>
-        <TextBlock Text="Inventory View Loaded" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOPBAR -->
+        <Grid Grid.Row="0" Margin="32,20" Background="{StaticResource CardBg}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.ColumnSpan="2" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom"/>
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Inventory Management" Style="{StaticResource PageH1}"/>
+                <TextBlock Text="Track food supplies and medical goods" Style="{StaticResource PageSubtitle}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="⟳  Refresh" Style="{StaticResource BtnGhost}" Click="OnRefresh" Margin="0,0,8,0"/>
+                <Button Content="+ Add Item" Style="{StaticResource BtnPrimary}" Click="OnAddItem"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- PAGE BODY -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="32,28">
+
+                <!-- Stat Cards (4-col) -->
+                <Grid Margin="0,0,0,28">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource StatCard}" Margin="0,0,4,0">
+                        <StackPanel>
+                            <Border Background="{StaticResource BlueLight}" CornerRadius="12" Width="44" Height="44"
+                                    Padding="0" BorderBrush="Transparent" HorizontalAlignment="Left" Margin="0,0,0,14">
+                                <TextBlock Text="🍚" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding FoodItemCount}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="Food Item Types" Style="{StaticResource StatLabel}"/>
+                            <Border Height="3" CornerRadius="2" Margin="0,12,0,0" Background="{StaticResource Blue}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource StatCard}" Margin="4,0">
+                        <StackPanel>
+                            <Border Background="{StaticResource AccentLight}" CornerRadius="12" Width="44" Height="44"
+                                    Padding="0" BorderBrush="Transparent" HorizontalAlignment="Left" Margin="0,0,0,14">
+                                <TextBlock Text="📦" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding TotalFoodUnits}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="Total Food Units" Style="{StaticResource StatLabel}"/>
+                            <Border Height="3" CornerRadius="2" Margin="0,12,0,0" Background="{StaticResource Accent}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource StatCard}" Margin="4,0">
+                        <StackPanel>
+                            <Border Background="{StaticResource TealLight}" CornerRadius="12" Width="44" Height="44"
+                                    Padding="0" BorderBrush="Transparent" HorizontalAlignment="Left" Margin="0,0,0,14">
+                                <TextBlock Text="💊" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding MedItemCount}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="Medical Item Types" Style="{StaticResource StatLabel}"/>
+                            <Border Height="3" CornerRadius="2" Margin="0,12,0,0" Background="{StaticResource Teal}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="3" Style="{StaticResource StatCard}" Margin="4,0,0,0">
+                        <StackPanel>
+                            <Border Background="{StaticResource RedLight}" CornerRadius="12" Width="44" Height="44"
+                                    Padding="0" BorderBrush="Transparent" HorizontalAlignment="Left" Margin="0,0,0,14">
+                                <TextBlock Text="🩺" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding TotalMedUnits}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="Total Medical Units" Style="{StaticResource StatLabel}"/>
+                            <Border Height="3" CornerRadius="2" Margin="0,12,0,0" Background="{StaticResource Red}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- TABS -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                    <Button x:Name="TabFoodBtn" Content="🍚  Food Items" Background="Transparent"
+                            Foreground="{StaticResource Accent}" FontSize="14" FontWeight="Bold"
+                            Padding="20,10" Click="OnTabFood"/>
+                    <Button x:Name="TabMedBtn" Content="💊  Medical Supplies" Background="Transparent"
+                            Foreground="{StaticResource TextMuted}" FontSize="14"
+                            Padding="20,10" Click="OnTabMedical"/>
+                </StackPanel>
+                <Border x:Name="TabUnderline" Height="2" Background="{StaticResource Accent}"
+                        Margin="0,0,0,20" HorizontalAlignment="Left" Width="140"/>
+
+                <!-- FOOD TAB PANE -->
+                <Border x:Name="FoodPane" Style="{StaticResource Card}">
+                    <StackPanel>
+                        <!-- Toolbar -->
+                        <Grid Margin="14,14" Background="{StaticResource CardBg}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" BorderBrush="{StaticResource Border}" BorderThickness="1"
+                                    CornerRadius="8" Padding="8,4" Background="White" MinWidth="200">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🔍" Foreground="{StaticResource TextMuted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="FoodSearchBox" BorderThickness="0" Background="Transparent"
+                                             FontSize="13" Width="160" VerticalAlignment="Center" TextChanged="OnFoodSearchChanged"/>
+                                </StackPanel>
+                            </Border>
+                            <Button Grid.Column="1" Content="📥 Stock In" Style="{StaticResource BtnGhost}" Click="OnStockInFood" Margin="8,0,0,0"/>
+                            <Button Grid.Column="2" Content="🗑 Delete" Style="{StaticResource BtnGhost}" Click="OnDeleteFood" Margin="8,0,0,0"/>
+                        </Grid>
+                        <!-- Food Table Header -->
+                        <Grid Margin="16,0,16,0" Background="{StaticResource TableHeaderBg}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="36"/><ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Text="ITEM NAME" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="2" Text="QUANTITY" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="3" Text="EXPIRATION" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="4" Text="STATUS" Style="{StaticResource TableHeader}"/>
+                        </Grid>
+                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <!-- Food Rows -->
+                        <ItemsControl x:Name="FoodTable" ItemsSource="{Binding FoodItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="16,8,16,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="36"/><ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <RadioButton Grid.Column="0" GroupName="FoodSelect" VerticalAlignment="Center"
+                                                     Checked="OnFoodRadioChecked" Tag="{Binding ItemID}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" Style="{StaticResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Qty}" Style="{StaticResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding ExpiryDisplay}" Style="{StaticResource TableCellMuted}"/>
+                                        <Border Grid.Column="4" Background="{Binding StatusBadgeBg}"
+                                                CornerRadius="20" Padding="10,3" BorderBrush="Transparent"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding StatusLabel}" FontSize="11" FontWeight="Bold"
+                                                       Foreground="{Binding StatusTextColor}"/>
+                                        </Border>
+                                        <Border Grid.ColumnSpan="5" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- MEDICAL TAB PANE -->
+                <Border x:Name="MedPane" Style="{StaticResource Card}" Visibility="Collapsed">
+                    <StackPanel>
+                        <Grid Margin="14,14" Background="{StaticResource CardBg}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" BorderBrush="{StaticResource Border}" BorderThickness="1"
+                                    CornerRadius="8" Padding="8,4" Background="White" MinWidth="200">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🔍" Foreground="{StaticResource TextMuted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="MedSearchBox" BorderThickness="0" Background="Transparent"
+                                             FontSize="13" Width="160" VerticalAlignment="Center" TextChanged="OnMedSearchChanged"/>
+                                </StackPanel>
+                            </Border>
+                            <Button Grid.Column="1" Content="📥 Stock In" Style="{StaticResource BtnGhost}" Click="OnStockInMed" Margin="8,0,0,0"/>
+                            <Button Grid.Column="2" Content="🗑 Delete" Style="{StaticResource BtnGhost}" Click="OnDeleteMed" Margin="8,0,0,0"/>
+                        </Grid>
+                        <Grid Margin="16,0,16,0" Background="{StaticResource TableHeaderBg}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="36"/><ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Text="ITEM NAME" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="2" Text="QUANTITY" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="3" Text="DOSAGE" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="4" Text="RX REQUIRED" Style="{StaticResource TableHeader}"/>
+                        </Grid>
+                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <ItemsControl x:Name="MedTable" ItemsSource="{Binding MedItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="16,8,16,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="36"/><ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <RadioButton Grid.Column="0" GroupName="MedSelect" VerticalAlignment="Center"
+                                                     Checked="OnMedRadioChecked" Tag="{Binding ItemID}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" Style="{StaticResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Qty}" Style="{StaticResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Dosage}" Style="{StaticResource TableCellMuted}"/>
+                                        <Border Grid.Column="4" Background="{Binding RxBadgeBg}"
+                                                CornerRadius="20" Padding="10,3" BorderBrush="Transparent"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding RxLabel}" FontSize="11" FontWeight="Bold"
+                                                       Foreground="{Binding RxTextColor}"/>
+                                        </Border>
+                                        <Border Grid.ColumnSpan="5" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- STOCK IN MODAL -->
+                <Border x:Name="ModalStockInOverlay" Visibility="Collapsed"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- STOCK IN MODAL -->
+        <Grid x:Name="StockInOverlay" Grid.RowSpan="2" Visibility="Collapsed" Background="#73000000">
+            <Border CornerRadius="16" Background="White" Padding="0" HorizontalAlignment="Center"
+                    VerticalAlignment="Center" MinWidth="420" BorderBrush="{StaticResource Border}" BorderThickness="1">
+                <StackPanel>
+                    <Grid Margin="26,22,26,16">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="📥 Stock In" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock x:Name="StockInItemName" FontSize="13" Foreground="{StaticResource TextMuted}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="{StaticResource TextMuted}"
+                                FontSize="18" Width="32" Height="32" Click="OnCloseStockIn"/>
+                    </Grid>
+                    <Border Height="1" Background="{StaticResource Border}"/>
+                    <StackPanel Margin="26,24">
+                        <TextBlock Text="Quantity to Add" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextSecondary}" Margin="0,0,0,8"/>
+                        <TextBox x:Name="StockInQtyEntry" FontSize="14" Padding="10,8"
+                                 BorderBrush="{StaticResource Border}" BorderThickness="1"/>
+                    </StackPanel>
+                    <Border Height="1" Background="{StaticResource Border}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="26,16">
+                        <Button Content="Cancel" Style="{StaticResource BtnGhost}" Click="OnCloseStockIn"/>
+                        <Button Content="📥 Confirm Stock In" Style="{StaticResource BtnPrimary}"
+                                Margin="10,0,0,0" Click="OnConfirmStockIn"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

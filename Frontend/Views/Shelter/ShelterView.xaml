@@ -1,8 +1,290 @@
 <UserControl x:Class="ProjectBReadyWPF.Frontend.Views.Shelter.ShelterView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="White">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="800"
+             Background="{StaticResource MainBg}">
     <Grid>
-        <TextBlock Text="Shelter View Loaded" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOPBAR -->
+        <Grid Grid.Row="0" Margin="32,20" Background="{StaticResource CardBg}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.ColumnSpan="2" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom"/>
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Shelter Management" Style="{StaticResource PageH1}"/>
+                <TextBlock Text="Manage evacuation centers and occupancy records" Style="{StaticResource PageSubtitle}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="⟳  Refresh" Style="{StaticResource BtnGhost}" Click="OnRefresh" Margin="0,0,8,0"/>
+                <Button Content="+ Add Shelter" Style="{StaticResource BtnPrimary}" Click="OnAddShelter"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- PAGE BODY -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="32,28">
+
+                <!-- Stat Cards (3-col) -->
+                <Grid Margin="0,0,0,28">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total Shelters -->
+                    <Border Grid.Column="0" Style="{StaticResource StatCard}" Margin="0,0,8,0">
+                        <StackPanel>
+                            <Border Background="{StaticResource TealLight}"
+                                    CornerRadius="12" Width="44" Height="44"
+                                    Padding="0" BorderBrush="Transparent"
+                                    HorizontalAlignment="Left" Margin="0,0,0,14">
+                                <TextBlock Text="🏛️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding TotalShelters}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="Total Shelters" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="All registered centers" Style="{StaticResource StatSub}"/>
+                            <Border Height="3" CornerRadius="2" Margin="0,12,0,0" Background="{StaticResource Teal}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Occupancy -->
+                    <Border Grid.Column="1" Style="{StaticResource StatCard}" Margin="4,0">
+                        <StackPanel>
+                            <Border Background="{StaticResource AccentLight}"
+                                    CornerRadius="12" Width="44" Height="44"
+                                    Padding="0" BorderBrush="Transparent"
+                                    HorizontalAlignment="Left" Margin="0,0,0,14">
+                                <TextBlock Text="👥" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding TotalOccupancy}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="Total Occupancy" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="{Binding CombinedCapacityNote}" Style="{StaticResource StatSub}"/>
+                            <Border Height="3" CornerRadius="2" Margin="0,12,0,0" Background="{StaticResource Accent}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Shelters at Full -->
+                    <Border Grid.Column="2" Style="{StaticResource StatCard}" Margin="8,0,0,0">
+                        <StackPanel>
+                            <Border Background="{StaticResource RedLight}"
+                                    CornerRadius="12" Width="44" Height="44"
+                                    Padding="0" BorderBrush="Transparent"
+                                    HorizontalAlignment="Left" Margin="0,0,0,14">
+                                <TextBlock Text="🚫" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding FullShelterCount}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="Shelters at Full" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="Require overflow action" Style="{StaticResource StatSub}"/>
+                            <Border Height="3" CornerRadius="2" Margin="0,12,0,0" Background="{StaticResource Red}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Table Card -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+
+                        <!-- Toolbar -->
+                        <Grid Margin="14,14" Background="{StaticResource CardBg}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.ColumnSpan="5" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom"/>
+
+                            <!-- Search -->
+                            <Border Grid.Column="0" BorderBrush="{StaticResource Border}" BorderThickness="1"
+                                    CornerRadius="8" Padding="8,4" Background="White" MinWidth="210">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🔍" Foreground="{StaticResource TextMuted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="SearchBox" BorderThickness="0" Background="Transparent"
+                                             FontSize="13" Width="170" VerticalAlignment="Center"
+                                             TextChanged="OnSearchChanged"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Button Grid.Column="1" Content="🗑 Delete" Style="{StaticResource BtnGhost}"
+                                    Click="OnDeleteSelected" Margin="8,0,0,0"/>
+                            <Button Grid.Column="2" Content="📋 Update Occupancy" Style="{StaticResource BtnGhost}"
+                                    Click="OnUpdateOccupancy" Margin="8,0,0,0"/>
+                        </Grid>
+
+                        <!-- Table Header -->
+                        <Grid Margin="16,8,16,0" Background="{StaticResource TableHeaderBg}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="36"/>
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Text="#" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="2" Text="SHELTER NAME" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="3" Text="MAX CAP." Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="4" Text="CURRENT" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="5" Text="AVAILABLE" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="6" Text="OCCUPANCY" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="7" Text="STATUS" Style="{StaticResource TableHeader}"/>
+                        </Grid>
+                        <Border Height="1" Background="{StaticResource Border}"/>
+
+                        <!-- Rows -->
+                        <ItemsControl x:Name="ShelterTable" ItemsSource="{Binding Shelters}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="16,8,16,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="36"/>
+                                            <ColumnDefinition Width="32"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <RadioButton Grid.Column="0" GroupName="ShelterSelect" VerticalAlignment="Center"
+                                                     Checked="OnShelterRadioChecked" Tag="{Binding ShelterID}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding RowNumber}" Style="{StaticResource TableCellMuted}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Name}" Style="{StaticResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding MaxCapacity}" Style="{StaticResource TableCell}"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding CurrentOccupancy}" Style="{StaticResource TableCell}"/>
+                                        <TextBlock Grid.Column="5" Text="{Binding Available}" Style="{StaticResource TableCell}"
+                                                   Foreground="{Binding AvailableColor}"/>
+                                        <!-- Progress bar -->
+                                        <Grid Grid.Column="6" VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="50"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid Grid.Column="0" Height="6" Margin="0,0,8,0">
+                                                <Border Background="{StaticResource Border}" CornerRadius="3" Height="6"/>
+                                                <Border Background="{Binding FillColor}" CornerRadius="3" Height="6"
+                                                        HorizontalAlignment="Stretch"
+                                                        RenderTransformOrigin="0,0.5">
+                                                    <Border.RenderTransform>
+                                                        <ScaleTransform ScaleX="{Binding FillPercent}"/>
+                                                    </Border.RenderTransform>
+                                                </Border>
+                                            </Grid>
+                                            <TextBlock Grid.Column="1" Text="{Binding PctFull}" FontSize="12"
+                                                       Foreground="{StaticResource TextMuted}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <!-- Status badge -->
+                                        <Border Grid.Column="7" Background="{Binding StatusBadgeBg}"
+                                                CornerRadius="20" Padding="10,3" BorderBrush="Transparent"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold"
+                                                       Foreground="{Binding StatusTextColor}"/>
+                                        </Border>
+                                        <!-- Row separator -->
+                                        <Border Grid.ColumnSpan="8" Height="1" Background="{StaticResource Border}"
+                                                VerticalAlignment="Bottom"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- MODAL: Update Occupancy -->
+        <Grid x:Name="ModalOccupancyOverlay" Grid.RowSpan="2" Visibility="Collapsed"
+              Background="#73000000">
+            <Border CornerRadius="16" Background="White" Padding="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    MinWidth="420" BorderBrush="{StaticResource Border}" BorderThickness="1">
+                <StackPanel>
+                    <Grid Margin="26,22,26,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Update Occupancy" FontSize="16" FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock x:Name="OccShelterName" FontSize="13"
+                                       Foreground="{StaticResource TextMuted}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="✕" Background="Transparent"
+                                Foreground="{StaticResource TextMuted}" FontSize="18"
+                                Width="32" Height="32" Click="OnCloseOccModal"/>
+                    </Grid>
+                    <Border Height="1" Background="{StaticResource Border}"/>
+                    <StackPanel Margin="26,24">
+                        <TextBlock Text="New Occupancy Count" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextSecondary}" Margin="0,0,0,8"/>
+                        <TextBox x:Name="OccInput" FontSize="14" Padding="10,8"
+                                 BorderBrush="{StaticResource Border}" BorderThickness="1"/>
+                        <TextBlock Text="Status will automatically update to Full when occupancy reaches max capacity."
+                                   FontSize="12" Foreground="{StaticResource TextMuted}" Margin="0,8,0,0"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Border Height="1" Background="{StaticResource Border}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="26,16">
+                        <Button Content="Cancel" Style="{StaticResource BtnGhost}" Click="OnCloseOccModal"/>
+                        <Button Content="💾 Save Occupancy" Style="{StaticResource BtnPrimary}"
+                                Margin="10,0,0,0" Click="OnSaveOccupancy"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- MODAL: Delete Shelter -->
+        <Grid x:Name="ModalDeleteOverlay" Grid.RowSpan="2" Visibility="Collapsed"
+              Background="#73000000">
+            <Border CornerRadius="16" Background="White" Padding="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    MinWidth="420" BorderBrush="{StaticResource Border}" BorderThickness="1">
+                <StackPanel>
+                    <Grid Margin="26,22,26,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Delete Shelter" FontSize="16" FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock Text="This action cannot be undone" FontSize="13"
+                                       Foreground="{StaticResource TextMuted}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="✕" Background="Transparent"
+                                Foreground="{StaticResource TextMuted}" FontSize="18"
+                                Width="32" Height="32" Click="OnCloseDeleteModal"/>
+                    </Grid>
+                    <Border Height="1" Background="{StaticResource Border}"/>
+                    <StackPanel Margin="26,24">
+                        <Border Style="{StaticResource AlertWarn}" Padding="14">
+                            <TextBlock x:Name="DeleteShelterLabel" FontSize="13" Foreground="#991B1B" TextWrapping="Wrap"/>
+                        </Border>
+                    </StackPanel>
+                    <Border Height="1" Background="{StaticResource Border}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="26,16">
+                        <Button Content="Cancel" Style="{StaticResource BtnGhost}" Click="OnCloseDeleteModal"/>
+                        <Button Content="🗑 Yes, Delete" Background="#DC2626" Foreground="White"
+                                Padding="16,8" Margin="10,0,0,0" Click="OnConfirmDelete"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
     </Grid>
 </UserControl>

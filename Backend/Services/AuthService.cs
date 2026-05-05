@@ -1,23 +1,42 @@
 using System;
-using ProjectBReadyWPF.Database.DataAccess;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace ProjectBReadyWPF.Backend.Services
 {
     public class AuthService
     {
-        private readonly DBHelper _dbHelper;
+        private readonly string _storedHash;
 
         public AuthService()
         {
-            _dbHelper = new DBHelper();
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            _storedHash = config.GetSection("Security")["AdminPinHash"] ?? "";
         }
 
-        // PLACEHOLDER: Login logic gamit ang PIN
-        public bool Login(string pin)
+        public bool ValidatePin(string inputPin)
         {
-            // TODO: I-verify ang PIN sa database
-            if (pin == "1234") return true; // Default temporary PIN
-            return false;
+            if (string.IsNullOrEmpty(inputPin) || string.IsNullOrEmpty(_storedHash))
+                return false;
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(inputPin));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                string inputHash = builder.ToString();
+
+                return inputHash.Equals(_storedHash, StringComparison.OrdinalIgnoreCase);
+            }
         }
     }
 }

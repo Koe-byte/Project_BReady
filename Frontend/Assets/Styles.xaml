@@ -1,0 +1,402 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  
+    
+
+      <!-- ══════════════════════════════════════════
+           DESIGN TOKENS  —  matched 1:1 to style.css :root
+      ══════════════════════════════════════════ -->
+      <SolidColorBrush x:Key="SidebarBg" Color="#0F1724"/>
+      <SolidColorBrush x:Key="SidebarHover" Color="#1A2538"/>
+      <SolidColorBrush x:Key="SidebarActive" Color="#1E2D45"/>
+      <SolidColorBrush x:Key="MainBg" Color="#F0F4F8"/>
+      <SolidColorBrush x:Key="CardBg" Color="#FFFFFF"/>
+      <SolidColorBrush x:Key="TableHeaderBg" Color="#F8FAFC"/>
+      <SolidColorBrush x:Key="ToolbarBg" Color="#FAFBFC"/>
+
+      <SolidColorBrush x:Key="Accent" Color="#F97316"/>
+      <SolidColorBrush x:Key="AccentLight" Color="#FFF4ED"/>
+      <SolidColorBrush x:Key="AccentDark" Color="#C05C0A"/>
+
+      <SolidColorBrush x:Key="Teal" Color="#0D9488"/>
+      <SolidColorBrush x:Key="TealLight" Color="#F0FDFA"/>
+      <SolidColorBrush x:Key="Blue" Color="#2563EB"/>
+      <SolidColorBrush x:Key="BlueLight" Color="#EFF6FF"/>
+      <SolidColorBrush x:Key="Red" Color="#EF4444"/>
+      <SolidColorBrush x:Key="RedLight" Color="#FEF2F2"/>
+      <SolidColorBrush x:Key="Amber" Color="#F59E0B"/>
+      <SolidColorBrush x:Key="AmberLight" Color="#FFFBEB"/>
+      <SolidColorBrush x:Key="Green" Color="#10B981"/>
+      <SolidColorBrush x:Key="GreenLight" Color="#ECFDF5"/>
+
+      <SolidColorBrush x:Key="TextPrimary" Color="#0F172A"/>
+      <SolidColorBrush x:Key="TextSecondary" Color="#475569"/>
+      <SolidColorBrush x:Key="TextMuted" Color="#94A3B8"/>
+      <SolidColorBrush x:Key="Border" Color="#E2E8F0"/>
+      <SolidColorBrush x:Key="BorderStrong" Color="#CBD5E1"/>
+
+      <!-- Badge text colours -->
+      <SolidColorBrush x:Key="BadgeGreenText" Color="#065F46"/>
+      <SolidColorBrush x:Key="BadgeRedText" Color="#991B1B"/>
+      <SolidColorBrush x:Key="BadgeAmberText" Color="#92400E"/>
+      <SolidColorBrush x:Key="BadgeTealText" Color="#065E58"/>
+      <SolidColorBrush x:Key="BadgeBlueText" Color="#1E40AF"/>
+
+      <!-- Row highlight backgrounds -->
+      <SolidColorBrush x:Key="RowExpiredBg" Color="#FFF5F5"/>
+      <SolidColorBrush x:Key="RowExpiringBg" Color="#FFFBEB"/>
+      <SolidColorBrush x:Key="RowFullBg" Color="#FFF5F5"/>
+
+      <!-- ══════════════════════════════════════════
+           CARD  (.card / .stat-card / .kpi-card)
+      ══════════════════════════════════════════ -->
+      <Style x:Key="Card" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource CardBg}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Border}"/>
+        <Setter Property="CornerRadius"    Value="16"/>
+                <Setter Property="Padding"         Value="0"/>
+        <Setter Property="Margin"          Value="0,0,0,20"/>
+      </Style>
+
+      <Style x:Key="StatCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource CardBg}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Border}"/>
+        <Setter Property="CornerRadius"    Value="16"/>
+                <Setter Property="Padding"         Value="24,22"/>
+      </Style>
+
+      <Style x:Key="KpiCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource CardBg}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Border}"/>
+        <Setter Property="CornerRadius"    Value="16"/>
+                <Setter Property="Padding"         Value="22,18"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           TYPOGRAPHY
+      ══════════════════════════════════════════ -->
+      <Style x:Key="PageH1" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="22"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+      </Style>
+
+      <Style x:Key="PageSubtitle" TargetType="TextBlock">
+        <Setter Property="FontSize"  Value="13"/>
+        <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+        <Setter Property="Margin"    Value="0,2,0,0"/>
+      </Style>
+
+      <Style x:Key="CardTitle" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="15"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+      </Style>
+
+      <Style x:Key="CardSubtitle" TargetType="TextBlock">
+        <Setter Property="FontSize"  Value="12"/>
+        <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+        <Setter Property="Margin"    Value="0,2,0,0"/>
+      </Style>
+
+      <Style x:Key="StatValue" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="32"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+        <Setter Property="LineHeight"     Value="1"/>
+      </Style>
+
+      <Style x:Key="StatLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="13"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextSecondary}"/>
+        <Setter Property="Margin"         Value="0,6,0,0"/>
+      </Style>
+
+      <Style x:Key="StatSub" TargetType="TextBlock">
+        <Setter Property="FontSize"  Value="12"/>
+        <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+        <Setter Property="Margin"    Value="0,3,0,0"/>
+      </Style>
+
+      <Style x:Key="KpiValue" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="28"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+      </Style>
+
+      <Style x:Key="KpiLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"         Value="11"/>
+        <Setter Property="FontWeight"   Value="Bold"/>
+        <Setter Property="Foreground"        Value="{StaticResource TextMuted}"/>
+              </Style>
+
+      <Style x:Key="KpiNote" TargetType="TextBlock">
+        <Setter Property="FontSize"  Value="12"/>
+        <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+        <Setter Property="Margin"    Value="0,4,0,0"/>
+      </Style>
+
+      <!-- Table -->
+      <Style x:Key="TableHeader" TargetType="TextBlock">
+        <Setter Property="FontSize"         Value="11"/>
+        <Setter Property="FontWeight"   Value="Bold"/>
+        <Setter Property="Foreground"        Value="{StaticResource TextMuted}"/>
+                <Setter Property="VerticalAlignment"  Value="Center"/>
+      </Style>
+
+      <Style x:Key="TableCell" TargetType="TextBlock">
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Foreground"       Value="{StaticResource TextPrimary}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Padding"         Value="0,13"/>
+      </Style>
+
+      <Style x:Key="TableCellMuted" TargetType="TextBlock" BasedOn="{StaticResource TableCell}">
+        <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+      </Style>
+
+      <Style x:Key="TableCellBold" TargetType="TextBlock" BasedOn="{StaticResource TableCell}">
+        <Setter Property="FontWeight" Value="Bold"/>
+      </Style>
+
+      <!-- Nav -->
+      <Style x:Key="NavSectionLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"         Value="10"/>
+        <Setter Property="FontWeight"   Value="Bold"/>
+        <Setter Property="Foreground"        Value="{StaticResource TextMuted}"/>
+                <Setter Property="Margin"           Value="12,10,0,4"/>
+      </Style>
+
+      <Style x:Key="AdminText" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="12"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource Green}"/>
+      </Style>
+
+      <Style x:Key="AdminHint" TargetType="TextBlock">
+        <Setter Property="FontSize"  Value="10"/>
+        <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+        <Setter Property="Margin"    Value="0,1,0,0"/>
+      </Style>
+
+      <!-- Section divider label -->
+      <Style x:Key="SectionDivider" TargetType="TextBlock">
+        <Setter Property="FontSize"         Value="12"/>
+        <Setter Property="FontWeight"   Value="Bold"/>
+        <Setter Property="Foreground"        Value="{StaticResource TextMuted}"/>
+                <Setter Property="Margin"           Value="0,8,0,0"/>
+      </Style>
+
+      <!-- Form -->
+      <Style x:Key="FormLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="12"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextSecondary}"/>
+        <Setter Property="Margin"         Value="0,0,0,6"/>
+      </Style>
+
+      <Style x:Key="FormSectionTitle" TargetType="TextBlock">
+        <Setter Property="FontSize"         Value="12"/>
+        <Setter Property="FontWeight"   Value="Bold"/>
+                <Setter Property="Foreground"        Value="{StaticResource TextMuted}"/>
+        <Setter Property="Margin"           Value="0,0,0,14"/>
+      </Style>
+
+      <!-- Modal -->
+      <Style x:Key="ModalTitle" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+      </Style>
+
+      <Style x:Key="ModalSub" TargetType="TextBlock">
+        <Setter Property="FontSize"  Value="12"/>
+        <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+        <Setter Property="Margin"    Value="0,3,0,0"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           SIDEBAR BUTTONS  (.nav-item / .nav-item.active)
+      ══════════════════════════════════════════ -->
+      <Style x:Key="NavItem" TargetType="Button">
+        <Setter Property="Background"         Value="Transparent"/>
+        <Setter Property="Foreground"               Value="#94A3B8"/>
+        <Setter Property="FontSize"                Value="14"/>
+        <Setter Property="FontWeight"          Value="Normal"/>
+        <Setter Property="Height"           Value="44"/>
+        <Setter Property="HorizontalAlignment"       Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Padding"                 Value="12,0"/>
+        <Setter Property="Margin"                  Value="0,1"/>
+      </Style>
+
+      <Style x:Key="NavItemActive" TargetType="Button" BasedOn="{StaticResource NavItem}">
+        <Setter Property="Background" Value="{StaticResource SidebarActive}"/>
+        <Setter Property="Foreground"       Value="White"/>
+        <Setter Property="FontWeight"  Value="Bold"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           ACTION BUTTONS  (.btn-*)
+      ══════════════════════════════════════════ -->
+      <Style x:Key="BtnPrimary" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource Accent}"/>
+        <Setter Property="Foreground"       Value="White"/>
+        <Setter Property="FontWeight"  Value="Bold"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Padding"         Value="16,9"/>
+      </Style>
+
+      <Style x:Key="BtnGhost" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground"       Value="{StaticResource TextSecondary}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Border}"/>
+        <Setter Property="BorderThickness"     Value="1"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Padding"         Value="16,9"/>
+      </Style>
+
+      <Style x:Key="BtnGhostSm" TargetType="Button" BasedOn="{StaticResource BtnGhost}">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding"  Value="10,5"/>
+      </Style>
+
+      <Style x:Key="BtnGhostSmDanger" TargetType="Button" BasedOn="{StaticResource BtnGhostSm}">
+        <Setter Property="Foreground"   Value="{StaticResource Red}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Red}"/>
+      </Style>
+
+      <Style x:Key="BtnDanger" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource Red}"/>
+        <Setter Property="Foreground"       Value="White"/>
+        <Setter Property="FontWeight"  Value="Bold"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Padding"         Value="16,9"/>
+      </Style>
+
+      <Style x:Key="BtnTeal" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource Teal}"/>
+        <Setter Property="Foreground"       Value="White"/>
+        <Setter Property="FontWeight"  Value="Bold"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Padding"         Value="16,9"/>
+      </Style>
+
+      <Style x:Key="BtnTealSm" TargetType="Button" BasedOn="{StaticResource BtnTeal}">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding"  Value="10,5"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           BADGES  (.badge .badge-*)
+      ══════════════════════════════════════════ -->
+      <Style x:Key="BadgeBase" TargetType="Border">
+        <Setter Property="CornerRadius"      Value="20"/>
+                <Setter Property="Padding"           Value="10,3"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="BorderBrush"       Value="Transparent"/>
+      </Style>
+
+      <Style x:Key="BadgeGreen" TargetType="Border" BasedOn="{StaticResource BadgeBase}">
+        <Setter Property="Background" Value="{StaticResource GreenLight}"/>
+      </Style>
+      <Style x:Key="BadgeRed" TargetType="Border" BasedOn="{StaticResource BadgeBase}">
+        <Setter Property="Background" Value="{StaticResource RedLight}"/>
+      </Style>
+      <Style x:Key="BadgeAmber" TargetType="Border" BasedOn="{StaticResource BadgeBase}">
+        <Setter Property="Background" Value="{StaticResource AmberLight}"/>
+      </Style>
+      <Style x:Key="BadgeTeal" TargetType="Border" BasedOn="{StaticResource BadgeBase}">
+        <Setter Property="Background" Value="{StaticResource TealLight}"/>
+      </Style>
+      <Style x:Key="BadgeBlue" TargetType="Border" BasedOn="{StaticResource BadgeBase}">
+        <Setter Property="Background" Value="{StaticResource BlueLight}"/>
+      </Style>
+      <Style x:Key="BadgeGray" TargetType="Border" BasedOn="{StaticResource BadgeBase}">
+        <Setter Property="Background" Value="#F1F5F9"/>
+      </Style>
+
+      <Style x:Key="BadgeLabelGreen" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="11"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource BadgeGreenText}"/>
+      </Style>
+      <Style x:Key="BadgeLabelRed" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="11"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource BadgeRedText}"/>
+      </Style>
+      <Style x:Key="BadgeLabelAmber" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="11"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource BadgeAmberText}"/>
+      </Style>
+      <Style x:Key="BadgeLabelTeal" TargetType="TextBlock">
+        <Setter Property="FontSize"       Value="11"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground"      Value="{StaticResource BadgeTealText}"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           ALERT BANNERS  (.alert-warn / .alert-danger)
+      ══════════════════════════════════════════ -->
+      <Style x:Key="AlertWarn" TargetType="Border">
+        <Setter Property="Background" Value="#FFFBEB"/>
+        <Setter Property="BorderBrush"     Value="#FDE68A"/>
+        <Setter Property="CornerRadius"    Value="12"/>
+                <Setter Property="Padding"         Value="18,13"/>
+      </Style>
+
+      <Style x:Key="AlertDanger" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource RedLight}"/>
+        <Setter Property="BorderBrush"     Value="#FECACA"/>
+        <Setter Property="CornerRadius"    Value="12"/>
+                <Setter Property="Padding"         Value="18,13"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           FORM FRAMES
+      ══════════════════════════════════════════ -->
+      <Style x:Key="FormCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource CardBg}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Border}"/>
+        <Setter Property="CornerRadius"    Value="16"/>
+                <Setter Property="Padding"         Value="0"/>
+        <Setter Property="MaxWidth" Value="560"/>
+      </Style>
+
+      <Style x:Key="FormInputFrame" TargetType="Border">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Border}"/>
+        <Setter Property="CornerRadius"    Value="8"/>
+                <Setter Property="Padding"         Value="13,9"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           ADMIN BADGE (.admin-badge)
+      ══════════════════════════════════════════ -->
+      <Style x:Key="AdminBadgeFrame" TargetType="Border">
+        <Setter Property="Background" Value="#081A12"/>
+        <Setter Property="BorderBrush"     Value="#144A30"/>
+        <Setter Property="CornerRadius"    Value="8"/>
+                <Setter Property="Padding"         Value="12,10"/>
+      </Style>
+
+      <!-- ══════════════════════════════════════════
+           MODAL CARD (.modal)
+      ══════════════════════════════════════════ -->
+      <Style x:Key="ModalCard" TargetType="Border">
+        <Setter Property="Background"  Value="White"/>
+        <Setter Property="CornerRadius"     Value="20"/>
+                <Setter Property="BorderBrush"      Value="{StaticResource Border}"/>
+        <Setter Property="Padding"          Value="0"/>
+        <Setter Property="Width"     Value="460"/>
+      </Style>
+
+    
+  
+
+
+</ResourceDictionary>

@@ -1,0 +1,25 @@
+<Window x:Class="ProjectBReadyWPF.Frontend.Components.PinPromptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Admin Authentication" Height="250" Width="350"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="{StaticResource MainBg}" WindowStyle="ToolWindow">
+    <Border Padding="20">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Admin Access Required" FontSize="18" FontWeight="Bold" 
+                       Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <TextBlock Text="Please enter the admin PIN to unlock controls." FontSize="12" 
+                       Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+            
+            <PasswordBox x:Name="PinEntry" FontSize="16" HorizontalContentAlignment="Center" 
+                         Padding="5" Margin="0,0,0,5" KeyDown="PinEntry_KeyDown"/>
+            <TextBlock x:Name="ErrorMsg" Text="Invalid PIN" Foreground="{StaticResource Red}" 
+                       Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Content="Cancel" Width="80" Height="30" Margin="0,0,10,0" Style="{StaticResource BtnGhost}" Click="BtnCancel_Click"/>
+                <Button Content="Unlock" Width="80" Height="30" Style="{StaticResource BtnPrimary}" Click="BtnUnlock_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

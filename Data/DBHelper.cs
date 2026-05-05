@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Data;
 using System.IO;
-using System.Windows.Forms;
+using System.Windows;
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 
@@ -114,7 +114,7 @@ namespace ProjectBReady.Data
             catch (Exception ex)
             {
                 MessageBox.Show($"Database Fetch Error: {ex.Message}",
-                    "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "System Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return dt;
         }
@@ -143,7 +143,7 @@ namespace ProjectBReady.Data
             catch (Exception ex)
             {
                 MessageBox.Show($"Database Action Error: {ex.Message}",
-                    "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "System Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }

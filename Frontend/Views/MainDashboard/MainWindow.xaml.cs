@@ -1,4 +1,5 @@
-﻿using System.Text;
+using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,10 +9,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using ProjectBReadyWPF.Database.DataAccess;
 using ProjectBReadyWPF.Frontend.Views.Shelter;
-using ProjectBReadyWPF.Frontend.Views.Report;
+using ProjectBReadyWPF.Frontend.Views.Reports;
 using ProjectBReadyWPF.Frontend.Views.Inventory;
+using ProjectBReadyWPF.Frontend.Components;
 
 namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 {
@@ -21,35 +24,106 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 /// </summary>
     public partial class MainWindow : Window
     {
+        private bool _isAdmin = false;
+        private DispatcherTimer _inactivityTimer;
+        private readonly TimeSpan _timeoutDuration = TimeSpan.FromMinutes(1);
+
         public MainWindow()
         {
             InitializeComponent();
-            MainContentArea.Content = new ShelterView();
+            
+            // Set initial state (Resident Mode)
+            AppSidebar.SetAdminMode(_isAdmin);
+            MainContentArea.Content = new MainDashboardView();
 
             // TESTING LANG: I-run ang connection test pagkabukas ng app
             DBHelper db = new DBHelper();
             db.TestConnection();
+
+            // Setup Inactivity Timer
+            _inactivityTimer = new DispatcherTimer();
+            _inactivityTimer.Interval = _timeoutDuration;
+            _inactivityTimer.Tick += OnInactivityTimeout;
+            _inactivityTimer.Start();
+
+            // Hook up global input events to reset timer
+            this.PreviewMouseMove += ResetTimerEvent;
+            this.PreviewMouseDown += ResetTimerEvent;
+            this.PreviewKeyDown += ResetTimerEvent;
+            this.PreviewTouchDown += ResetTimerEvent;
+        }
+
+        private void ResetTimerEvent(object sender, EventArgs e)
+        {
+            _inactivityTimer.Stop();
+            _inactivityTimer.Start();
+        }
+
+        private void OnInactivityTimeout(object? sender, EventArgs e)
+        {
+            if (_isAdmin)
+            {
+                // Auto-logout admin due to inactivity
+                _isAdmin = false;
+                AppSidebar.SetAdminMode(_isAdmin);
+                MainContentArea.Content = new MainDashboardView();
+                MessageBox.Show("Session expired due to inactivity. Returning to Resident View.", "Timeout", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void NavDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            MainContentArea.Content = new MainDashboardView();
         }
 
         private void NavShelter_Click(object sender, RoutedEventArgs e)
         {
-            MainContentArea.Content = new ShelterView(); // Papalitan ang gitna ng Shelter View
+            if (_isAdmin) MainContentArea.Content = new ShelterView();
         }
 
         private void NavInventory_Click(object sender, RoutedEventArgs e)
         {
-            MainContentArea.Content = new InventoryView(); // Papalitan ang gitna ng Inventory View
+            if (_isAdmin) MainContentArea.Content = new InventoryView();
         }
 
         private void NavReport_Click(object sender, RoutedEventArgs e)
         {
-            MainContentArea.Content = new ReportView(); // Papalitan ang gitna ng Report View
+            if (_isAdmin) MainContentArea.Content = new ReportView();
         }
 
-        private void Logout_Click(object sender, RoutedEventArgs e)
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show("Logging out...");
-            Application.Current.Shutdown(); // Isasara ang app
+            // Reset timer is handled by ResetTimerEvent hook
+
+            // Toggle Admin mode using Ctrl + Shift + O
+            if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.O)
+            {
+                if (_isAdmin)
+                {
+                    // Manually logging out
+                    _isAdmin = false;
+                    AppSidebar.SetAdminMode(_isAdmin);
+                    MainContentArea.Content = new MainDashboardView();
+                    MessageBox.Show("Switched to Resident Mode. Returning to Dashboard.", "Logout", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    // Prompt for PIN to login
+                    var pinPrompt = new PinPromptWindow();
+                    pinPrompt.Owner = this;
+                    bool? result = pinPrompt.ShowDialog();
+
+                    if (result == true && pinPrompt.IsAuthenticated)
+                    {
+                        _isAdmin = true;
+                        AppSidebar.SetAdminMode(_isAdmin);
+                        MessageBox.Show("Switched to Admin Mode. All functions unlocked.", "Admin Login", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                
+                // Prevent further handling of this key combination
+                e.Handled = true;
+            }
         }
     }
 }
