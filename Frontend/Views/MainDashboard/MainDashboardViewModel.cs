@@ -18,7 +18,8 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 
         // Bar chart
         public string OccupancyDisplay => $"{CurrentOccupancy} / {MaxCapacity}";
-        public double BarWidth => MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 280 : 0;
+        public double FillPercent => MaxCapacity > 0 ? Math.Min((double)CurrentOccupancy / MaxCapacity, 1.0) : 0;
+        public double BarWidth => MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 300 : 0;
         public SolidColorBrush FillColor
         {
             get
@@ -26,7 +27,7 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 double pct = MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 100 : 0;
                 if (pct >= 90) return new SolidColorBrush(Color.FromRgb(239, 68, 68));
                 if (pct >= 70) return new SolidColorBrush(Color.FromRgb(234, 124, 60));
-                return new SolidColorBrush(Color.FromRgb(20, 184, 166));
+                return new SolidColorBrush(Color.FromRgb(163, 230, 53));
             }
         }
 
@@ -91,6 +92,12 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
         public int DispatchCount { get; set; }
         public int ExpiringFoodCount { get; set; }
 
+        // Computed display properties
+        public int AvailableSlots => Math.Max(TotalCapacity - TotalEvacuees, 0);
+        public string ShelterCountNote => $"of {TotalShelters} total";
+        public string CapacityNote => $"of {TotalCapacity} slots";
+        public int FullShelterCount { get; set; }
+
         public MainDashboardViewModel()
         {
             LoadFromDatabase();
@@ -113,11 +120,12 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 DispatchCount = stats.DispatchCount;
                 ExpiringFoodCount = stats.ExpiringFoodCount;
 
-                // ── Shelter list (for bar chart + table) ──
+                // ── Shelter list (for bar chart) ──
                 var shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
                 var dbShelters = shelterService.GetAllShelters();
 
                 Shelters = new List<ShelterDisplayItem>();
+                int fullCount = 0;
                 foreach (var s in dbShelters)
                 {
                     Shelters.Add(new ShelterDisplayItem
@@ -126,9 +134,11 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                         CurrentOccupancy = s.CurrentOccupancy,
                         MaxCapacity = s.MaxCapacity
                     });
+                    if (s.CurrentOccupancy >= s.MaxCapacity) fullCount++;
                 }
+                FullShelterCount = fullCount;
 
-                // ── Recent Dispatches (for table) ──
+                // ── Recent Dispatches ──
                 var dispatchService = App.ServiceProvider.GetRequiredService<IDispatchService>();
                 var dbDispatches = dispatchService.GetRecentDispatches(5);
 

@@ -87,11 +87,15 @@
                       <TextBlock Grid.Column="0" Text="Occupancy" Foreground="{StaticResource TextMuted}" FontSize="12"/>
                       <TextBlock Grid.Column="1" Text="{Binding OccupancyDisplay}" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
                     </Grid>
-                    <!-- Progress bar background -->
-                    <Border Background="#404040" CornerRadius="4" Height="10" Margin="0,0,0,12">
-                      <Border Background="{Binding FillColor}" CornerRadius="4" Height="10"
-                              HorizontalAlignment="Left" Width="{Binding BarWidth}"/>
-                    </Border>
+                    <!-- Progress bar -->
+                    <Grid Height="10" Margin="0,0,0,12" ClipToBounds="True">
+                      <Border Background="#404040" CornerRadius="4"/>
+                      <Border Background="{Binding FillColor}" CornerRadius="4" HorizontalAlignment="Stretch" RenderTransformOrigin="0,0.5">
+                        <Border.RenderTransform>
+                          <ScaleTransform ScaleX="{Binding FillPercent}"/>
+                        </Border.RenderTransform>
+                      </Border>
+                    </Grid>
                     
                     <!-- Status Row -->
                     <Grid>

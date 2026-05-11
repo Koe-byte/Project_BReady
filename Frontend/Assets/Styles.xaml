@@ -395,8 +395,53 @@
         <Setter Property="Width"     Value="460"/>
       </Style>
 
+      <!-- ══════════════════════════════════════════
+           SLIM SCROLLBAR (dark theme)
+      ══════════════════════════════════════════ -->
+      <Style TargetType="ScrollBar">
+        <Setter Property="Width" Value="6"/>
+        <Setter Property="MinWidth" Value="6"/>
+        <Setter Property="Background" Value="Transparent"/>
+      </Style>
+
+      <Style x:Key="SlimScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Style.Resources>
+          <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="MinWidth" Value="6"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                  <Grid Background="Transparent">
+                    <Track x:Name="PART_Track" IsDirectionReversed="True">
+                      <Track.Thumb>
+                        <Thumb>
+                          <Thumb.Style>
+                            <Style TargetType="Thumb">
+                              <Setter Property="Template">
+                                <Setter.Value>
+                                  <ControlTemplate TargetType="Thumb">
+                                    <Border Background="#3A3A3A" CornerRadius="3" Margin="0,2"/>
+                                  </ControlTemplate>
+                                </Setter.Value>
+                              </Setter>
+                            </Style>
+                          </Thumb.Style>
+                        </Thumb>
+                      </Track.Thumb>
+                    </Track>
+                  </Grid>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </Style.Resources>
+      </Style>
+
     
   
-
 
 </ResourceDictionary>

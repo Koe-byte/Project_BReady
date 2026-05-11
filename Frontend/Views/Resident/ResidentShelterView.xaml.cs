@@ -16,7 +16,10 @@ namespace ProjectBReadyWPF.Frontend.Views.Resident
 
         public string OccupancyDisplay => $"{CurrentOccupancy} / {MaxCapacity}";
         
-        // Progress bar width (max 300px)
+        // Progress bar fill (0.0 to 1.0)
+        public double FillPercent => MaxCapacity > 0 ? Math.Min((double)CurrentOccupancy / MaxCapacity, 1.0) : 0;
+        
+        // Legacy fixed-width (kept for reference)
         public double BarWidth => MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 300 : 0;
         
         public SolidColorBrush FillColor
