@@ -6,19 +6,27 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="250">
     
-    <Border Background="#2C3E50">
-        <StackPanel Margin="10,30,10,10">
-            <!-- Project Logo -->
-            <Image Source="pack://application:,,,/Frontend/Assets/logo.jpg" Height="80" Width="80" Margin="0,0,0,10" Stretch="UniformToFill"/>
-            <TextBlock Text="B-READY" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-            <TextBlock Text="BARANGAY DISASTER RELIEF" Foreground="#BDC3C7" FontSize="10" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+    <Border Background="{StaticResource SidebarBg}" BorderBrush="{StaticResource Border}" BorderThickness="0,0,1,0">
+        <StackPanel Margin="20,30,20,10">
+            <!-- Search Bar Mockup -->
+            <Border Background="{StaticResource CardBg}" CornerRadius="18" Padding="12,8" Margin="0,0,0,30">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🔍" Foreground="{StaticResource TextMuted}" Margin="0,0,10,0"/>
+                    <TextBlock Text="Search" Foreground="{StaticResource TextMuted}"/>
+                </StackPanel>
+            </Border>
 
-            <Button x:Name="BtnDashboard" Content="Main Dashboard" Margin="0,5" Height="40" Background="#34495E" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+            <!-- Navigation Links -->
+            <TextBlock Text="DASHBOARD" Style="{StaticResource NavSectionLabel}"/>
+            <Button x:Name="BtnDashboard" Content="Overview" Style="{StaticResource NavItemActive}"/>
             
-            <!-- These three are hidden in Kiosk/Resident Mode -->
-            <Button x:Name="BtnShelter" Content="Shelter Management" Margin="0,5" Height="40" Background="#34495E" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-            <Button x:Name="BtnInventory" Content="Relief Inventory" Margin="0,5" Height="40" Background="#34495E" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-            <Button x:Name="BtnReport" Content="Situational Reports" Margin="0,5" Height="40" Background="#34495E" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+            <TextBlock Text="SHELTERS" Style="{StaticResource NavSectionLabel}" Margin="12,20,0,4"/>
+            <Button x:Name="BtnShelter" Content="Shelters" Style="{StaticResource NavItem}"/>
+            
+            <!-- Admin-only nav items (hidden by default, shown via SetAdminMode) -->
+            <TextBlock x:Name="LblManagement" Text="MANAGEMENT" Style="{StaticResource NavSectionLabel}" Margin="12,20,0,4" Visibility="Collapsed"/>
+            <Button x:Name="BtnInventory" Content="Relief Inventory" Style="{StaticResource NavItem}" Visibility="Collapsed"/>
+            <Button x:Name="BtnReport" Content="Situational Reports" Style="{StaticResource NavItem}" Visibility="Collapsed"/>
         </StackPanel>
     </Border>
 </UserControl>

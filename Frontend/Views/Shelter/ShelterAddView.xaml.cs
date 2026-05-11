@@ -100,7 +100,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
         private void OnBackToShelters(object sender, RoutedEventArgs e)
         {
             // Navigate back to Shelter list
-            var mainWindow = Window.GetWindow(this) as ProjectBReadyWPF.Frontend.Views.MainDashboard.MainWindow;
+            var mainWindow = Window.GetWindow(this) ;
             if (mainWindow != null)
             {
                 var contentArea = mainWindow.FindName("MainContentArea") as ContentControl;

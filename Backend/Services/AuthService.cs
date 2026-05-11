@@ -14,12 +14,25 @@ namespace ProjectBReadyWPF.Backend.Services
 
         public AuthService()
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
+            try
+            {
+                var config = new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .Build();
 
-            _storedHash = config.GetSection("Security")["AdminPinHash"] ?? "";
+                _storedHash = config.GetSection("Security")["AdminPinHash"] ?? "";
+            }
+            catch (FileNotFoundException)
+            {
+                System.Windows.MessageBox.Show("Configuration file 'appsettings.json' is missing!\nAdmin login will not work until this file is added.", "Security Setup Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                _storedHash = "";
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error loading security configuration: {ex.Message}", "Security Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                _storedHash = "";
+            }
         }
 
         public bool ValidatePin(string inputPin)

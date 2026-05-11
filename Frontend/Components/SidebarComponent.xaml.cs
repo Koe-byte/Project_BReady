@@ -24,7 +24,7 @@ namespace ProjectBReadyWPF.Frontend.Components
         {
             var visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
             
-            if (BtnShelter != null) BtnShelter.Visibility = visibility;
+            if (LblManagement != null) LblManagement.Visibility = visibility;
             if (BtnInventory != null) BtnInventory.Visibility = visibility;
             if (BtnReport != null) BtnReport.Visibility = visibility;
         }

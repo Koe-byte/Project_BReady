@@ -263,7 +263,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Inventory
 
         private void OnAddItem(object sender, RoutedEventArgs e)
         {
-            var mainWindow = Window.GetWindow(this) as ProjectBReadyWPF.Frontend.Views.MainDashboard.MainWindow;
+            var mainWindow = Window.GetWindow(this) ;
             if (mainWindow != null)
             {
                 var contentArea = mainWindow.FindName("MainContentArea") as ContentControl;

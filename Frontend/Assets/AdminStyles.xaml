@@ -5,36 +5,36 @@
     
 
       <!-- ══════════════════════════════════════════
-           DESIGN TOKENS  —  matched 1:1 to style.css :root
+           ADMIN DESIGN TOKENS (Blue Theme for Authority)
       ══════════════════════════════════════════ -->
-      <SolidColorBrush x:Key="SidebarBg" Color="#212121"/>
-      <SolidColorBrush x:Key="SidebarHover" Color="#2E2E2E"/>
-      <SolidColorBrush x:Key="SidebarActive" Color="#323232"/>
-      <SolidColorBrush x:Key="MainBg" Color="#212121"/>
-      <SolidColorBrush x:Key="CardBg" Color="#323232"/>
-      <SolidColorBrush x:Key="TableHeaderBg" Color="#292929"/>
-      <SolidColorBrush x:Key="ToolbarBg" Color="#212121"/>
+      <SolidColorBrush x:Key="SidebarBg" Color="#1E3A8A"/> <!-- Navy Blue for Authority -->
+      <SolidColorBrush x:Key="SidebarHover" Color="#1E40AF"/>
+      <SolidColorBrush x:Key="SidebarActive" Color="#1D4ED8"/>
+      <SolidColorBrush x:Key="MainBg" Color="#F8FAFC"/> <!-- Clean light background -->
+      <SolidColorBrush x:Key="CardBg" Color="#FFFFFF"/>
+      <SolidColorBrush x:Key="TableHeaderBg" Color="#F1F5F9"/>
+      <SolidColorBrush x:Key="ToolbarBg" Color="#FFFFFF"/>
 
-      <SolidColorBrush x:Key="Accent" Color="#A3E635"/>
-      <SolidColorBrush x:Key="AccentLight" Color="#3F6212"/>
-      <SolidColorBrush x:Key="AccentDark" Color="#65A30D"/>
+      <SolidColorBrush x:Key="Accent" Color="#2563EB"/> <!-- Primary Blue -->
+      <SolidColorBrush x:Key="AccentLight" Color="#DBEAFE"/>
+      <SolidColorBrush x:Key="AccentDark" Color="#1D4ED8"/>
 
-      <SolidColorBrush x:Key="Teal" Color="#2DD4BF"/>
-      <SolidColorBrush x:Key="TealLight" Color="#134E4A"/>
-      <SolidColorBrush x:Key="Blue" Color="#60A5FA"/>
-      <SolidColorBrush x:Key="BlueLight" Color="#1E3A8A"/>
-      <SolidColorBrush x:Key="Red" Color="#F87171"/>
-      <SolidColorBrush x:Key="RedLight" Color="#7F1D1D"/>
-      <SolidColorBrush x:Key="Amber" Color="#FBBF24"/>
-      <SolidColorBrush x:Key="AmberLight" Color="#78350F"/>
-      <SolidColorBrush x:Key="Green" Color="#A3E635"/>
-      <SolidColorBrush x:Key="GreenLight" Color="#3F6212"/>
+      <SolidColorBrush x:Key="Teal" Color="#0D9488"/>
+      <SolidColorBrush x:Key="TealLight" Color="#F0FDFA"/>
+      <SolidColorBrush x:Key="Blue" Color="#3B82F6"/>
+      <SolidColorBrush x:Key="BlueLight" Color="#EFF6FF"/>
+      <SolidColorBrush x:Key="Red" Color="#EF4444"/>
+      <SolidColorBrush x:Key="RedLight" Color="#FEF2F2"/>
+      <SolidColorBrush x:Key="Amber" Color="#F59E0B"/>
+      <SolidColorBrush x:Key="AmberLight" Color="#FFFBEB"/>
+      <SolidColorBrush x:Key="Green" Color="#10B981"/>
+      <SolidColorBrush x:Key="GreenLight" Color="#ECFDF5"/>
 
-      <SolidColorBrush x:Key="TextPrimary" Color="#FFFFFF"/>
-      <SolidColorBrush x:Key="TextSecondary" Color="#D1D5DB"/>
-      <SolidColorBrush x:Key="TextMuted" Color="#9CA3AF"/>
-      <SolidColorBrush x:Key="Border" Color="#404040"/>
-      <SolidColorBrush x:Key="BorderStrong" Color="#525252"/>
+      <SolidColorBrush x:Key="TextPrimary" Color="#0F172A"/> <!-- Dark text for light bg -->
+      <SolidColorBrush x:Key="TextSecondary" Color="#475569"/>
+      <SolidColorBrush x:Key="TextMuted" Color="#64748B"/>
+      <SolidColorBrush x:Key="Border" Color="#E2E8F0"/>
+      <SolidColorBrush x:Key="BorderStrong" Color="#CBD5E1"/>
 
       <!-- Badge text colours -->
       <SolidColorBrush x:Key="BadgeGreenText" Color="#065F46"/>
