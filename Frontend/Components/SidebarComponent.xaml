@@ -6,27 +6,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="250">
     
-    <Border Background="{StaticResource SidebarBg}" BorderBrush="{StaticResource Border}" BorderThickness="0,0,1,0">
+    <Border Background="{DynamicResource SidebarBg}" BorderBrush="{DynamicResource Border}" BorderThickness="0,0,1,0">
         <StackPanel Margin="20,30,20,10">
-            <!-- Search Bar Mockup -->
-            <Border Background="{StaticResource CardBg}" CornerRadius="18" Padding="12,8" Margin="0,0,0,30">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="🔍" Foreground="{StaticResource TextMuted}" Margin="0,0,10,0"/>
-                    <TextBlock Text="Search" Foreground="{StaticResource TextMuted}"/>
-                </StackPanel>
-            </Border>
+            <!-- Project Logo/Title -->
+            <Image Source="/Frontend/Assets/logo.jpg" Height="60" Margin="0,0,0,30" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality"/>
 
             <!-- Navigation Links -->
-            <TextBlock Text="DASHBOARD" Style="{StaticResource NavSectionLabel}"/>
-            <Button x:Name="BtnDashboard" Content="Overview" Style="{StaticResource NavItemActive}"/>
+            <TextBlock Text="DASHBOARD" Style="{DynamicResource NavSectionLabel}"/>
+            <Button x:Name="BtnDashboard" Content="Overview" Style="{DynamicResource NavItemActive}"/>
             
-            <TextBlock Text="SHELTERS" Style="{StaticResource NavSectionLabel}" Margin="12,20,0,4"/>
-            <Button x:Name="BtnShelter" Content="Shelters" Style="{StaticResource NavItem}"/>
+            <TextBlock Text="SHELTERS" Style="{DynamicResource NavSectionLabel}" Margin="12,20,0,4"/>
+            <Button x:Name="BtnShelter" Content="Shelters" Style="{DynamicResource NavItem}"/>
             
             <!-- Admin-only nav items (hidden by default, shown via SetAdminMode) -->
-            <TextBlock x:Name="LblManagement" Text="MANAGEMENT" Style="{StaticResource NavSectionLabel}" Margin="12,20,0,4" Visibility="Collapsed"/>
-            <Button x:Name="BtnInventory" Content="Relief Inventory" Style="{StaticResource NavItem}" Visibility="Collapsed"/>
-            <Button x:Name="BtnReport" Content="Situational Reports" Style="{StaticResource NavItem}" Visibility="Collapsed"/>
+            <TextBlock x:Name="LblManagement" Text="MANAGEMENT" Style="{DynamicResource NavSectionLabel}" Margin="12,20,0,4" Visibility="Collapsed"/>
+            <Button x:Name="BtnInventory" Content="Relief Inventory" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
+            <Button x:Name="BtnReport" Content="Situational Reports" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
         </StackPanel>
     </Border>
 </UserControl>

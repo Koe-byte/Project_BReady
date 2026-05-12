@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="800"
-             Background="{StaticResource MainBg}">
+             Background="{DynamicResource MainBg}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,18 +13,18 @@
         </Grid.RowDefinitions>
 
         <!-- TOPBAR -->
-        <Grid Grid.Row="0" Margin="32,20" Background="{StaticResource CardBg}">
+        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource CardBg}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.ColumnSpan="2" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom"/>
+            <Border Grid.ColumnSpan="2" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom"/>
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock Text="Add New Shelter" Style="{StaticResource PageH1}"/>
-                <TextBlock Text="Register a new evacuation center" Style="{StaticResource PageSubtitle}"/>
+                <TextBlock Text="Add New Shelter" Style="{DynamicResource PageH1}"/>
+                <TextBlock Text="Register a new evacuation center" Style="{DynamicResource PageSubtitle}"/>
             </StackPanel>
             <Button Grid.Column="1" Content="← Back to Shelters"
-                    Style="{StaticResource BtnGhost}" VerticalAlignment="Center"
+                    Style="{DynamicResource BtnGhost}" VerticalAlignment="Center"
                     Click="OnBackToShelters"/>
         </Grid>
 
@@ -32,13 +32,13 @@
         <ScrollViewer Grid.Row="1">
             <StackPanel Margin="32,36" HorizontalAlignment="Center" MaxWidth="600">
 
-                <Border Style="{StaticResource Card}" Padding="0">
+                <Border Style="{DynamicResource Card}" Padding="0">
                     <StackPanel>
 
                         <!-- Card Header -->
                         <StackPanel Margin="28,24,28,18">
                             <StackPanel Orientation="Horizontal">
-                                <Border Background="{StaticResource AccentLight}"
+                                <Border Background="{DynamicResource AccentLight}"
                                         CornerRadius="12" Width="44" Height="44"
                                         Padding="0" BorderBrush="Transparent" Margin="0,0,14,0">
                                     <TextBlock Text="🏛️" FontSize="22"
@@ -46,29 +46,29 @@
                                 </Border>
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="Shelter Details" FontSize="18" FontWeight="Bold"
-                                               Foreground="{StaticResource TextPrimary}"/>
+                                               Foreground="{DynamicResource TextPrimary}"/>
                                     <TextBlock Text="Fill in all required fields below" FontSize="13"
-                                               Foreground="{StaticResource TextMuted}" Margin="0,2,0,0"/>
+                                               Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
 
                         <!-- Card Body -->
                         <StackPanel Margin="28">
 
                             <TextBlock Text="BASIC INFORMATION" FontSize="11" FontWeight="Bold"
-                                       Foreground="{StaticResource TextMuted}" Margin="0,0,0,6"/>
-                            <Border Height="1" Background="{StaticResource Border}" Margin="0,0,0,14"/>
+                                       Foreground="{DynamicResource TextMuted}" Margin="0,0,0,6"/>
+                            <Border Height="1" Background="{DynamicResource Border}" Margin="0,0,0,14"/>
 
                             <!-- Shelter Name -->
                             <StackPanel Margin="0,0,0,16">
                                 <TextBlock FontSize="13" FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,0,6">
-                                    <Run Text="Shelter Name "/><Run Text="*" Foreground="{StaticResource Red}"/>
+                                           Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6">
+                                    <Run Text="Shelter Name "/><Run Text="*" Foreground="{DynamicResource Red}"/>
                                 </TextBlock>
                                 <TextBox x:Name="ShelterNameEntry" FontSize="14" Padding="10,8"
-                                         BorderBrush="{StaticResource Border}" BorderThickness="1"/>
+                                         BorderBrush="{DynamicResource Border}" BorderThickness="1"/>
                             </StackPanel>
 
                             <!-- Capacity Row -->
@@ -79,38 +79,38 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Margin="0,0,8,0">
                                     <TextBlock FontSize="13" FontWeight="SemiBold"
-                                               Foreground="{StaticResource TextSecondary}" Margin="0,0,0,6">
-                                        <Run Text="Maximum Capacity "/><Run Text="*" Foreground="{StaticResource Red}"/>
+                                               Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6">
+                                        <Run Text="Maximum Capacity "/><Run Text="*" Foreground="{DynamicResource Red}"/>
                                     </TextBlock>
                                     <TextBox x:Name="MaxCapEntry" FontSize="14" Padding="10,8"
-                                             BorderBrush="{StaticResource Border}" BorderThickness="1"/>
+                                             BorderBrush="{DynamicResource Border}" BorderThickness="1"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Margin="8,0,0,0">
                                     <TextBlock Text="Current Occupancy" FontSize="13" FontWeight="SemiBold"
-                                               Foreground="{StaticResource TextSecondary}" Margin="0,0,0,6"/>
+                                               Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
                                     <TextBox x:Name="CurrOccEntry" Text="0" FontSize="14" Padding="10,8"
-                                             BorderBrush="{StaticResource Border}" BorderThickness="1"/>
+                                             BorderBrush="{DynamicResource Border}" BorderThickness="1"/>
                                 </StackPanel>
                             </Grid>
 
                             <!-- Status -->
                             <StackPanel Margin="0,0,0,16">
                                 <TextBlock Text="Status" FontSize="13" FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,0,6"/>
+                                           Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
                                 <ComboBox x:Name="StatusPicker" FontSize="14" Padding="10,8"
-                                          BorderBrush="{StaticResource Border}" SelectedIndex="0">
+                                          BorderBrush="{DynamicResource Border}" SelectedIndex="0">
                                     <ComboBoxItem Content="Open"/>
                                     <ComboBoxItem Content="Full"/>
                                     <ComboBoxItem Content="Closed"/>
                                     <ComboBoxItem Content="Under Maintenance"/>
                                 </ComboBox>
                                 <TextBlock Text="Status will auto-update to Full when occupancy reaches max capacity on save."
-                                           FontSize="12" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"
+                                           FontSize="12" Foreground="{DynamicResource TextMuted}" Margin="0,6,0,0"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
                             <!-- Error / Success -->
-                            <Border x:Name="ErrorBorder" Style="{StaticResource AlertWarn}"
+                            <Border x:Name="ErrorBorder" Style="{DynamicResource AlertWarn}"
                                     Visibility="Collapsed" Margin="0,4,0,0" Padding="14">
                                 <TextBlock x:Name="ErrorLabel" FontSize="13" Foreground="#991B1B" TextWrapping="Wrap"/>
                             </Border>
@@ -123,10 +123,10 @@
                         </StackPanel>
 
                         <!-- Card Footer -->
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="28,18">
-                            <Button Content="✕ Cancel" Style="{StaticResource BtnGhost}" Click="OnCancel"/>
-                            <Button Content="💾 Save Shelter" Style="{StaticResource BtnPrimary}"
+                            <Button Content="✕ Cancel" Style="{DynamicResource BtnGhost}" Click="OnCancel"/>
+                            <Button Content="💾 Save Shelter" Style="{DynamicResource BtnPrimary}"
                                     Margin="10,0,0,0" Click="OnSaveShelter"/>
                         </StackPanel>
 

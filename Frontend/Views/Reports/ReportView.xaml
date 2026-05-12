@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="1200" d:DesignWidth="800"
-             Background="{StaticResource MainBg}">
+             Background="{DynamicResource MainBg}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,20 +13,20 @@
         </Grid.RowDefinitions>
 
         <!-- TOPBAR -->
-        <Grid Grid.Row="0" Margin="32,20" Background="{StaticResource CardBg}">
+        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource CardBg}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.ColumnSpan="2" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom"/>
+            <Border Grid.ColumnSpan="2" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom"/>
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock Text="Reports &amp; Analytics" Style="{StaticResource PageH1}"/>
-                <TextBlock Text="Comprehensive summary of all relief operations" Style="{StaticResource PageSubtitle}"/>
+                <TextBlock Text="Reports &amp; Analytics" Style="{DynamicResource PageH1}"/>
+                <TextBlock Text="Comprehensive summary of all relief operations" Style="{DynamicResource PageSubtitle}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Content="⟳  Refresh" Style="{StaticResource BtnGhost}" Click="OnRefresh" Margin="0,0,8,0"/>
-                <Button Content="🖨 Print" Style="{StaticResource BtnGhost}" Click="OnPrint" Margin="0,0,8,0"/>
-                <Button Content="⬇ Export CSV" Style="{StaticResource BtnPrimary}" Click="OnExportCsv"/>
+                <Button Content="⟳  Refresh" Style="{DynamicResource BtnGhost}" Click="OnRefresh" Margin="0,0,8,0"/>
+                <Button Content="🖨 Print" Style="{DynamicResource BtnGhost}" Click="OnPrint" Margin="0,0,8,0"/>
+                <Button Content="⬇ Export CSV" Style="{DynamicResource BtnPrimary}" Click="OnExportCsv"/>
             </StackPanel>
         </Grid>
 
@@ -43,41 +43,41 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Shelters KPI -->
-                    <Border Grid.Column="0" Style="{StaticResource StatCard}" Margin="0,0,8,0">
+                    <Border Grid.Column="0" Style="{DynamicResource StatCard}" Margin="0,0,8,0">
                         <StackPanel>
                             <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="SHELTERS" Style="{StaticResource StatLabel}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Text="SHELTERS" Style="{DynamicResource StatLabel}" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" Text="🏛️" FontSize="22"/>
                             </Grid>
-                            <TextBlock Text="{Binding Summary.TotalShelters}" Style="{StaticResource StatValue}"/>
-                            <TextBlock Text="{Binding Summary.ShelterNote}" FontSize="12" Foreground="{StaticResource TextMuted}" Margin="0,4,0,0"/>
+                            <TextBlock Text="{Binding Summary.TotalShelters}" Style="{DynamicResource StatValue}"/>
+                            <TextBlock Text="{Binding Summary.ShelterNote}" FontSize="12" Foreground="{DynamicResource TextMuted}" Margin="0,4,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Occupancy Rate KPI -->
-                    <Border Grid.Column="1" Style="{StaticResource StatCard}" Margin="8,0">
+                    <Border Grid.Column="1" Style="{DynamicResource StatCard}" Margin="8,0">
                         <StackPanel>
                             <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="OCCUPANCY RATE" Style="{StaticResource StatLabel}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Text="OCCUPANCY RATE" Style="{DynamicResource StatLabel}" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" Text="📊" FontSize="22"/>
                             </Grid>
-                            <TextBlock Text="{Binding Summary.OccupancyRateDisplay}" Style="{StaticResource StatValue}"/>
-                            <TextBlock Text="{Binding Summary.OccupancyNote}" FontSize="12" Foreground="{StaticResource TextMuted}" Margin="0,4,0,0"/>
+                            <TextBlock Text="{Binding Summary.OccupancyRateDisplay}" Style="{DynamicResource StatValue}"/>
+                            <TextBlock Text="{Binding Summary.OccupancyNote}" FontSize="12" Foreground="{DynamicResource TextMuted}" Margin="0,4,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Expiring Items KPI -->
-                    <Border Grid.Column="2" Style="{StaticResource StatCard}" Margin="8,0,0,0">
+                    <Border Grid.Column="2" Style="{DynamicResource StatCard}" Margin="8,0,0,0">
                         <StackPanel>
                             <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="EXPIRING ITEMS" Style="{StaticResource StatLabel}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Text="EXPIRING ITEMS" Style="{DynamicResource StatLabel}" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" Text="⚠️" FontSize="22"/>
                             </Grid>
-                            <TextBlock Text="{Binding Summary.ExpiringCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Red}"/>
-                            <TextBlock Text="Within the next 30 days" FontSize="12" Foreground="{StaticResource TextMuted}" Margin="0,4,0,0"/>
+                            <TextBlock Text="{Binding Summary.ExpiringCount}" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource Red}"/>
+                            <TextBlock Text="Within the next 30 days" FontSize="12" Foreground="{DynamicResource TextMuted}" Margin="0,4,0,0"/>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -89,34 +89,34 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="SHELTER REPORT" FontSize="11" FontWeight="Bold"
-                               Foreground="{StaticResource TextMuted}" VerticalAlignment="Center"/>
-                    <Border Grid.Column="1" Height="1" Background="{StaticResource Border}" Margin="12,0,0,0"/>
+                               Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                    <Border Grid.Column="1" Height="1" Background="{DynamicResource Border}" Margin="12,0,0,0"/>
                 </Grid>
 
-                <Border Style="{StaticResource Card}" Margin="0,0,0,24" Padding="0">
+                <Border Style="{DynamicResource Card}" Margin="0,0,0,24" Padding="0">
                     <StackPanel>
                         <StackPanel Margin="18,18,18,14">
-                            <TextBlock Text="Evacuation Shelter Summary" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
-                            <TextBlock Text="Full status and capacity breakdown" FontSize="13" Foreground="{StaticResource TextMuted}" Margin="0,2,0,0"/>
+                            <TextBlock Text="Evacuation Shelter Summary" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                            <TextBlock Text="Full status and capacity breakdown" FontSize="13" Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0"/>
                         </StackPanel>
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
                         
-                        <Grid Margin="16,0,16,0" Background="{StaticResource TableHeaderBg}">
+                        <Grid Margin="16,0,16,0" Background="{DynamicResource TableHeaderBg}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="SHELTER NAME" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="1" Text="MAX CAP." Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="2" Text="CURRENT" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="3" Text="AVAILABLE" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="4" Text="OCCUPANCY" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="5" Text="% FULL" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="6" Text="STATUS" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="0" Text="SHELTER NAME" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="1" Text="MAX CAP." Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="2" Text="CURRENT" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="3" Text="AVAILABLE" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="4" Text="OCCUPANCY" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="5" Text="% FULL" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="6" Text="STATUS" Style="{DynamicResource TableHeader}"/>
                         </Grid>
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
 
                         <ItemsControl ItemsSource="{Binding ShelterRows}">
                             <ItemsControl.ItemTemplate>
@@ -128,14 +128,14 @@
                                             <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{StaticResource TableCellBold}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding Max}" Style="{StaticResource TableCellMuted}"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding Current}" Style="{StaticResource TableCellMuted}"/>
-                                        <TextBlock Grid.Column="3" Text="{Binding Available}" Style="{StaticResource TableCellBold}" Foreground="{Binding AvailableColor}"/>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{DynamicResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Max}" Style="{DynamicResource TableCellMuted}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Current}" Style="{DynamicResource TableCellMuted}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Available}" Style="{DynamicResource TableCellBold}" Foreground="{Binding AvailableColor}"/>
                                         
                                         <!-- Progress bar -->
                                         <Grid Grid.Column="4" Margin="0,0,16,0" VerticalAlignment="Center">
-                                            <Border Background="{StaticResource Border}" CornerRadius="3" Height="6"/>
+                                            <Border Background="{DynamicResource Border}" CornerRadius="3" Height="6"/>
                                             <Border Background="{Binding FillColor}" CornerRadius="3" Height="6"
                                                     HorizontalAlignment="Stretch" RenderTransformOrigin="0,0.5">
                                                 <Border.RenderTransform>
@@ -144,32 +144,32 @@
                                             </Border>
                                         </Grid>
 
-                                        <TextBlock Grid.Column="5" Text="{Binding PctFull}" Style="{StaticResource TableCellBold}" Foreground="{Binding PctColor}"/>
+                                        <TextBlock Grid.Column="5" Text="{Binding PctFull}" Style="{DynamicResource TableCellBold}" Foreground="{Binding PctColor}"/>
                                         <Border Grid.Column="6" Background="{Binding StatusBadgeBg}"
                                                 CornerRadius="20" Padding="10,3" BorderBrush="Transparent"
                                                 HorizontalAlignment="Left" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold" Foreground="{Binding StatusTextColor}"/>
                                         </Border>
-                                        <Border Grid.ColumnSpan="7" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom" Margin="0,8,0,0"/>
+                                        <Border Grid.ColumnSpan="7" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom" Margin="0,8,0,0"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
                         <!-- Totals Row -->
-                        <Grid Margin="16,13,16,13" Background="{StaticResource TableHeaderBg}">
+                        <Grid Margin="16,13,16,13" Background="{DynamicResource TableHeaderBg}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="TOTAL" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextSecondary}"/>
+                            <TextBlock Grid.Column="0" Text="TOTAL" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}"/>
                             <TextBlock Grid.Column="1" Text="{Binding ShelterTotals.TotalMax}" FontSize="13" FontWeight="Bold"/>
                             <TextBlock Grid.Column="2" Text="{Binding ShelterTotals.TotalCurrent}" FontSize="13" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="3" Text="{Binding ShelterTotals.TotalAvailable}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Teal}"/>
-                            <TextBlock Grid.Column="5" Text="{Binding ShelterTotals.OverallPct}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Accent}"/>
-                            <TextBlock Grid.Column="6" Text="—" FontSize="13" Foreground="{StaticResource TextMuted}"/>
+                            <TextBlock Grid.Column="3" Text="{Binding ShelterTotals.TotalAvailable}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource Teal}"/>
+                            <TextBlock Grid.Column="5" Text="{Binding ShelterTotals.OverallPct}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource Accent}"/>
+                            <TextBlock Grid.Column="6" Text="—" FontSize="13" Foreground="{DynamicResource TextMuted}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -181,35 +181,35 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="FOOD INVENTORY REPORT" FontSize="11" FontWeight="Bold"
-                               Foreground="{StaticResource TextMuted}" VerticalAlignment="Center"/>
-                    <Border Grid.Column="1" Height="1" Background="{StaticResource Border}" Margin="12,0,0,0"/>
+                               Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                    <Border Grid.Column="1" Height="1" Background="{DynamicResource Border}" Margin="12,0,0,0"/>
                 </Grid>
 
-                <Border Style="{StaticResource Card}" Margin="0,0,0,24" Padding="0">
+                <Border Style="{DynamicResource Card}" Margin="0,0,0,24" Padding="0">
                     <StackPanel>
                         <Grid Margin="18,18,18,14">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="🍚 Food Items" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
-                                <TextBlock Text="Current stock levels and expiration" FontSize="13" Foreground="{StaticResource TextMuted}" Margin="0,2,0,0"/>
+                                <TextBlock Text="🍚 Food Items" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                <TextBlock Text="Current stock levels and expiration" FontSize="13" Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0"/>
                             </StackPanel>
-                            <Button Grid.Column="1" Content="View Full Inventory" Style="{StaticResource BtnGhostSm}" VerticalAlignment="Center" Click="OnViewInventory"/>
+                            <Button Grid.Column="1" Content="View Full Inventory" Style="{DynamicResource BtnGhostSm}" VerticalAlignment="Center" Click="OnViewInventory"/>
                         </Grid>
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
                         
-                        <Grid Margin="16,0,16,0" Background="{StaticResource TableHeaderBg}">
+                        <Grid Margin="16,0,16,0" Background="{DynamicResource TableHeaderBg}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="ITEM NAME" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="1" Text="QTY" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="2" Text="EXPIRATION" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="3" Text="DAYS LEFT" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="4" Text="STATUS" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="0" Text="ITEM NAME" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="1" Text="QTY" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="2" Text="EXPIRATION" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="3" Text="DAYS LEFT" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="4" Text="STATUS" Style="{DynamicResource TableHeader}"/>
                         </Grid>
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
 
                         <ItemsControl ItemsSource="{Binding FoodReportRows}">
                             <ItemsControl.ItemTemplate>
@@ -220,9 +220,9 @@
                                             <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{StaticResource TableCellBold}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding Qty}" Style="{StaticResource TableCellBold}"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding ExpiryDisplay}" Style="{StaticResource TableCellMuted}" Foreground="{Binding ExpiryColor}"/>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{DynamicResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Qty}" Style="{DynamicResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding ExpiryDisplay}" Style="{DynamicResource TableCellMuted}" Foreground="{Binding ExpiryColor}"/>
                                         
                                         <Border Grid.Column="3" Background="{Binding DaysBadgeBg}"
                                                 CornerRadius="20" Padding="10,3" BorderBrush="Transparent"
@@ -234,20 +234,20 @@
                                                 HorizontalAlignment="Left" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding StatusLabel}" FontSize="11" FontWeight="Bold" Foreground="{Binding StatusTextColor}"/>
                                         </Border>
-                                        <Border Grid.ColumnSpan="5" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom" Margin="0,8,0,0"/>
+                                        <Border Grid.ColumnSpan="5" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom" Margin="0,8,0,0"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
                         <!-- Totals Row -->
-                        <Grid Margin="16,13,16,13" Background="{StaticResource TableHeaderBg}">
+                        <Grid Margin="16,13,16,13" Background="{DynamicResource TableHeaderBg}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="TOTAL" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextSecondary}"/>
+                            <TextBlock Grid.Column="0" Text="TOTAL" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}"/>
                             <TextBlock Grid.Column="1" Text="{Binding FoodTotal}" FontSize="13" FontWeight="Bold"/>
                         </Grid>
                     </StackPanel>
@@ -260,33 +260,33 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="MEDICAL INVENTORY REPORT" FontSize="11" FontWeight="Bold"
-                               Foreground="{StaticResource TextMuted}" VerticalAlignment="Center"/>
-                    <Border Grid.Column="1" Height="1" Background="{StaticResource Border}" Margin="12,0,0,0"/>
+                               Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                    <Border Grid.Column="1" Height="1" Background="{DynamicResource Border}" Margin="12,0,0,0"/>
                 </Grid>
 
-                <Border Style="{StaticResource Card}" Margin="0,0,0,24" Padding="0">
+                <Border Style="{DynamicResource Card}" Margin="0,0,0,24" Padding="0">
                     <StackPanel>
                         <Grid Margin="18,18,18,14">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="💊 Medical Supplies" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
-                                <TextBlock Text="Current medical stock" FontSize="13" Foreground="{StaticResource TextMuted}" Margin="0,2,0,0"/>
+                                <TextBlock Text="💊 Medical Supplies" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                <TextBlock Text="Current medical stock" FontSize="13" Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0"/>
                             </StackPanel>
-                            <Button Grid.Column="1" Content="View Full Inventory" Style="{StaticResource BtnGhostSm}" VerticalAlignment="Center" Click="OnViewInventory"/>
+                            <Button Grid.Column="1" Content="View Full Inventory" Style="{DynamicResource BtnGhostSm}" VerticalAlignment="Center" Click="OnViewInventory"/>
                         </Grid>
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
                         
-                        <Grid Margin="16,0,16,0" Background="{StaticResource TableHeaderBg}">
+                        <Grid Margin="16,0,16,0" Background="{DynamicResource TableHeaderBg}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="ITEM NAME" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="1" Text="QTY" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="2" Text="DOSAGE" Style="{StaticResource TableHeader}"/>
-                            <TextBlock Grid.Column="3" Text="RX REQUIRED" Style="{StaticResource TableHeader}"/>
+                            <TextBlock Grid.Column="0" Text="ITEM NAME" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="1" Text="QTY" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="2" Text="DOSAGE" Style="{DynamicResource TableHeader}"/>
+                            <TextBlock Grid.Column="3" Text="RX REQUIRED" Style="{DynamicResource TableHeader}"/>
                         </Grid>
-                        <Border Height="1" Background="{StaticResource Border}"/>
+                        <Border Height="1" Background="{DynamicResource Border}"/>
 
                         <ItemsControl ItemsSource="{Binding MedReportRows}">
                             <ItemsControl.ItemTemplate>
@@ -296,28 +296,28 @@
                                             <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{StaticResource TableCellBold}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding Qty}" Style="{StaticResource TableCellBold}"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding Dosage}" Style="{StaticResource TableCellMuted}"/>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{DynamicResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Qty}" Style="{DynamicResource TableCellBold}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Dosage}" Style="{DynamicResource TableCellMuted}"/>
                                         
                                         <Border Grid.Column="3" Background="{Binding RxBadgeBg}"
                                                 CornerRadius="20" Padding="10,3" BorderBrush="Transparent"
                                                 HorizontalAlignment="Left" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding RxLabel}" FontSize="11" FontWeight="Bold" Foreground="{Binding RxTextColor}"/>
                                         </Border>
-                                        <Border Grid.ColumnSpan="4" Height="1" Background="{StaticResource Border}" VerticalAlignment="Bottom" Margin="0,8,0,0"/>
+                                        <Border Grid.ColumnSpan="4" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom" Margin="0,8,0,0"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
                         <!-- Totals Row -->
-                        <Grid Margin="16,13,16,13" Background="{StaticResource TableHeaderBg}">
+                        <Grid Margin="16,13,16,13" Background="{DynamicResource TableHeaderBg}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="TOTAL" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextSecondary}"/>
+                            <TextBlock Grid.Column="0" Text="TOTAL" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}"/>
                             <TextBlock Grid.Column="1" Text="{Binding MedTotal}" FontSize="13" FontWeight="Bold"/>
                         </Grid>
                     </StackPanel>

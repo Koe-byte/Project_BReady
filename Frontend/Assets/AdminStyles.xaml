@@ -7,7 +7,7 @@
       <!-- ══════════════════════════════════════════
            ADMIN DESIGN TOKENS (Blue Theme for Authority)
       ══════════════════════════════════════════ -->
-      <SolidColorBrush x:Key="SidebarBg" Color="#1E3A8A"/> <!-- Navy Blue for Authority -->
+      <SolidColorBrush x:Key="SidebarBg" Color="#232C7B"/> <!-- Navy Blue matching logo crop.jpg -->
       <SolidColorBrush x:Key="SidebarHover" Color="#1E40AF"/>
       <SolidColorBrush x:Key="SidebarActive" Color="#1D4ED8"/>
       <SolidColorBrush x:Key="MainBg" Color="#F8FAFC"/> <!-- Clean light background -->
@@ -165,7 +165,7 @@
       <Style x:Key="NavSectionLabel" TargetType="TextBlock">
         <Setter Property="FontSize"         Value="10"/>
         <Setter Property="FontWeight"   Value="Bold"/>
-        <Setter Property="Foreground"        Value="{StaticResource TextMuted}"/>
+        <Setter Property="Foreground"        Value="#93C5FD"/>
                 <Setter Property="Margin"           Value="12,10,0,4"/>
       </Style>
 
@@ -222,20 +222,54 @@
       ══════════════════════════════════════════ -->
       <Style x:Key="NavItem" TargetType="Button">
         <Setter Property="Background"         Value="Transparent"/>
-        <Setter Property="Foreground"               Value="#94A3B8"/>
+        <Setter Property="Foreground"               Value="#93C5FD"/>
         <Setter Property="FontSize"                Value="14"/>
         <Setter Property="FontWeight"          Value="Normal"/>
-        <Setter Property="Height"           Value="44"/>
+        <Setter Property="Height"           Value="42"/>
         <Setter Property="HorizontalAlignment"       Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        <Setter Property="Padding"                 Value="12,0"/>
-        <Setter Property="Margin"                  Value="0,1"/>
+        <Setter Property="Padding"                 Value="16,0"/>
+        <Setter Property="Margin"                  Value="0,2"/>
+        <Setter Property="Cursor"                  Value="Hand"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="Button">
+              <Border x:Name="NavBorder" Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock x:Name="Chevron" Text="›  " Foreground="#6B9BD2" FontSize="14" VerticalAlignment="Center"/>
+                  <ContentPresenter VerticalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                  <Setter TargetName="NavBorder" Property="Background" Value="#1E40AF"/>
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
       </Style>
 
-      <Style x:Key="NavItemActive" TargetType="Button" BasedOn="{StaticResource NavItem}">
-        <Setter Property="Background" Value="{StaticResource SidebarActive}"/>
-        <Setter Property="Foreground"       Value="White"/>
-        <Setter Property="FontWeight"  Value="Bold"/>
+      <Style x:Key="NavItemActive" TargetType="Button">
+        <Setter Property="Background"         Value="#3B82F6"/>
+        <Setter Property="Foreground"               Value="White"/>
+        <Setter Property="FontSize"                Value="14"/>
+        <Setter Property="FontWeight"          Value="Bold"/>
+        <Setter Property="Height"           Value="42"/>
+        <Setter Property="HorizontalAlignment"       Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Padding"                 Value="16,0"/>
+        <Setter Property="Margin"                  Value="0,2"/>
+        <Setter Property="Cursor"                  Value="Hand"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="Button">
+              <Border Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}">
+                <ContentPresenter VerticalAlignment="Center"/>
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
       </Style>
 
       <!-- ══════════════════════════════════════════

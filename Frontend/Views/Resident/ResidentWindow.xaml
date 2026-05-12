@@ -4,7 +4,7 @@
         xmlns:dashboard="clr-namespace:ProjectBReadyWPF.Frontend.Views.MainDashboard"
         Title="Project B-Ready — Evacuation Monitoring" Height="700" Width="1100"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource MainBg}"
+        Background="{DynamicResource MainBg}"
         PreviewKeyDown="Window_PreviewKeyDown">
     
     <!-- Full-width kiosk: no sidebar, just the dashboard -->
