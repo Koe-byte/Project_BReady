@@ -8,6 +8,7 @@ namespace ProjectBReadyWPF.Frontend.Components
         public event RoutedEventHandler? DashboardClick;
         public event RoutedEventHandler? ShelterClick;
         public event RoutedEventHandler? InventoryClick;
+        public event RoutedEventHandler? DispatchClick;
         public event RoutedEventHandler? ReportClick;
 
         private Button? _activeButton;
@@ -19,6 +20,7 @@ namespace ProjectBReadyWPF.Frontend.Components
             if (BtnDashboard != null) BtnDashboard.Click += (s, e) => { SetActiveButton(BtnDashboard); DashboardClick?.Invoke(s, e); };
             if (BtnShelter != null) BtnShelter.Click += (s, e) => { SetActiveButton(BtnShelter); ShelterClick?.Invoke(s, e); };
             if (BtnInventory != null) BtnInventory.Click += (s, e) => { SetActiveButton(BtnInventory); InventoryClick?.Invoke(s, e); };
+            if (BtnDispatch != null) BtnDispatch.Click += (s, e) => { SetActiveButton(BtnDispatch); DispatchClick?.Invoke(s, e); };
             if (BtnReport != null) BtnReport.Click += (s, e) => { SetActiveButton(BtnReport); ReportClick?.Invoke(s, e); };
 
             // Default active
@@ -44,6 +46,7 @@ namespace ProjectBReadyWPF.Frontend.Components
             
             if (LblManagement != null) LblManagement.Visibility = visibility;
             if (BtnInventory != null) BtnInventory.Visibility = visibility;
+            if (BtnDispatch != null) BtnDispatch.Visibility = visibility;
             if (BtnReport != null) BtnReport.Visibility = visibility;
         }
     }

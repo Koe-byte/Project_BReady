@@ -1,0 +1,138 @@
+<UserControl x:Class="ProjectBReadyWPF.Frontend.Views.Dispatch.DispatchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{DynamicResource MainBg}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOPBAR -->
+        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource CardBg}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom"/>
+            <StackPanel VerticalAlignment="Center" Margin="0,0,0,10">
+                <TextBlock Text="Dispatch &amp; Situational Reports" Style="{DynamicResource PageH1}"/>
+                <TextBlock Text="Manage relief goods distribution and view recent dispatch logs" Style="{DynamicResource PageSubtitle}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- PAGE BODY: Side-Panel Layout -->
+        <Grid Grid.Row="1" Margin="32,10,32,32">
+            <Grid.ColumnDefinitions>
+                <!-- Left: Recent Logs -->
+                <ColumnDefinition Width="*"/>
+                <!-- Right: Side Panel for Dispatching -->
+                <ColumnDefinition Width="320"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT COLUMN: RECENT DISPATCHES -->
+            <Border Grid.Column="0" Style="{DynamicResource Card}" Margin="0,0,24,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <StackPanel Grid.Row="0" Margin="20,20,20,10">
+                        <TextBlock Text="Recent Dispatch Logs" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                        <TextBlock Text="History of relief goods sent to evacuation centers" FontSize="13" Foreground="{DynamicResource TextMuted}" Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <!-- Table Header -->
+                    <Border Grid.Row="0" VerticalAlignment="Bottom" Height="1" Background="{DynamicResource Border}" Margin="0,20,0,0"/>
+
+                    <ScrollViewer Grid.Row="1" Margin="0,10,0,0">
+                        <StackPanel>
+                            <!-- Header Row -->
+                            <Grid Margin="20,10,20,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="DATE" Style="{DynamicResource TableHeader}"/>
+                                <TextBlock Grid.Column="1" Text="ITEM DISPATCHED" Style="{DynamicResource TableHeader}"/>
+                                <TextBlock Grid.Column="2" Text="DESTINATION SHELTER" Style="{DynamicResource TableHeader}"/>
+                                <TextBlock Grid.Column="3" Text="QUANTITY" Style="{DynamicResource TableHeader}" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Border Height="1" Background="{DynamicResource Border}"/>
+
+                            <!-- Logs Data -->
+                            <ItemsControl x:Name="LogsTable" ItemsSource="{Binding DispatchLogs}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="20,12,20,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Binding formatting for Date requires custom or just string property in ViewModel -->
+                                            <TextBlock Grid.Column="0" Text="{Binding DispatchDate, StringFormat=\{0:MMM dd\, yyyy\}}" Style="{DynamicResource TableCellMuted}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding ItemName}" Style="{DynamicResource TableCellBold}"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding ShelterName}" Style="{DynamicResource TableCell}"/>
+                                            
+                                            <!-- Green Badge for Sent Quantity -->
+                                            <Border Grid.Column="3" Background="#DCFCE7" CornerRadius="12" Padding="10,4" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding QuantityDispatched, StringFormat=+{0}}" Foreground="#166534" FontSize="12" FontWeight="Bold"/>
+                                            </Border>
+                                            
+                                            <Border Grid.ColumnSpan="4" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom" Margin="-20,-12,-20,-12"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <!-- Empty State -->
+                                <ItemsControl.Style>
+                                    <Style TargetType="ItemsControl">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasLogs}" Value="False">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <TextBlock Text="No dispatch logs found." Foreground="{DynamicResource TextMuted}" FontSize="14" HorizontalAlignment="Center" Margin="0,40,0,0"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ItemsControl.Style>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- RIGHT COLUMN: SIDE PANEL (DISPATCH FORM) -->
+            <Border Grid.Column="1" Background="{DynamicResource CardBg}" BorderBrush="{DynamicResource Border}" BorderThickness="1" CornerRadius="12" VerticalAlignment="Top">
+                <StackPanel Margin="24">
+                    <TextBlock Text="🚚 New Dispatch" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                    <TextBlock Text="Send inventory items to a shelter." FontSize="13" Foreground="{DynamicResource TextMuted}" Margin="0,4,0,24" TextWrapping="Wrap"/>
+                    
+                    <!-- Item Selection -->
+                    <TextBlock Text="Select Item" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CmbItems" DisplayMemberPath="DisplayLabel" SelectedValuePath="ItemID" FontSize="14" Padding="8,6" Margin="0,0,0,16" BorderBrush="{DynamicResource Border}"/>
+
+                    <!-- Shelter Selection -->
+                    <TextBlock Text="Target Shelter" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CmbShelters" DisplayMemberPath="ShelterName" SelectedValuePath="ShelterID" FontSize="14" Padding="8,6" Margin="0,0,0,16" BorderBrush="{DynamicResource Border}"/>
+
+                    <!-- Quantity Input -->
+                    <TextBlock Text="Quantity to Dispatch" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
+                    <TextBox x:Name="TxtQuantity" FontSize="14" Padding="10,8" BorderBrush="{DynamicResource Border}" BorderThickness="1" Margin="0,0,0,24"/>
+
+                    <!-- Action Button -->
+                    <Button Content="Dispatch Goods" Style="{DynamicResource BtnPrimary}" Padding="0,12" Click="OnDispatchClicked"/>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>

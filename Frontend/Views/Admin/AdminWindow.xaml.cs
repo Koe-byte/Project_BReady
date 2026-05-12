@@ -5,10 +5,13 @@ using System.Windows.Threading;
 
 using ProjectBReadyWPF.Frontend.Views.Shelter;
 using ProjectBReadyWPF.Frontend.Views.Reports;
+using ProjectBReadyWPF.Frontend.Views.Dispatch;
 
 using ProjectBReadyWPF.Frontend.Views.Inventory;
 using ProjectBReadyWPF.Frontend.Views.MainDashboard;
 using ProjectBReadyWPF.Frontend.Components;
+using Microsoft.Extensions.DependencyInjection;
+using ProjectBReadyWPF.Backend.Interfaces;
 
 namespace ProjectBReadyWPF.Frontend.Views.Admin
 {
@@ -66,9 +69,17 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
             MainContentArea.Content = new InventoryView();
         }
 
+        private void NavDispatch_Click(object sender, RoutedEventArgs e)
+        {
+            var dispatchService = App.ServiceProvider.GetRequiredService<IDispatchService>();
+            var inventoryService = App.ServiceProvider.GetRequiredService<IInventoryService>();
+            var shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
+            MainContentArea.Content = new DispatchView(dispatchService, inventoryService, shelterService);
+        }
+
         private void NavReport_Click(object sender, RoutedEventArgs e)
         {
-            MainContentArea.Content = new ReportView();
+            MainContentArea.Content = new ProjectBReadyWPF.Frontend.Views.Reports.ReportView();
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)

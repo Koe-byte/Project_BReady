@@ -21,6 +21,7 @@
             <!-- Admin-only nav items (hidden by default, shown via SetAdminMode) -->
             <TextBlock x:Name="LblManagement" Text="MANAGEMENT" Style="{DynamicResource NavSectionLabel}" Margin="12,20,0,4" Visibility="Collapsed"/>
             <Button x:Name="BtnInventory" Content="Relief Inventory" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
+            <Button x:Name="BtnDispatch" Content="Dispatch Hub" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
             <Button x:Name="BtnReport" Content="Situational Reports" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
         </StackPanel>
     </Border>

@@ -24,7 +24,8 @@
         <components:SidebarComponent x:Name="AppSidebar" Grid.Column="0" 
                                     DashboardClick="NavDashboard_Click"
                                     ShelterClick="NavShelter_Click" 
-                                    InventoryClick="NavInventory_Click" 
+                                    InventoryClick="NavInventory_Click"
+                                    DispatchClick="NavDispatch_Click"
                                     ReportClick="NavReport_Click"/>
 
         <ContentControl x:Name="MainContentArea" Grid.Column="1"/>

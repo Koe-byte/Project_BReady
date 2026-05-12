@@ -1,0 +1,114 @@
+using System.Windows;
+using System.Windows.Controls;
+using ProjectBReadyWPF.Backend.Interfaces;
+using ProjectBReadyWPF.Backend.Models.Inventory;
+using ProjectBReadyWPF.Backend.Models.Facilities;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System;
+
+namespace ProjectBReadyWPF.Frontend.Views.Dispatch
+{
+    public partial class DispatchView : UserControl
+    {
+        private readonly IDispatchService _dispatchService;
+        private readonly IInventoryService _inventoryService;
+        private readonly IShelterService _shelterService;
+
+        public DispatchViewModel ViewModel { get; set; }
+
+        public DispatchView(IDispatchService dispatchService, IInventoryService inventoryService, IShelterService shelterService)
+        {
+            InitializeComponent();
+            _dispatchService = dispatchService;
+            _inventoryService = inventoryService;
+            _shelterService = shelterService;
+
+            ViewModel = new DispatchViewModel();
+            this.DataContext = ViewModel;
+
+            LoadDropdowns();
+            LoadLogs();
+        }
+
+        private void LoadDropdowns()
+        {
+            var items = _inventoryService.GetCurrentInventory();
+            var displayItems = items.Select(i => new {
+                ItemID = i.ItemID,
+                DisplayLabel = $"{i.ItemName} (Stock: {i.Quantity})"
+            }).ToList();
+            CmbItems.ItemsSource = displayItems;
+
+            var shelters = _shelterService.GetAllShelters();
+            CmbShelters.ItemsSource = shelters;
+        }
+
+        private void LoadLogs()
+        {
+            var logs = _dispatchService.GetRecentDispatches(50);
+            ViewModel.DispatchLogs.Clear();
+            foreach (var log in logs)
+            {
+                ViewModel.DispatchLogs.Add(log);
+            }
+            ViewModel.HasLogs = ViewModel.DispatchLogs.Count > 0;
+        }
+
+        private void OnDispatchClicked(object sender, RoutedEventArgs e)
+        {
+            if (CmbItems.SelectedValue == null)
+            {
+                MessageBox.Show("Please select an item to dispatch.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (CmbShelters.SelectedValue == null)
+            {
+                MessageBox.Show("Please select a target shelter.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(TxtQuantity.Text, out int quantity) || quantity <= 0)
+            {
+                MessageBox.Show("Please enter a valid positive quantity.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            int itemId = (int)CmbItems.SelectedValue;
+            int shelterId = (int)CmbShelters.SelectedValue;
+
+            bool success = _dispatchService.DispatchItem(itemId, shelterId, quantity);
+            
+            if (success)
+            {
+                MessageBox.Show("Relief goods dispatched successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                TxtQuantity.Clear();
+                CmbItems.SelectedIndex = -1;
+                CmbShelters.SelectedIndex = -1;
+
+                // Refresh data
+                LoadDropdowns();
+                LoadLogs();
+            }
+        }
+    }
+
+    public class DispatchViewModel : System.ComponentModel.INotifyPropertyChanged
+    {
+        public ObservableCollection<DispatchLog> DispatchLogs { get; set; } = new ObservableCollection<DispatchLog>();
+
+        private bool _hasLogs;
+        public bool HasLogs
+        {
+            get => _hasLogs;
+            set
+            {
+                _hasLogs = value;
+                PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(HasLogs)));
+            }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    }
+}
