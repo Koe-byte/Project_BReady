@@ -19,6 +19,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
         public string Name { get; set; } = "";
         public int MaxCapacity { get; set; }
         public int CurrentOccupancy { get; set; }
+        public string Status { get; set; } = "Open"; // From DB: Open, Full, Closed, Under Maintenance
 
         public int Available => MaxCapacity - CurrentOccupancy;
         public SolidColorBrush AvailableColor => Available > 0
@@ -30,6 +31,8 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
         {
             get
             {
+                if (Status == "Closed" || Status == "Under Maintenance")
+                    return new SolidColorBrush(Color.FromRgb(148, 163, 184)); // Slate gray
                 double pct = MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 100 : 0;
                 if (pct >= 90) return new SolidColorBrush(Color.FromRgb(239, 68, 68));
                 if (pct >= 70) return new SolidColorBrush(Color.FromRgb(234, 124, 60));
@@ -37,14 +40,22 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
             }
         }
         public string PctFull => MaxCapacity > 0 ? $"{(double)CurrentOccupancy / MaxCapacity * 100:F0}%" : "0%";
+        public SolidColorBrush PctColor => FillColor;
 
-        public string Status => CurrentOccupancy >= MaxCapacity ? "Full" : "Open";
-        public SolidColorBrush StatusBadgeBg => Status == "Full"
-            ? new SolidColorBrush(Color.FromRgb(254, 226, 226))
-            : new SolidColorBrush(Color.FromRgb(209, 250, 229));
-        public SolidColorBrush StatusTextColor => Status == "Full"
-            ? new SolidColorBrush(Color.FromRgb(153, 27, 27))
-            : new SolidColorBrush(Color.FromRgb(22, 101, 52));
+        public SolidColorBrush StatusBadgeBg => Status switch
+        {
+            "Full" => new SolidColorBrush(Color.FromRgb(254, 226, 226)),       // Red bg
+            "Closed" => new SolidColorBrush(Color.FromRgb(226, 232, 240)),     // Slate bg
+            "Under Maintenance" => new SolidColorBrush(Color.FromRgb(254, 243, 199)), // Amber bg
+            _ => new SolidColorBrush(Color.FromRgb(209, 250, 229))            // Green bg
+        };
+        public SolidColorBrush StatusTextColor => Status switch
+        {
+            "Full" => new SolidColorBrush(Color.FromRgb(153, 27, 27)),         // Red text
+            "Closed" => new SolidColorBrush(Color.FromRgb(51, 65, 85)),        // Slate text
+            "Under Maintenance" => new SolidColorBrush(Color.FromRgb(146, 64, 14)), // Amber text
+            _ => new SolidColorBrush(Color.FromRgb(22, 101, 52))              // Green text
+        };
     }
 
     // ── ViewModel ────────────────────────────────────────────────────
@@ -105,12 +116,13 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
                         RowNumber = row++,
                         Name = s.ShelterName,
                         MaxCapacity = s.MaxCapacity,
-                        CurrentOccupancy = s.CurrentOccupancy
+                        CurrentOccupancy = s.CurrentOccupancy,
+                        Status = s.Status
                     });
 
                     totalOcc += s.CurrentOccupancy;
                     totalCap += s.MaxCapacity;
-                    if (s.CurrentOccupancy >= s.MaxCapacity) fullCount++;
+                    if (s.Status == "Full") fullCount++;
                 }
 
                 var vm = new ShelterPageViewModel
@@ -165,9 +177,9 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
             }
         }
 
-        // ── Update Occupancy Modal ───────────────────────────────────
+        // ── Edit Shelter Modal ──────────────────────────────────────
 
-        private void OnUpdateOccupancy(object sender, RoutedEventArgs e)
+        private void OnEditShelter(object sender, RoutedEventArgs e)
         {
             if (_selectedShelterId < 0)
             {
@@ -178,42 +190,74 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
             var shelter = _allShelters.FirstOrDefault(s => s.ShelterID == _selectedShelterId);
             if (shelter != null)
             {
-                OccShelterName.Text = $"{shelter.Name} (Max: {shelter.MaxCapacity})";
-                OccInput.Text = shelter.CurrentOccupancy.ToString();
+                EditShelterSubtitle.Text = $"Editing: {shelter.Name}";
+                EditNameInput.Text = shelter.Name;
+                EditOccInput.Text = shelter.CurrentOccupancy.ToString();
+                EditMaxCapLabel.Text = $"(Max: {shelter.MaxCapacity})";
+
+                // Set ComboBox to current status
+                for (int i = 0; i < EditStatusPicker.Items.Count; i++)
+                {
+                    if (EditStatusPicker.Items[i] is ComboBoxItem item &&
+                        item.Content?.ToString() == shelter.Status)
+                    {
+                        EditStatusPicker.SelectedIndex = i;
+                        break;
+                    }
+                }
             }
-            ModalOccupancyOverlay.Visibility = Visibility.Visible;
+            ModalEditOverlay.Visibility = Visibility.Visible;
         }
 
-        private void OnCloseOccModal(object sender, RoutedEventArgs e)
+        private void OnCloseEditModal(object sender, RoutedEventArgs e)
         {
-            ModalOccupancyOverlay.Visibility = Visibility.Collapsed;
+            ModalEditOverlay.Visibility = Visibility.Collapsed;
         }
 
-        private void OnSaveOccupancy(object sender, RoutedEventArgs e)
+        private void OnSaveEdit(object sender, RoutedEventArgs e)
         {
-            if (!int.TryParse(OccInput.Text, out int newOcc) || newOcc < 0)
-            {
-                MessageBox.Show("Invalid number.", "Error");
-                return;
-            }
-
             var shelter = _allShelters.FirstOrDefault(s => s.ShelterID == _selectedShelterId);
-            if (shelter != null && newOcc > shelter.MaxCapacity)
+            if (shelter == null) return;
+
+            // Validate name
+            string newName = EditNameInput.Text?.Trim() ?? "";
+            if (string.IsNullOrEmpty(newName))
             {
-                MessageBox.Show($"Hindi puwede lumampas sa max capacity ({shelter.MaxCapacity}).", "Error");
+                MessageBox.Show("Shelter name is required.", "Validation Error");
                 return;
             }
 
-            bool success = _shelterService.UpdateOccupancy(_selectedShelterId, newOcc);
-            if (success)
+            // Validate occupancy
+            if (!int.TryParse(EditOccInput.Text, out int newOcc) || newOcc < 0)
             {
-                // Auto-update status
-                string newStatus = (shelter != null && newOcc >= shelter.MaxCapacity) ? "Full" : "Open";
+                MessageBox.Show("Invalid occupancy number.", "Validation Error");
+                return;
+            }
+            if (newOcc > shelter.MaxCapacity)
+            {
+                MessageBox.Show($"Occupancy cannot exceed max capacity ({shelter.MaxCapacity}).", "Validation Error");
+                return;
+            }
+
+            // Get selected status
+            string newStatus = "Open";
+            if (EditStatusPicker.SelectedItem is ComboBoxItem selected)
+            {
+                newStatus = selected.Content?.ToString() ?? "Open";
+            }
+
+            // Save changes
+            if (newName != shelter.Name)
+                _shelterService.UpdateShelterName(_selectedShelterId, newName);
+
+            if (newOcc != shelter.CurrentOccupancy)
+                _shelterService.UpdateOccupancy(_selectedShelterId, newOcc);
+
+            if (newStatus != shelter.Status)
                 _shelterService.UpdateStatus(_selectedShelterId, newStatus);
 
-                ModalOccupancyOverlay.Visibility = Visibility.Collapsed;
-                LoadData(); // Refresh table
-            }
+            ModalEditOverlay.Visibility = Visibility.Collapsed;
+            LoadData();
         }
 
         // ── Delete Modal ─────────────────────────────────────────────

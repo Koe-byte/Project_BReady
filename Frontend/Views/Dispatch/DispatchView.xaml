@@ -9,11 +9,10 @@
         </Grid.RowDefinitions>
 
         <!-- TOPBAR -->
-        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource CardBg}">
+        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource MainBg}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Border Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom"/>
             <StackPanel VerticalAlignment="Center" Margin="0,0,0,10">
                 <TextBlock Text="Dispatch &amp; Situational Reports" Style="{DynamicResource PageH1}"/>
                 <TextBlock Text="Manage relief goods distribution and view recent dispatch logs" Style="{DynamicResource PageSubtitle}"/>

@@ -13,12 +13,11 @@
         </Grid.RowDefinitions>
 
         <!-- TOPBAR -->
-        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource CardBg}">
+        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource MainBg}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.ColumnSpan="2" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom"/>
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
                 <TextBlock Text="Reports &amp; Analytics" Style="{DynamicResource PageH1}"/>
                 <TextBlock Text="Comprehensive summary of all relief operations" Style="{DynamicResource PageSubtitle}"/>

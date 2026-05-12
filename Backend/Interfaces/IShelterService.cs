@@ -10,6 +10,7 @@ namespace ProjectBReadyWPF.Backend.Interfaces
         bool AddShelter(Shelter shelter);
         bool UpdateOccupancy(int shelterId, int newOccupancy);
         bool UpdateStatus(int shelterId, string status);
+        bool UpdateShelterName(int shelterId, string newName);
         bool DeleteShelter(int shelterId);
     }
 }

@@ -45,13 +45,21 @@ namespace ProjectBReadyWPF.Frontend.Views.Resident
             }
         }
 
-        public string Status => CurrentOccupancy >= MaxCapacity ? "Full" : "Available";
-        public SolidColorBrush StatusBadgeBg => Status == "Full"
-            ? new SolidColorBrush(Color.FromRgb(254, 226, 226))
-            : new SolidColorBrush(Color.FromRgb(209, 250, 229));
-        public SolidColorBrush StatusTextColor => Status == "Full"
-            ? new SolidColorBrush(Color.FromRgb(153, 27, 27))
-            : new SolidColorBrush(Color.FromRgb(22, 101, 52));
+        public string Status { get; set; } = "Open"; // From DB
+        public SolidColorBrush StatusBadgeBg => Status switch
+        {
+            "Full" => new SolidColorBrush(Color.FromRgb(254, 226, 226)),
+            "Closed" => new SolidColorBrush(Color.FromRgb(226, 232, 240)),
+            "Under Maintenance" => new SolidColorBrush(Color.FromRgb(254, 243, 199)),
+            _ => new SolidColorBrush(Color.FromRgb(209, 250, 229))
+        };
+        public SolidColorBrush StatusTextColor => Status switch
+        {
+            "Full" => new SolidColorBrush(Color.FromRgb(153, 27, 27)),
+            "Closed" => new SolidColorBrush(Color.FromRgb(51, 65, 85)),
+            "Under Maintenance" => new SolidColorBrush(Color.FromRgb(146, 64, 14)),
+            _ => new SolidColorBrush(Color.FromRgb(22, 101, 52))
+        };
     }
 
     // ── ViewModel ────────────────────────────────────────────────────
@@ -104,7 +112,8 @@ namespace ProjectBReadyWPF.Frontend.Views.Resident
                     {
                         Name = s.ShelterName,
                         MaxCapacity = s.MaxCapacity,
-                        CurrentOccupancy = s.CurrentOccupancy
+                        CurrentOccupancy = s.CurrentOccupancy,
+                        Status = s.Status
                     });
 
                     totalOcc += s.CurrentOccupancy;

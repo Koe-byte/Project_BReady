@@ -15,6 +15,23 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
         public string Name { get; set; } = "";
         public int CurrentOccupancy { get; set; }
         public int MaxCapacity { get; set; }
+        public string RawStatus { get; set; } = "Open";
+
+        private string NormalizedStatus
+        {
+            get
+            {
+                var value = RawStatus?.Trim() ?? string.Empty;
+                if (value.Equals("UnderMaintenance", StringComparison.OrdinalIgnoreCase) ||
+                    value.Equals("Under Maintenance", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Under Maintenance";
+                }
+                if (value.Equals("Closed", StringComparison.OrdinalIgnoreCase)) return "Closed";
+                if (value.Equals("Full", StringComparison.OrdinalIgnoreCase)) return "Full";
+                return "Open";
+            }
+        }
 
         // Bar chart
         public string OccupancyDisplay => $"{CurrentOccupancy} / {MaxCapacity}";
@@ -25,6 +42,10 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             get
             {
                 double pct = MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 100 : 0;
+                if (NormalizedStatus == "Closed" || NormalizedStatus == "Under Maintenance")
+                {
+                    return new SolidColorBrush(Color.FromRgb(148, 163, 184));
+                }
                 if (pct >= 90) return new SolidColorBrush(Color.FromRgb(239, 68, 68));
                 if (pct >= 70) return new SolidColorBrush(Color.FromRgb(234, 124, 60));
                 return new SolidColorBrush(Color.FromRgb(163, 230, 53));
@@ -45,6 +66,10 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             get
             {
                 double pct = MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 100 : 0;
+                if (NormalizedStatus == "Closed" || NormalizedStatus == "Under Maintenance")
+                {
+                    return new SolidColorBrush(Color.FromRgb(71, 85, 105));
+                }
                 if (pct >= 90) return new SolidColorBrush(Color.FromRgb(239, 68, 68));
                 if (pct >= 70) return new SolidColorBrush(Color.FromRgb(234, 124, 60));
                 return new SolidColorBrush(Color.FromRgb(22, 163, 74));
@@ -54,17 +79,23 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
         {
             get
             {
-                double pct = MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 100 : 0;
-                if (pct >= 100) return "Full";
-                return "Open";
+                return NormalizedStatus;
             }
         }
-        public SolidColorBrush StatusBadgeBg => Status == "Full"
-            ? new SolidColorBrush(Color.FromRgb(254, 226, 226))
-            : new SolidColorBrush(Color.FromRgb(209, 250, 229));
-        public SolidColorBrush StatusTextColor => Status == "Full"
-            ? new SolidColorBrush(Color.FromRgb(153, 27, 27))
-            : new SolidColorBrush(Color.FromRgb(22, 101, 52));
+        public SolidColorBrush StatusBadgeBg => Status switch
+        {
+            "Full" => new SolidColorBrush(Color.FromRgb(254, 226, 226)),
+            "Closed" => new SolidColorBrush(Color.FromRgb(226, 232, 240)),
+            "Under Maintenance" => new SolidColorBrush(Color.FromRgb(254, 243, 199)),
+            _ => new SolidColorBrush(Color.FromRgb(209, 250, 229))
+        };
+        public SolidColorBrush StatusTextColor => Status switch
+        {
+            "Full" => new SolidColorBrush(Color.FromRgb(153, 27, 27)),
+            "Closed" => new SolidColorBrush(Color.FromRgb(51, 65, 85)),
+            "Under Maintenance" => new SolidColorBrush(Color.FromRgb(146, 64, 14)),
+            _ => new SolidColorBrush(Color.FromRgb(22, 101, 52))
+        };
     }
 
     public class DispatchDisplayItem
@@ -132,9 +163,13 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                     {
                         Name = s.ShelterName,
                         CurrentOccupancy = s.CurrentOccupancy,
-                        MaxCapacity = s.MaxCapacity
+                        MaxCapacity = s.MaxCapacity,
+                        RawStatus = s.Status ?? "Open"
                     });
-                    if (s.CurrentOccupancy >= s.MaxCapacity) fullCount++;
+                    if ((s.Status ?? string.Empty).Trim().Equals("Full", StringComparison.OrdinalIgnoreCase))
+                    {
+                        fullCount++;
+                    }
                 }
                 FullShelterCount = fullCount;
 

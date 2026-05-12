@@ -77,7 +77,7 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             int fullCount = 0;
             foreach (var s in vm.Shelters)
             {
-                if (s.CurrentOccupancy >= s.MaxCapacity) fullCount++;
+                if (s.Status == "Full") fullCount++;
             }
             FullSheltersBadge.Text = fullCount == 0
                 ? "All shelters open"

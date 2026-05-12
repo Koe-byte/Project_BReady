@@ -12,6 +12,32 @@ namespace ProjectBReadyWPF.Backend.Services
     {
         private readonly DBHelper _dbHelper;
 
+        private static string NormalizeStatus(string? status)
+        {
+            var value = status?.Trim() ?? string.Empty;
+            if (value.Equals("UnderMaintenance", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Under Maintenance";
+            }
+
+            if (value.Equals("Under Maintenance", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Under Maintenance";
+            }
+
+            if (value.Equals("Closed", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Closed";
+            }
+
+            if (value.Equals("Full", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Full";
+            }
+
+            return "Open";
+        }
+
         public ShelterService()
         {
             _dbHelper = new DBHelper();
@@ -38,7 +64,7 @@ namespace ProjectBReadyWPF.Backend.Services
                         ShelterName = reader.GetString(1),
                         MaxCapacity = reader.GetInt32(2),
                         CurrentOccupancy = reader.GetInt32(3),
-                        Status = reader.GetString(4)
+                        Status = NormalizeStatus(reader.GetString(4))
                     });
                 }
             }
@@ -66,7 +92,7 @@ namespace ProjectBReadyWPF.Backend.Services
                     ShelterName = reader.GetString(1),
                     MaxCapacity = reader.GetInt32(2),
                     CurrentOccupancy = reader.GetInt32(3),
-                    Status = reader.GetString(4)
+                    Status = NormalizeStatus(reader.GetString(4))
                 };
             }
 
@@ -88,7 +114,7 @@ namespace ProjectBReadyWPF.Backend.Services
                 cmd.Parameters.AddWithValue("@name", shelter.ShelterName);
                 cmd.Parameters.AddWithValue("@maxCap", shelter.MaxCapacity);
                 cmd.Parameters.AddWithValue("@curOcc", shelter.CurrentOccupancy);
-                cmd.Parameters.AddWithValue("@status", shelter.Status);
+                cmd.Parameters.AddWithValue("@status", NormalizeStatus(shelter.Status));
 
                 return cmd.ExecuteNonQuery() > 0;
             }
@@ -135,7 +161,7 @@ namespace ProjectBReadyWPF.Backend.Services
                     "UPDATE shelters SET status = @status WHERE shelter_id = @id",
                     conn);
 
-                cmd.Parameters.AddWithValue("@status", status);
+                cmd.Parameters.AddWithValue("@status", NormalizeStatus(status));
                 cmd.Parameters.AddWithValue("@id", shelterId);
 
                 return cmd.ExecuteNonQuery() > 0;
@@ -143,6 +169,30 @@ namespace ProjectBReadyWPF.Backend.Services
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"Error updating status: {ex.Message}",
+                    "Database Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return false;
+            }
+        }
+
+        // ── UPDATE: I-update ang pangalan ng shelter ─────────────────
+        public bool UpdateShelterName(int shelterId, string newName)
+        {
+            try
+            {
+                using var conn = _dbHelper.GetConnection();
+                conn.Open();
+                using var cmd = new NpgsqlCommand(
+                    "UPDATE shelters SET shelter_name = @name WHERE shelter_id = @id",
+                    conn);
+
+                cmd.Parameters.AddWithValue("@name", newName);
+                cmd.Parameters.AddWithValue("@id", shelterId);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error updating shelter name: {ex.Message}",
                     "Database Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 return false;
             }

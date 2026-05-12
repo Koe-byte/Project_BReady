@@ -13,12 +13,11 @@
         </Grid.RowDefinitions>
 
         <!-- TOPBAR -->
-        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource CardBg}">
+        <Grid Grid.Row="0" Margin="32,20" Background="{DynamicResource MainBg}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.ColumnSpan="2" Height="1" Background="{DynamicResource Border}" VerticalAlignment="Bottom"/>
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
                 <TextBlock Text="Shelter Management" Style="{DynamicResource PageH1}"/>
                 <TextBlock Text="Manage evacuation centers and occupancy records" Style="{DynamicResource PageSubtitle}"/>
@@ -118,10 +117,10 @@
                                 </StackPanel>
                             </Border>
 
-                            <Button Grid.Column="1" Content="🗑 Delete" Style="{DynamicResource BtnGhost}"
+                            <Button Grid.Column="1" Content="✏️ Edit Shelter" Style="{DynamicResource BtnGhost}"
+                                    Click="OnEditShelter" Margin="8,0,0,0"/>
+                            <Button Grid.Column="2" Content="🗑 Delete" Style="{DynamicResource BtnGhost}"
                                     Click="OnDeleteSelected" Margin="8,0,0,0"/>
-                            <Button Grid.Column="2" Content="📋 Update Occupancy" Style="{DynamicResource BtnGhost}"
-                                    Click="OnUpdateOccupancy" Margin="8,0,0,0"/>
                         </Grid>
 
                         <!-- Table Header -->
@@ -208,12 +207,12 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- MODAL: Update Occupancy -->
-        <Grid x:Name="ModalOccupancyOverlay" Grid.RowSpan="2" Visibility="Collapsed"
+        <!-- MODAL: Edit Shelter -->
+        <Grid x:Name="ModalEditOverlay" Grid.RowSpan="2" Visibility="Collapsed"
               Background="#73000000">
             <Border CornerRadius="16" Background="White" Padding="0"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                    MinWidth="420" BorderBrush="{DynamicResource Border}" BorderThickness="1">
+                    MinWidth="460" BorderBrush="{DynamicResource Border}" BorderThickness="1">
                 <StackPanel>
                     <Grid Margin="26,22,26,16">
                         <Grid.ColumnDefinitions>
@@ -221,30 +220,51 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Update Occupancy" FontSize="16" FontWeight="Bold"
+                            <TextBlock Text="Edit Shelter" FontSize="16" FontWeight="Bold"
                                        Foreground="{DynamicResource TextPrimary}"/>
-                            <TextBlock x:Name="OccShelterName" FontSize="13"
+                            <TextBlock x:Name="EditShelterSubtitle" FontSize="13"
                                        Foreground="{DynamicResource TextMuted}"/>
                         </StackPanel>
                         <Button Grid.Column="1" Content="✕" Background="Transparent"
                                 Foreground="{DynamicResource TextMuted}" FontSize="18"
-                                Width="32" Height="32" Click="OnCloseOccModal"/>
+                                Width="32" Height="32" Click="OnCloseEditModal"/>
                     </Grid>
                     <Border Height="1" Background="{DynamicResource Border}"/>
-                    <StackPanel Margin="26,24">
-                        <TextBlock Text="New Occupancy Count" FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,8"/>
-                        <TextBox x:Name="OccInput" FontSize="14" Padding="10,8"
+                    <StackPanel Margin="26,20">
+                        <!-- Shelter Name -->
+                        <TextBlock FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6">
+                            <Run Text="Shelter Name "/>
+                            <Run Text="*" Foreground="{DynamicResource Red}"/>
+                        </TextBlock>
+                        <TextBox x:Name="EditNameInput" FontSize="14" Padding="10,8"
+                                 BorderBrush="{DynamicResource Border}" BorderThickness="1" Margin="0,0,0,16"/>
+
+                        <!-- Status -->
+                        <TextBlock Text="Status" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
+                        <ComboBox x:Name="EditStatusPicker" FontSize="14" Padding="10,8"
+                                  BorderBrush="{DynamicResource Border}" Margin="0,0,0,16">
+                            <ComboBoxItem Content="Open"/>
+                            <ComboBoxItem Content="Full"/>
+                            <ComboBoxItem Content="Closed"/>
+                            <ComboBoxItem Content="Under Maintenance"/>
+                        </ComboBox>
+
+                        <!-- Current Occupancy -->
+                        <TextBlock FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6">
+                            <Run Text="Current Occupancy "/>
+                            <Run x:Name="EditMaxCapLabel" Text="" Foreground="{DynamicResource TextMuted}"/>
+                        </TextBlock>
+                        <TextBox x:Name="EditOccInput" FontSize="14" Padding="10,8"
                                  BorderBrush="{DynamicResource Border}" BorderThickness="1"/>
-                        <TextBlock Text="Status will automatically update to Full when occupancy reaches max capacity."
-                                   FontSize="12" Foreground="{DynamicResource TextMuted}" Margin="0,8,0,0"
-                                   TextWrapping="Wrap"/>
                     </StackPanel>
                     <Border Height="1" Background="{DynamicResource Border}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="26,16">
-                        <Button Content="Cancel" Style="{DynamicResource BtnGhost}" Click="OnCloseOccModal"/>
-                        <Button Content="💾 Save Occupancy" Style="{DynamicResource BtnPrimary}"
-                                Margin="10,0,0,0" Click="OnSaveOccupancy"/>
+                        <Button Content="Cancel" Style="{DynamicResource BtnGhost}" Click="OnCloseEditModal"/>
+                        <Button Content="💾 Save Changes" Style="{DynamicResource BtnPrimary}"
+                                Margin="10,0,0,0" Click="OnSaveEdit"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
