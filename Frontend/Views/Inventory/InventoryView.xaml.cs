@@ -78,6 +78,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Inventory
     public partial class InventoryView : UserControl
     {
         private readonly IInventoryService _inventoryService;
+        private readonly IRealTimeService _realTimeService;
         private List<FoodDisplayItem> _allFood = new();
         private List<MedDisplayItem> _allMed = new();
         private int _selectedFoodId = -1;
@@ -88,7 +89,20 @@ namespace ProjectBReadyWPF.Frontend.Views.Inventory
         {
             InitializeComponent();
             _inventoryService = App.ServiceProvider.GetRequiredService<IInventoryService>();
+            _realTimeService = App.ServiceProvider.GetRequiredService<IRealTimeService>();
             LoadData();
+
+            // Subscribe to real-time database events
+            _realTimeService.OnTableUpdated += RealTime_OnTableUpdated;
+            this.Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTime_OnTableUpdated;
+        }
+
+        private void RealTime_OnTableUpdated(object? sender, string tableName)
+        {
+            if (tableName == "inventory_items")
+            {
+                LoadData();
+            }
         }
 
         private void LoadData()
@@ -253,13 +267,6 @@ namespace ProjectBReadyWPF.Frontend.Views.Inventory
         }
 
         // ── Navigation ───────────────────────────────────────────────
-
-        private void OnRefresh(object sender, RoutedEventArgs e)
-        {
-            _selectedFoodId = -1;
-            _selectedMedId = -1;
-            LoadData();
-        }
 
         private void OnAddItem(object sender, RoutedEventArgs e)
         {

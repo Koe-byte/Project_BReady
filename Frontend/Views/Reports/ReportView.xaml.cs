@@ -187,11 +187,6 @@ namespace ProjectBReadyWPF.Frontend.Views.Reports
             }
         }
 
-        private void OnRefresh(object sender, RoutedEventArgs e)
-        {
-            LoadData();
-        }
-
         private void OnPrint(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Printing is not implemented yet.", "Print Report");

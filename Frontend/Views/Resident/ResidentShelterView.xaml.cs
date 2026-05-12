@@ -66,10 +66,25 @@ namespace ProjectBReadyWPF.Frontend.Views.Resident
     // ── View ─────────────────────────────────────────────────────────
     public partial class ResidentShelterView : UserControl
     {
+        private readonly IRealTimeService _realTimeService;
+
         public ResidentShelterView()
         {
             InitializeComponent();
+            _realTimeService = App.ServiceProvider.GetRequiredService<IRealTimeService>();
             LoadData();
+
+            // Subscribe to real-time database events
+            _realTimeService.OnTableUpdated += RealTime_OnTableUpdated;
+            this.Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTime_OnTableUpdated;
+        }
+
+        private void RealTime_OnTableUpdated(object? sender, string tableName)
+        {
+            if (tableName == "shelters")
+            {
+                LoadData();
+            }
         }
 
         private void LoadData()

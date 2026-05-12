@@ -31,6 +31,16 @@ public partial class App : Application
         services.AddSingleton<IDashboardService, DashboardService>();
         services.AddSingleton<IDispatchService, DispatchService>();
         services.AddSingleton<IInventoryService, InventoryService>();
+        services.AddSingleton<IRealTimeService, PostgresRealTimeService>();
+    }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+        
+        // Start the real-time background listener on application startup
+        var realTimeService = ServiceProvider.GetRequiredService<IRealTimeService>();
+        realTimeService.StartListening();
     }
 }
 

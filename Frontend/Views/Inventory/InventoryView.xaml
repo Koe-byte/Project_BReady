@@ -24,7 +24,9 @@
                 <TextBlock Text="Track food supplies and medical goods" Style="{DynamicResource PageSubtitle}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Content="⟳  Refresh" Style="{DynamicResource BtnGhost}" Click="OnRefresh" Margin="0,0,8,0"/>
+                <Border Background="{DynamicResource TealLight}" CornerRadius="8" Padding="10,5" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <TextBlock Text="● Live" Foreground="{DynamicResource Teal}" FontSize="11" FontWeight="Bold"/>
+                </Border>
                 <Button Content="+ Add Item" Style="{DynamicResource BtnPrimary}" Click="OnAddItem"/>
             </StackPanel>
         </Grid>

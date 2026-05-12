@@ -6,6 +6,7 @@ using ProjectBReadyWPF.Backend.Models.Facilities;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectBReadyWPF.Frontend.Views.Dispatch
 {
@@ -14,6 +15,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Dispatch
         private readonly IDispatchService _dispatchService;
         private readonly IInventoryService _inventoryService;
         private readonly IShelterService _shelterService;
+        private readonly IRealTimeService _realTimeService;
 
         public DispatchViewModel ViewModel { get; set; }
 
@@ -23,12 +25,31 @@ namespace ProjectBReadyWPF.Frontend.Views.Dispatch
             _dispatchService = dispatchService;
             _inventoryService = inventoryService;
             _shelterService = shelterService;
+            
+            // Resolve RealTimeService from App DI
+            _realTimeService = App.ServiceProvider.GetRequiredService<IRealTimeService>();
 
             ViewModel = new DispatchViewModel();
             this.DataContext = ViewModel;
 
             LoadDropdowns();
             LoadLogs();
+
+            // Subscribe to real-time events
+            _realTimeService.OnTableUpdated += RealTimeService_OnTableUpdated;
+            this.Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTimeService_OnTableUpdated;
+        }
+
+        private void RealTimeService_OnTableUpdated(object? sender, string tableName)
+        {
+            if (tableName == "inventory_items" || tableName == "shelters")
+            {
+                LoadDropdowns();
+            }
+            if (tableName == "dispatch_logs")
+            {
+                LoadLogs();
+            }
         }
 
         private void LoadDropdowns()

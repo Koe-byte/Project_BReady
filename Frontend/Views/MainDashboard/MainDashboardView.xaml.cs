@@ -2,21 +2,36 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Microsoft.Extensions.DependencyInjection;
+using ProjectBReadyWPF.Backend.Interfaces;
 
 namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 {
     public partial class MainDashboardView : UserControl
     {
+        private readonly IRealTimeService _realTimeService;
+
         public MainDashboardView()
         {
             InitializeComponent();
-            var vm = new MainDashboardViewModel();
-            DataContext = vm;
-            UpdateDonutChart(vm);
-            UpdateLabels(vm);
+            _realTimeService = App.ServiceProvider.GetRequiredService<IRealTimeService>();
+            RefreshDashboard();
+
+            // Subscribe to real-time database events
+            _realTimeService.OnTableUpdated += RealTime_OnTableUpdated;
+            this.Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTime_OnTableUpdated;
         }
 
-        private void OnRefresh(object sender, RoutedEventArgs e)
+        private void RealTime_OnTableUpdated(object? sender, string tableName)
+        {
+            // Dashboard shows data from all tables, so refresh on any change
+            if (tableName == "shelters" || tableName == "inventory_items" || tableName == "dispatch_logs")
+            {
+                RefreshDashboard();
+            }
+        }
+
+        private void RefreshDashboard()
         {
             var vm = new MainDashboardViewModel();
             DataContext = vm;

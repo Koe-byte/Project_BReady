@@ -61,6 +61,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
     public partial class ShelterView : UserControl
     {
         private readonly IShelterService _shelterService;
+        private readonly IRealTimeService _realTimeService;
         private List<ShelterRowItem> _allShelters = new();
         private int _selectedShelterId = -1;
 
@@ -68,7 +69,20 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
         {
             InitializeComponent();
             _shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
+            _realTimeService = App.ServiceProvider.GetRequiredService<IRealTimeService>();
             LoadData();
+
+            // Subscribe to real-time database events
+            _realTimeService.OnTableUpdated += RealTime_OnTableUpdated;
+            this.Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTime_OnTableUpdated;
+        }
+
+        private void RealTime_OnTableUpdated(object? sender, string tableName)
+        {
+            if (tableName == "shelters")
+            {
+                LoadData();
+            }
         }
 
         private void LoadData()
@@ -118,12 +132,6 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
         }
 
         // ── Event handlers ───────────────────────────────────────────
-
-        private void OnRefresh(object sender, RoutedEventArgs e)
-        {
-            _selectedShelterId = -1;
-            LoadData();
-        }
 
         private void OnAddShelter(object sender, RoutedEventArgs e)
         {
