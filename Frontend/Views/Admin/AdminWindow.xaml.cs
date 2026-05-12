@@ -19,6 +19,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
     {
         private DispatcherTimer _inactivityTimer;
         private readonly TimeSpan _timeoutDuration = TimeSpan.FromMinutes(1);
+        private bool _isClosing = false; // Guard flag to prevent double-fire
 
         public AdminWindow()
         {
@@ -42,16 +43,35 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
 
         private void ResetTimer()
         {
+            if (_isClosing) return; // Don't reset if we're already closing
             _inactivityTimer.Stop();
             _inactivityTimer.Start();
         }
 
         private void OnInactivityTimeout(object? sender, EventArgs e)
         {
-            // Auto-logout admin due to inactivity
+            if (_isClosing) return; // Prevent double-fire
+            _isClosing = true;
             _inactivityTimer.Stop();
-            MessageBox.Show("Admin session expired due to inactivity. Returning to Resident View.", "Timeout", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            // Close the admin window FIRST, then show notification
             this.Close();
+
+            // Show message AFTER close — it will appear on the Resident window
+            MessageBox.Show(
+                "You've been inactive for too long. Returning to Resident View.",
+                "Session Timeout",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+
+        private void PerformLogout(string message, string title, MessageBoxImage icon)
+        {
+            if (_isClosing) return;
+            _isClosing = true;
+            _inactivityTimer.Stop();
+            this.Close();
+            MessageBox.Show(message, title, MessageBoxButton.OK, icon);
         }
 
         private void NavDashboard_Click(object sender, RoutedEventArgs e)
@@ -87,10 +107,7 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
             // Toggle Admin mode using Ctrl + Shift + O (Logout)
             if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.O)
             {
-                // Manually logging out
-                _inactivityTimer.Stop();
-                MessageBox.Show("Logged out. Returning to Resident View.", "Logout", MessageBoxButton.OK, MessageBoxImage.Information);
-                this.Close();
+                PerformLogout("Logged out. Returning to Resident View.", "Logout", MessageBoxImage.Information);
                 e.Handled = true;
             }
         }
