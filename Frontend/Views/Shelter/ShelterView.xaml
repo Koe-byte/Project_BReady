@@ -31,7 +31,7 @@
         </Grid>
 
         <!-- PAGE BODY -->
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
             <StackPanel Margin="32,28">
 
                 <!-- Stat Cards (3-col) -->
@@ -128,12 +128,12 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="36"/>
                                 <ColumnDefinition Width="32"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2*" MinWidth="150"/>
+                                <ColumnDefinition Width="*" MinWidth="80"/>
+                                <ColumnDefinition Width="*" MinWidth="80"/>
+                                <ColumnDefinition Width="*" MinWidth="80"/>
+                                <ColumnDefinition Width="2*" MinWidth="150"/>
+                                <ColumnDefinition Width="1.5*" MinWidth="140"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="1" Text="#" Style="{DynamicResource TableHeader}"/>
                             <TextBlock Grid.Column="2" Text="SHELTER NAME" Style="{DynamicResource TableHeader}"/>
@@ -153,12 +153,12 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="36"/>
                                             <ColumnDefinition Width="32"/>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="2*" MinWidth="150"/>
+                                            <ColumnDefinition Width="*" MinWidth="80"/>
+                                            <ColumnDefinition Width="*" MinWidth="80"/>
+                                            <ColumnDefinition Width="*" MinWidth="80"/>
+                                            <ColumnDefinition Width="2*" MinWidth="150"/>
+                                            <ColumnDefinition Width="1.5*" MinWidth="140"/>
                                         </Grid.ColumnDefinitions>
                                         <RadioButton Grid.Column="0" GroupName="ShelterSelect" VerticalAlignment="Center"
                                                      Checked="OnShelterRadioChecked" Tag="{Binding ShelterID}"/>
@@ -257,8 +257,24 @@
                             <Run Text="Current Occupancy "/>
                             <Run x:Name="EditMaxCapLabel" Text="" Foreground="{DynamicResource TextMuted}"/>
                         </TextBlock>
-                        <TextBox x:Name="EditOccInput" FontSize="14" Padding="10,8"
-                                 BorderBrush="{DynamicResource Border}" BorderThickness="1"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="−" FontSize="18" FontWeight="Bold"
+                                    Width="40" Height="38" Background="#F1F5F9" Foreground="#334155"
+                                    BorderBrush="{DynamicResource Border}" BorderThickness="1,1,0,1"
+                                    Click="OnOccDecrement" Cursor="Hand"/>
+                            <TextBox x:Name="EditOccInput" Grid.Column="1" FontSize="14" Padding="10,8"
+                                     BorderBrush="{DynamicResource Border}" BorderThickness="1"
+                                     HorizontalContentAlignment="Center"/>
+                            <Button Grid.Column="2" Content="+" FontSize="18" FontWeight="Bold"
+                                    Width="40" Height="38" Background="#F1F5F9" Foreground="#334155"
+                                    BorderBrush="{DynamicResource Border}" BorderThickness="0,1,1,1"
+                                    Click="OnOccIncrement" Cursor="Hand"/>
+                        </Grid>
                     </StackPanel>
                     <Border Height="1" Background="{DynamicResource Border}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="26,16">
