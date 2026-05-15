@@ -29,18 +29,18 @@
 ---
 
 <div align="center">
-  <img src="https://via.placeholder.com/900x400?text=Project+B-Ready+Social+Preview+Banner" alt="B-Ready social preview banner" width="900" />
+  <img src="docs/brand/social-preview.png" alt="B-Ready social preview banner" width="900" />
 </div>
 
 ## Demo
 
 <div align="center">
-  <img src="https://via.placeholder.com/900x500?text=Animated+Demo+GIF+Placeholder" alt="B-Ready demo showing dashboard, shelter management, and real-time updates" width="900" />
+  <img src="docs/demo/demo.png" alt="B-Ready demo showing dashboard, shelter management, and real-time updates" width="900" />
 </div>
 
 | Admin Dashboard | Resident Kiosk | Inventory Management |
 | --- | --- | --- |
-| <img src="https://via.placeholder.com/280x180?text=Admin+Dashboard" alt="Admin Dashboard" width="280" height="180" /> | <img src="https://via.placeholder.com/280x180?text=Resident+Kiosk" alt="Resident Kiosk" width="280" height="180" /> | <img src="https://via.placeholder.com/280x180?text=Inventory+Management" alt="Inventory Management" width="280" height="180" /> |
+| <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="280" height="180" /> | <img src="docs/screenshots/resident-kiosk.png" alt="Resident Kiosk" width="280" height="180" /> | <img src="docs/screenshots/inventory-management.png" alt="Inventory Management" width="280" height="180" /> |
 
 ## Instructions on How to Run the Application
 
@@ -197,6 +197,10 @@ ProjectBReadyWPF/
 |   `-- Services/         Logic Implementation
 |-- Database/             Data Access Layer
 |   `-- DataAccess/       PostgreSQL Helper Classes
+|-- docs/                 Project Documentation & Media
+|   |-- brand/            Banners and Social Preview
+|   |-- demo/             Application Demo Assets
+|   `-- screenshots/      Feature Screenshots
 |-- Frontend/             User Interface
 |   |-- Assets/           Logos, Styles, and Themes
 |   |-- ViewModels/       UI State Management
