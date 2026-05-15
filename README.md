@@ -1,55 +1,109 @@
 # 🚨 Project B-Ready: Digital Disaster Relief & Shelter Management
 
-[cite_start]Project B-Ready is a desktop-based management system developed using C# Windows Forms Application[cite: 152]. [cite_start]It is designed to assist barangay officials in managing disaster relief operations and evacuation shelter monitoring at a localized scale[cite: 153]. 
+![Project Logo](Frontend/Assets/logo.jpg)
 
-[cite_start]To ensure efficiency and maintainability, the system runs on a "Kiosk Mode" architecture[cite: 154]. [cite_start]It starts with a default read-only "Resident View" dashboard and restricts administrative controls to authorized officials via a secret shortcut and PIN[cite: 155].
-
----
-
-## ⚙️ Core Features
-* [cite_start]**Evacuation Shelter Management:** Monitors shelter capacity, current occupancy, and operational status (Open/Full/Closed)[cite: 156].
-* [cite_start]**Relief Goods Inventory:** Manages the stock-in and dispatch of essential supplies without tight resident-level tracking to prevent system lag[cite: 157].
-* [cite_start]**Reports & Summary Dashboard:** Utilizes an on-demand refresh system to fetch the latest data from the database and generate quick situational reports[cite: 158].
+**Project B-Ready** is a professional desktop-based management system designed to assist barangay officials and disaster response teams in managing evacuation centers and relief operations. Built with modern .NET technologies, it provides a seamless transition from manual tracking to a robust, real-time digital solution.
 
 ---
 
-## 🛠️ Tech Stack
-* [cite_start]**Language & Framework:** C# / .NET [cite: 159]
-* [cite_start]**Interface:** Windows Forms (WinForms) [cite: 159]
-* [cite_start]**Database:** SQL Server (LocalDB via Table-Per-Hierarchy approach) [cite: 159]
-* [cite_start]**Design Tool:** Figma [cite: 159]
+## 🛠️ Tech Stack & Architecture
+
+- **Framework:** .NET 8.0 (Windows Desktop)
+- **UI Technology:** Windows Presentation Foundation (WPF) with XAML
+- **Language:** C# 12
+- **Database:** PostgreSQL (Hosted on Supabase)
+- **Pattern:** N-Tier Architecture with Dependency Injection (DI)
+- **Real-time:** Custom PostgreSQL Notification Listener
 
 ---
 
-## 💻 Object-Oriented Programming (OOP) Application
-The system strictly adheres to the four pillars of Object-Oriented Programming:
-* [cite_start]**Encapsulation:** Protects data integrity by managing shelter capacities through private fields and public methods[cite: 159].
-* [cite_start]**Inheritance:** Utilizes base classes for users (Person) and inventory (InventoryItem) to create specialized subclasses[cite: 160].
-* [cite_start]**Polymorphism:** Implements method overriding to handle distinct relief distribution computations based on item types[cite: 161].
-* [cite_start]**Abstraction:** Leverages `ITrackable` and `IReportable` interfaces to ensure consistent data generation across isolated modules[cite: 162].
+## ⚙️ Key Features
+
+### 🏢 Evacuation Shelter Management
+- Real-time monitoring of shelter capacities and occupancy.
+- Dynamic status tracking: **Open**, **Full**, **Closed**, or **Under Maintenance**.
+- Centralized database synchronization across all terminal instances.
+
+### 📦 Relief Goods & Inventory
+- Specialized management for stock-in and dispatch of essential supplies.
+- Automated logs for distribution to ensure transparency in relief operations.
+- Inventory trend tracking to predict supply needs.
+
+### 🖥️ Kiosk Mode & Secure Admin Access
+- **Resident View:** A read-only dashboard for public display in evacuation centers.
+- **Hidden Admin Panel:** Authorized personnel can access management tools via a secret shortcut: `Ctrl + Shift + O`.
+- **PIN Verification:** Secondary security layer for administrative actions.
 
 ---
 
-## 🚀 Setup Instructions (For Development)
-1. **Clone the repository.**
-2. [cite_start]Ensure you have **Visual Studio** installed with the `.NET desktop development` workload[cite: 37].
-3. [cite_start]**Database Setup:** The project uses **SQL Server Express (LocalDB)** which is built-in to Visual Studio[cite: 54]. [cite_start]The `.mdf` database file is automatically included in the repository and will dynamically connect using the `|DataDirectory|` connection string[cite: 114].
-4. Build and Run the solution.
+## 🚀 Getting Started
 
-> [cite_start]**Note:** A `.gitignore` file specifically for Visual Studio has been applied to this repository to prevent temporary background files (like `bin/` and `obj/` folders) from causing code conflicts[cite: 167, 168]. [cite_start]Pure C# code lang ang ma-u-upload[cite: 169].
+Follow these instructions to set up the project on your local machine for development and testing.
+
+### Prerequisites
+- **Visual Studio 2022** (Community, Professional, or Enterprise)
+- **.NET 8 SDK**
+- **Desktop Development with .NET** workload (Install via VS Installer)
+
+### Installation & Setup
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Koe-byte/Project_BReady.git
+   cd ProjectBReadyWPF
+   ```
+
+2. **Restore NuGet Packages**
+   Open the solution (`ProjectBReadyWPF.sln`) in Visual Studio. NuGet packages should restore automatically. If not, go to:
+   `Tools > NuGet Package Manager > Manage NuGet Packages for Solution > Restore`
+
+3. **Configure Database**
+   The project uses a remote PostgreSQL database. Create an `appsettings.json` file in the root directory (if it doesn't exist) and add your connection string:
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "YOUR_POSTGRES_CONNECTION_STRING"
+     },
+     "Security": {
+       "AdminPinHash": "YOUR_SHA256_PIN_HASH"
+     }
+   }
+   ```
+   > [!NOTE]
+   > Ensure `appsettings.json` is set to **Copy to Output Directory: Copy if newer** in the file properties.
+
+4. **Build and Run**
+   Press `F5` or click **Start** in Visual Studio to launch the application in **Resident View**.
 
 ---
 
-## 👥 Meet the Team
-* [cite_start]**Tristan Allen Cabral** - Logic Developer/Tester [cite: 320]
-* [cite_start]**Nash Ibon** - Logic Developer/Tester [cite: 320]
-* [cite_start]**John Danver Manalo** - Project Manager/Lead Developer [cite: 320]
-* [cite_start]**Janna Alexis Raras** - GUI Designer [cite: 321]
+## 🏗️ Project Structure
+
+- **`Frontend/`**: Contains XAML Views, ViewModels, and UI Components.
+- **`Backend/`**: Core logic, Service implementations, and Interfaces.
+- **`Database/`**: Data access layer and database helper classes.
+- **`Models/`**: Domain entities (Shelters, Inventory, Persons).
+
+---
+
+## 🎓 Object-Oriented Programming (OOP) Principles
+
+This project serves as a showcase for advanced OOP concepts:
+- **Abstraction:** Use of interfaces (`IShelterService`, `IAuthService`) to decouple logic from implementation.
+- **Encapsulation:** Data protection through private fields and robust property validation.
+- **Inheritance:** Hierarchical model structures for different facility and user types.
+- **Polymorphism:** Flexible service implementations and UI event handling.
+
+---
+
+## 👥 Meet the Team (BSU Alangilan Devs)
+
+- **John Danver Manalo** - Project Manager / Lead Backend Developer
+- **Tristan Allen Cabral** - Logic Developer / Database Architect
+- **Nash Ibon** - Logic Developer / Quality Assurance
+- **Janna Alexis Raras** - Lead GUI Designer / UX Specialist
 
 ---
 
 ## 📜 License
-[cite_start]This project is licensed under the **MIT License**[cite: 178]. 
-* [cite_start]You can copy, study, or use the code[cite: 179].
-* [cite_start]Please give credit to the original creators (Team B-Ready) if you use the code[cite: 180]. 
-* [cite_start]The creators hold no liability for any issues or errors that may occur upon using the system[cite: 181].
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
