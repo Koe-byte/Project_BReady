@@ -23,10 +23,8 @@ namespace ProjectBReadyWPF.Frontend.Views.Resident
 
                 if (result == true && pinPrompt.IsAuthenticated)
                 {
-                    var adminWindow = new AdminWindow
-                    {
-                        WindowStartupLocation = WindowStartupLocation.CenterScreen
-                    };
+                    var adminWindow = new AdminWindow();
+                    MatchWindowGeometry(adminWindow, this);
                     adminWindow.Closed += (_, _) => Show();
 
                     Hide();
@@ -35,6 +33,26 @@ namespace ProjectBReadyWPF.Frontend.Views.Resident
 
                 e.Handled = true;
             }
+        }
+
+        private static void MatchWindowGeometry(Window target, Window source)
+        {
+            if (source.WindowState == WindowState.Maximized)
+            {
+                target.WindowState = WindowState.Maximized;
+                return;
+            }
+
+            var bounds = source.WindowState == WindowState.Normal
+                ? new Rect(source.Left, source.Top, source.Width, source.Height)
+                : source.RestoreBounds;
+
+            target.WindowState = WindowState.Normal;
+            target.WindowStartupLocation = WindowStartupLocation.Manual;
+            target.Width = bounds.Width > 0 ? bounds.Width : source.Width;
+            target.Height = bounds.Height > 0 ? bounds.Height : source.Height;
+            target.Left = bounds.Left;
+            target.Top = bounds.Top;
         }
     }
 }

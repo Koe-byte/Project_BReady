@@ -3,12 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:components="clr-namespace:ProjectBReadyWPF.Frontend.Components"
         Title="Project B-READY — Disaster Command Center"
-        MinHeight="600" MinWidth="900"
         Height="700" Width="1100"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="CanResize"
         Background="{DynamicResource MainBg}"
-        Loaded="AdminWindow_Loaded"
         PreviewKeyDown="Window_PreviewKeyDown">
         
     <Window.Resources>

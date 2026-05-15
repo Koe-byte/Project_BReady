@@ -1,0 +1,93 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Dark green "safe / secure" palette for resident kiosk -->
+  <SolidColorBrush x:Key="MainBg" Color="#0A120E"/>
+  <SolidColorBrush x:Key="CardBg" Color="#132019"/>
+  <SolidColorBrush x:Key="TableHeaderBg" Color="#0F1A14"/>
+  <SolidColorBrush x:Key="ToolbarBg" Color="#0A120E"/>
+
+  <SolidColorBrush x:Key="Accent" Color="#4ADE80"/>
+  <SolidColorBrush x:Key="AccentLight" Color="#14532D"/>
+  <SolidColorBrush x:Key="AccentDark" Color="#22C55E"/>
+
+  <SolidColorBrush x:Key="Teal" Color="#86EFAC"/>
+  <SolidColorBrush x:Key="TealLight" Color="#166534"/>
+  <SolidColorBrush x:Key="Green" Color="#4ADE80"/>
+  <SolidColorBrush x:Key="GreenLight" Color="#14532D"/>
+
+  <SolidColorBrush x:Key="Blue" Color="#7DD3FC"/>
+  <SolidColorBrush x:Key="BlueLight" Color="#0C4A6E"/>
+  <SolidColorBrush x:Key="Red" Color="#F87171"/>
+  <SolidColorBrush x:Key="RedLight" Color="#450A0A"/>
+  <SolidColorBrush x:Key="Amber" Color="#FCD34D"/>
+  <SolidColorBrush x:Key="AmberLight" Color="#422006"/>
+
+  <SolidColorBrush x:Key="TextPrimary" Color="#F0FDF4"/>
+  <SolidColorBrush x:Key="TextSecondary" Color="#BBF7D0"/>
+  <SolidColorBrush x:Key="TextMuted" Color="#6B9B7A"/>
+  <SolidColorBrush x:Key="Border" Color="#1F3D2E"/>
+  <SolidColorBrush x:Key="BorderStrong" Color="#2D5A42"/>
+
+  <SolidColorBrush x:Key="AlertSafeBg" Color="#0F2419"/>
+  <SolidColorBrush x:Key="AlertSafeBorder" Color="#22C55E"/>
+  <SolidColorBrush x:Key="AlertSafeText" Color="#BBF7D0"/>
+  <SolidColorBrush x:Key="AlertWarnBg" Color="#1C1608"/>
+  <SolidColorBrush x:Key="AlertWarnBorder" Color="#CA8A04"/>
+  <SolidColorBrush x:Key="AlertWarnText" Color="#FEF3C7"/>
+  <SolidColorBrush x:Key="AlertCriticalBg" Color="#1A0A0A"/>
+  <SolidColorBrush x:Key="AlertCriticalBorder" Color="#DC2626"/>
+  <SolidColorBrush x:Key="AlertCriticalText" Color="#FECACA"/>
+
+  <SolidColorBrush x:Key="ChartAvailable" Color="#4ADE80"/>
+  <SolidColorBrush x:Key="ChartOccupied" Color="#F87171"/>
+  <SolidColorBrush x:Key="ChartTrack" Color="#1F3D2E"/>
+
+  <Style x:Key="LiveStatusBadge" TargetType="Border">
+    <Setter Property="Background" Value="#14532D"/>
+    <Setter Property="BorderBrush" Value="#4ADE80"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="Padding" Value="12,6"/>
+  </Style>
+
+  <Style x:Key="LiveStatusLabel" TargetType="TextBlock">
+    <Setter Property="Foreground" Value="#DCFCE7"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+  </Style>
+
+  <Style x:Key="AlertDanger" TargetType="Border">
+    <Setter Property="Background" Value="{StaticResource AlertCriticalBg}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource AlertCriticalBorder}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="12"/>
+    <Setter Property="Padding" Value="18,13"/>
+  </Style>
+
+  <Style x:Key="ResidentPageH1" TargetType="TextBlock" BasedOn="{StaticResource PageH1}">
+    <Setter Property="Foreground" Value="#F0FDF4"/>
+  </Style>
+
+  <Style x:Key="ResidentPageSubtitle" TargetType="TextBlock" BasedOn="{StaticResource PageSubtitle}">
+    <Setter Property="Foreground" Value="#86EFAC"/>
+  </Style>
+
+  <Style x:Key="Card" TargetType="Border">
+    <Setter Property="Background" Value="{StaticResource CardBg}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource Border}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="16"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Margin" Value="0,0,0,20"/>
+  </Style>
+
+  <Style x:Key="StatCard" TargetType="Border">
+    <Setter Property="Background" Value="{StaticResource CardBg}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource Border}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="16"/>
+    <Setter Property="Padding" Value="24,22"/>
+  </Style>
+
+</ResourceDictionary>
