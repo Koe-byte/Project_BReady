@@ -58,6 +58,7 @@ AssemblyInfo.cs
 Backend/Interfaces/
  IAuthService.cs
  IDashboardService.cs
+ IDashboardTrendTracker.cs
  IDispatchService.cs
  IInventoryService.cs
  IRealTimeService.cs
@@ -78,6 +79,7 @@ Backend/Models/
 Backend/Services/
  AuthService.cs
  DashboardService.cs
+ DashboardTrendTracker.cs
  DispatchService.cs
  InventoryService.cs
  PostgresRealTimeService.cs
@@ -88,6 +90,10 @@ Frontend/Components/
  SidebarComponent.xaml.cs
 Frontend/Views/
  Admin/AdminWindow.xaml.cs
+ AdminDashboard/
+  AdminDashboardCharts.cs
+  AdminDashboardView.xaml.cs
+  AdminDashboardViewModel.cs
  Dispatch/DispatchView.xaml.cs
  Inventory/
   InventoryAddView.xaml.cs
@@ -110,6 +116,7 @@ obj/Debug/net8.0-windows/
   SidebarComponent.g.cs
  Frontend/Views/
   Admin/AdminWindow.g.cs
+  AdminDashboard/AdminDashboardView.g.cs
   Dispatch/DispatchView.g.cs
   Inventory/
    InventoryAddView.g.cs

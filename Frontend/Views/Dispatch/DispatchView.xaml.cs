@@ -99,6 +99,25 @@ namespace ProjectBReadyWPF.Frontend.Views.Dispatch
             int itemId = (int)CmbItems.SelectedValue;
             int shelterId = (int)CmbShelters.SelectedValue;
 
+            // Get display names for confirmation message
+            var selectedItem = CmbItems.SelectedItem as dynamic;
+            var selectedShelter = CmbShelters.SelectedItem as ProjectBReadyWPF.Backend.Models.Facilities.Shelter;
+
+            string itemName = selectedItem?.DisplayLabel ?? "selected item";
+            string shelterName = selectedShelter?.ShelterName ?? "selected shelter";
+
+            var confirm = MessageBox.Show(
+                $"Are you sure you want to dispatch?\n\n" +
+                $"Item     : {itemName}\n" +
+                $"Shelter  : {shelterName}\n" +
+                $"Quantity : {quantity} units\n\n" +
+                $"This action cannot be undone.",
+                "Confirm Dispatch",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirm != MessageBoxResult.Yes) return;
+
             bool success = _dispatchService.DispatchItem(itemId, shelterId, quantity);
             
             if (success)
