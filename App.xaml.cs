@@ -32,6 +32,7 @@ public partial class App : Application
         services.AddSingleton<IDispatchService, DispatchService>();
         services.AddSingleton<IInventoryService, InventoryService>();
         services.AddSingleton<IRealTimeService, PostgresRealTimeService>();
+        services.AddSingleton<IDashboardTrendTracker, DashboardTrendTracker>();
     }
 
     protected override void OnStartup(StartupEventArgs e)

@@ -8,7 +8,7 @@ using ProjectBReadyWPF.Frontend.Views.Reports;
 using ProjectBReadyWPF.Frontend.Views.Dispatch;
 
 using ProjectBReadyWPF.Frontend.Views.Inventory;
-using ProjectBReadyWPF.Frontend.Views.MainDashboard;
+using ProjectBReadyWPF.Frontend.Views.AdminDashboard;
 using ProjectBReadyWPF.Frontend.Components;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectBReadyWPF.Backend.Interfaces;
@@ -21,13 +21,15 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
         private readonly TimeSpan _timeoutDuration = TimeSpan.FromMinutes(1);
         private bool _isClosing = false; // Guard flag to prevent double-fire
 
+        private AdminDashboardView? _dashboardView;
+
         public AdminWindow()
         {
             InitializeComponent();
-            
-            // Set initial state (Admin Mode)
+
             AppSidebar.SetAdminMode(true);
-            MainContentArea.Content = new MainDashboardView();
+            _dashboardView = new AdminDashboardView();
+            MainContentArea.Content = _dashboardView;
 
             // Setup Inactivity Timer
             _inactivityTimer = new DispatcherTimer();
@@ -39,6 +41,8 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
             this.PreviewMouseDown += (s, e) => ResetTimer();
             this.PreviewKeyDown += (s, e) => ResetTimer();
             this.PreviewTouchDown += (s, e) => ResetTimer();
+
+            ContentRendered += (_, _) => FitWindowToWorkArea();
         }
 
         private void ResetTimer()
@@ -74,32 +78,67 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
             MessageBox.Show(message, title, MessageBoxButton.OK, icon);
         }
 
-        private void NavDashboard_Click(object sender, RoutedEventArgs e)
+        private void NavDashboard_Click(object sender, RoutedEventArgs e) => NavigateToDashboard();
+        private void NavShelter_Click(object sender, RoutedEventArgs e) => NavigateToShelters();
+        private void NavInventory_Click(object sender, RoutedEventArgs e) => NavigateToInventory();
+        private void NavDispatch_Click(object sender, RoutedEventArgs e) => NavigateToDispatch();
+        private void NavReport_Click(object sender, RoutedEventArgs e) => NavigateToReports();
+
+        public void NavigateToDashboard()
         {
-            MainContentArea.Content = new MainDashboardView();
+            AppSidebar.ActivateNav("dashboard");
+            _dashboardView ??= new AdminDashboardView();
+            MainContentArea.Content = _dashboardView;
+            _dashboardView.RefreshNow();
         }
 
-        private void NavShelter_Click(object sender, RoutedEventArgs e)
+        private void AdminWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            FitWindowToWorkArea();
+        }
+
+        private void FitWindowToWorkArea()
+        {
+            var area = SystemParameters.WorkArea;
+            const double margin = 24;
+            double maxW = area.Width - margin;
+            double maxH = area.Height - margin;
+
+            MaxWidth = maxW;
+            MaxHeight = maxH;
+
+            if (Width > maxW) Width = maxW;
+            if (Height > maxH) Height = maxH;
+
+            Left = area.Left + (area.Width - Width) / 2;
+            Top = area.Top + (area.Height - Height) / 2;
+        }
+
+        public void NavigateToShelters()
+        {
+            AppSidebar.ActivateNav("shelters");
             MainContentArea.Content = new ShelterView();
         }
 
-        private void NavInventory_Click(object sender, RoutedEventArgs e)
+        public void NavigateToInventory()
         {
+            AppSidebar.ActivateNav("inventory");
             MainContentArea.Content = new InventoryView();
         }
 
-        private void NavDispatch_Click(object sender, RoutedEventArgs e)
+        public void NavigateToDispatch()
         {
+            AppSidebar.ActivateNav("dispatch");
             var dispatchService = App.ServiceProvider.GetRequiredService<IDispatchService>();
             var inventoryService = App.ServiceProvider.GetRequiredService<IInventoryService>();
             var shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
             MainContentArea.Content = new DispatchView(dispatchService, inventoryService, shelterService);
         }
 
-        private void NavReport_Click(object sender, RoutedEventArgs e)
+        public void NavigateToReports()
         {
-            MainContentArea.Content = new ProjectBReadyWPF.Frontend.Views.Reports.ReportView();
+            AppSidebar.ActivateNav("reports");
+            MainContentArea.Content = new ReportView();
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)

@@ -43,11 +43,24 @@ namespace ProjectBReadyWPF.Frontend.Components
         public void SetAdminMode(bool isAdmin)
         {
             var visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
-            
-            if (LblManagement != null) LblManagement.Visibility = visibility;
+
             if (BtnInventory != null) BtnInventory.Visibility = visibility;
             if (BtnDispatch != null) BtnDispatch.Visibility = visibility;
             if (BtnReport != null) BtnReport.Visibility = visibility;
+        }
+
+        public void ActivateNav(string section)
+        {
+            Button? target = section switch
+            {
+                "dashboard" => BtnDashboard,
+                "shelters" => BtnShelter,
+                "inventory" => BtnInventory,
+                "dispatch" => BtnDispatch,
+                "reports" => BtnReport,
+                _ => BtnDashboard
+            };
+            if (target != null) SetActiveButton(target);
         }
     }
 }

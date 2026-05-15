@@ -17,18 +17,14 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             _realTimeService = App.ServiceProvider.GetRequiredService<IRealTimeService>();
             RefreshDashboard();
 
-            // Subscribe to real-time database events
             _realTimeService.OnTableUpdated += RealTime_OnTableUpdated;
-            this.Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTime_OnTableUpdated;
+            Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTime_OnTableUpdated;
         }
 
         private void RealTime_OnTableUpdated(object? sender, string tableName)
         {
-            // Dashboard shows data from all tables, so refresh on any change
-            if (tableName == "shelters" || tableName == "inventory_items" || tableName == "dispatch_logs")
-            {
+            if (tableName is "shelters" or "inventory_items" or "dispatch_logs")
                 RefreshDashboard();
-            }
         }
 
         private void RefreshDashboard()
@@ -41,35 +37,29 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 
         private void UpdateDonutChart(MainDashboardViewModel vm)
         {
-            // Calculate the StrokeDashArray for the occupied arc
-            // The circumference of the ellipse (approx circle): C = π * diameter
             double diameter = 160;
             double circumference = Math.PI * diameter;
 
             double pct = vm.TotalCapacity > 0
                 ? (double)vm.TotalEvacuees / vm.TotalCapacity
                 : 0;
-
-            pct = Math.Min(pct, 1.0); // Clamp to 100%
+            pct = Math.Min(pct, 1.0);
 
             double occupiedLength = circumference * pct;
             double gapLength = circumference - occupiedLength;
-
-            // StrokeDashArray values are in multiples of StrokeThickness
             double strokeThickness = 28.0;
-            double dashOccupied = occupiedLength / strokeThickness;
-            double dashGap = gapLength / strokeThickness;
-            OccupiedArc.StrokeDashArray = new DoubleCollection { dashOccupied, dashGap };
+            OccupiedArc.StrokeDashArray = new DoubleCollection
+            {
+                occupiedLength / strokeThickness,
+                gapLength / strokeThickness
+            };
 
-            // Update center label
             DonutPctLabel.Text = $"{pct * 100:F0}%";
         }
 
         private void UpdateLabels(MainDashboardViewModel vm)
         {
-            int available = vm.TotalCapacity - vm.TotalEvacuees;
-            if (available < 0) available = 0;
-
+            int available = Math.Max(vm.TotalCapacity - vm.TotalEvacuees, 0);
             LegendOccupied.Text = vm.TotalEvacuees.ToString();
             LegendAvailable.Text = available.ToString();
             LegendTotal.Text = vm.TotalCapacity.ToString();

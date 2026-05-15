@@ -23,10 +23,13 @@ namespace ProjectBReadyWPF.Frontend.Views.Resident
 
                 if (result == true && pinPrompt.IsAuthenticated)
                 {
-                    var adminWindow = new AdminWindow();
-                    adminWindow.Closed += (s, args) => this.Show();
+                    var adminWindow = new AdminWindow
+                    {
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen
+                    };
+                    adminWindow.Closed += (_, _) => Show();
 
-                    this.Hide();
+                    Hide();
                     adminWindow.Show();
                 }
 

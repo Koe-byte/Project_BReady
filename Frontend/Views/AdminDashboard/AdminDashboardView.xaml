@@ -1,0 +1,214 @@
+<UserControl x:Class="ProjectBReadyWPF.Frontend.Views.AdminDashboard.AdminDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1000"
+             Background="{DynamicResource MainBg}"
+             Loaded="AdminDashboardView_Loaded"
+             SizeChanged="AdminDashboardView_SizeChanged">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <Border Grid.Row="0" Background="{DynamicResource ToolbarBg}" BorderBrush="{DynamicResource Border}" BorderThickness="0,0,0,1" Padding="28,18">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="BATANGAS CITY DISASTER COMMAND CENTER"
+                   FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"
+                   VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock x:Name="ClockLabel" FontSize="12" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+          <Border Background="{DynamicResource AccentLight}" CornerRadius="8" Width="32" Height="32" ToolTip="Settings (coming soon)">
+            <Viewbox Width="16" Height="16">
+              <Path Fill="{DynamicResource Accent}" Data="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+            </Viewbox>
+          </Border>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+  <ScrollViewer Grid.Row="1" Style="{DynamicResource SlimScrollViewer}">
+    <StackPanel Margin="24,20,24,28">
+
+      <UniformGrid Columns="4" Margin="0,0,0,16">
+        <Border Style="{DynamicResource KpiCard}" Margin="0,0,8,0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+              <Viewbox Width="18" Height="18" Margin="0,0,8,0">
+                <Path Fill="{DynamicResource Accent}" Data="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              </Viewbox>
+              <TextBlock Text="ACTIVE SHELTERS" Style="{DynamicResource KpiLabel}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Text="{Binding OpenShelters}" Style="{DynamicResource KpiValue}" Margin="0,6,0,0"/>
+            <Canvas Grid.Row="2" x:Name="SparkShelters" Height="28" Margin="0,8,0,0"/>
+          </Grid>
+        </Border>
+
+        <Border Style="{DynamicResource KpiCard}" Margin="4,0,4,0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+              <Viewbox Width="18" Height="18" Margin="0,0,8,0">
+                <Path Fill="{DynamicResource Blue}" Data="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </Viewbox>
+              <TextBlock Text="TOTAL EVACUEES" Style="{DynamicResource KpiLabel}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Text="{Binding EvacueesDisplay}" Style="{DynamicResource KpiValue}" Margin="0,6,0,0"/>
+            <Canvas Grid.Row="2" x:Name="SparkEvacuees" Height="28" Margin="0,8,0,0"/>
+          </Grid>
+        </Border>
+
+        <Border Style="{DynamicResource KpiCard}" Margin="4,0,4,0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+              <Viewbox Width="18" Height="18" Margin="0,0,8,0">
+                <Path Fill="{DynamicResource Teal}" Data="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2V7z"/>
+              </Viewbox>
+              <TextBlock Text="AVAILABLE BEDS" Style="{DynamicResource KpiLabel}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Text="{Binding AvailableBedsDisplay}" Style="{DynamicResource KpiValue}" Margin="0,6,0,0" Foreground="{DynamicResource Teal}"/>
+            <Canvas Grid.Row="2" x:Name="SparkBeds" Height="28" Margin="0,8,0,0"/>
+          </Grid>
+        </Border>
+
+        <Border Style="{DynamicResource KpiCard}" Margin="8,0,0,0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+              <Viewbox Width="18" Height="18" Margin="0,0,8,0">
+                <Path Fill="{DynamicResource Amber}" Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </Viewbox>
+              <TextBlock Text="SHELTER CAPACITY" Style="{DynamicResource KpiLabel}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Text="{Binding OccupancyPercentDisplay}" Style="{DynamicResource KpiValue}" Margin="0,6,0,0" FontSize="22"/>
+            <Canvas Grid.Row="2" x:Name="SparkCapacity" Height="28" Margin="0,8,0,0"/>
+          </Grid>
+        </Border>
+      </UniformGrid>
+
+      <Grid Margin="0,0,0,16">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="220"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="280"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+          <Border Style="{DynamicResource KpiCard}" Margin="0,0,0,10">
+            <StackPanel>
+              <TextBlock Text="RELIEF PACKS ON HAND" Style="{DynamicResource KpiLabel}" Margin="0,0,0,6"/>
+              <TextBlock Text="{Binding ReliefItemsDisplay}" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+              <Canvas x:Name="SparkRelief" Height="24" Margin="0,6,0,0"/>
+            </StackPanel>
+          </Border>
+          <Border Style="{DynamicResource KpiCard}" Margin="0,0,0,10">
+            <StackPanel>
+              <TextBlock Text="FOOD SUPPLY STATUS" Style="{DynamicResource KpiLabel}" Margin="0,0,0,6"/>
+              <TextBlock Text="{Binding FoodSupplyStatus}" FontSize="22" FontWeight="Bold" Foreground="{Binding FoodStatusColor}"/>
+              <Canvas x:Name="SparkFood" Height="24" Margin="0,6,0,0"/>
+            </StackPanel>
+          </Border>
+          <Border Style="{DynamicResource KpiCard}">
+            <StackPanel>
+              <TextBlock Text="MEDICAL SUPPLY STATUS" Style="{DynamicResource KpiLabel}" Margin="0,0,0,6"/>
+              <TextBlock Text="{Binding MedicalSupplyStatus}" FontSize="22" FontWeight="Bold" Foreground="{Binding MedicalStatusColor}"/>
+              <Canvas x:Name="SparkMedical" Height="24" Margin="0,6,0,0"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <Border Grid.Column="1" Style="{DynamicResource Card}" Padding="20" Margin="0,0,12,0">
+          <StackPanel>
+            <TextBlock Text="SHELTER OCCUPANCY TREND (LAST 7 DAYS)" Style="{DynamicResource CardTitle}" FontSize="13" Margin="0,0,0,12"/>
+            <Canvas x:Name="LineChartCanvas" Height="200" HorizontalAlignment="Stretch"/>
+            <UniformGrid Columns="7" Margin="36,4,12,0">
+              <TextBlock Text="Day 1" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock Text="Day 2" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock Text="Day 3" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock Text="Day 4" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock Text="Day 5" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock Text="Day 6" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock Text="Today" FontSize="10" Foreground="{DynamicResource Accent}" FontWeight="Bold" HorizontalAlignment="Center"/>
+            </UniformGrid>
+          </StackPanel>
+        </Border>
+
+        <Border Grid.Column="2" Style="{DynamicResource Card}" Padding="20">
+          <StackPanel>
+            <TextBlock Text="RELIEF STOCK ALLOCATION BY TYPE" Style="{DynamicResource CardTitle}" FontSize="12" Margin="0,0,0,12"/>
+            <Canvas x:Name="PieChartCanvas" Height="140" Width="140" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+            <ItemsControl ItemsSource="{Binding InventoryLegend}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto"/>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{Binding SwatchBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Label}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="{Binding QuantityDisplay}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <Border Style="{DynamicResource Card}" Padding="20">
+        <StackPanel>
+          <TextBlock Text="CRITICAL LOGISTICS ALERTS" Style="{DynamicResource CardTitle}" FontSize="13" Margin="0,0,0,12"/>
+          <ScrollViewer MaxHeight="120" Style="{DynamicResource SlimScrollViewer}" Margin="0,0,0,16">
+            <ItemsControl ItemsSource="{Binding Alerts}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <Ellipse Width="8" Height="8" Fill="{Binding IconColor}" VerticalAlignment="Top" Margin="0,5,10,0"/>
+                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontSize="13" Foreground="{DynamicResource TextPrimary}" MaxWidth="900"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+          <Border Height="1" Background="{DynamicResource Border}" Margin="0,0,0,14"/>
+          <TextBlock Text="Quick Action" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextMuted}" Margin="0,0,0,10"/>
+          <StackPanel Orientation="Horizontal">
+            <Button Content="REGISTER SHELTER" Style="{DynamicResource QuickActionBtn}" Margin="0,0,10,0" Click="QuickAction_RegisterShelter_Click"/>
+            <Button Content="LOG DONATION" Style="{DynamicResource QuickActionBtn}" Margin="0,0,10,0" Click="QuickAction_LogDonation_Click"/>
+            <Button Content="DISTRIBUTE GOODS" Style="{DynamicResource QuickActionBtn}" Click="QuickAction_DistributeGoods_Click"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+    </StackPanel>
+  </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -12,17 +12,15 @@
             <Image Source="/Frontend/Assets/logo.jpg" Height="60" Margin="0,0,0,30" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality"/>
 
             <!-- Navigation Links -->
-            <TextBlock Text="DASHBOARD" Style="{DynamicResource NavSectionLabel}"/>
-            <Button x:Name="BtnDashboard" Content="Overview" Style="{DynamicResource NavItemActive}"/>
+            <TextBlock Text="OPERATIONS" Style="{DynamicResource NavSectionLabel}"/>
+            <Button x:Name="BtnDashboard" Content="Dashboard" Style="{DynamicResource NavItemActive}"/>
             
-            <TextBlock Text="SHELTERS" Style="{DynamicResource NavSectionLabel}" Margin="12,20,0,4"/>
-            <Button x:Name="BtnShelter" Content="Shelters" Style="{DynamicResource NavItem}"/>
+            <Button x:Name="BtnShelter" Content="Shelters" Style="{DynamicResource NavItem}" Margin="0,2,0,0"/>
             
             <!-- Admin-only nav items (hidden by default, shown via SetAdminMode) -->
-            <TextBlock x:Name="LblManagement" Text="MANAGEMENT" Style="{DynamicResource NavSectionLabel}" Margin="12,20,0,4" Visibility="Collapsed"/>
-            <Button x:Name="BtnInventory" Content="Relief Inventory" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
-            <Button x:Name="BtnDispatch" Content="Dispatch Hub" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
-            <Button x:Name="BtnReport" Content="Situational Reports" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
+            <Button x:Name="BtnInventory" Content="Inventory" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
+            <Button x:Name="BtnDispatch" Content="Logistics" Style="{DynamicResource NavItem}" Visibility="Collapsed"/>
+            <Button x:Name="BtnReport" Content="Reports" Style="{DynamicResource NavItem}" Visibility="Collapsed" Margin="0,2,0,0"/>
         </StackPanel>
     </Border>
 </UserControl>

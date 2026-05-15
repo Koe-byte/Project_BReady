@@ -27,11 +27,10 @@
       <ScrollViewer Grid.Row="1" Style="{DynamicResource SlimScrollViewer}">
         <StackPanel Margin="32,10,32,32">
 
-          <!-- ═══ STAT CARDS (3-col) ═══ -->
+          <!-- STAT CARDS (3-col) -->
           <Grid Margin="0,0,0,24">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
 
-            <!-- Card 1: Active Shelters -->
             <Border Grid.Column="0" Style="{DynamicResource StatCard}" Margin="0,0,12,0">
               <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -50,7 +49,6 @@
               </Grid>
             </Border>
 
-            <!-- Card 2: Total Evacuees -->
             <Border Grid.Column="1" Style="{DynamicResource StatCard}" Margin="6,0,6,0">
               <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -69,7 +67,6 @@
               </Grid>
             </Border>
 
-            <!-- Card 3: Available Capacity -->
             <Border Grid.Column="2" Style="{DynamicResource StatCard}" Margin="12,0,0,0">
               <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -89,34 +86,26 @@
             </Border>
           </Grid>
 
-          <!-- ═══ TWO-COLUMN: Donut Chart + Shelter Bar Chart ═══ -->
+          <!-- Donut Chart + Shelter Bar Chart -->
           <Grid Margin="0,0,0,24">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="1.3*"/></Grid.ColumnDefinitions>
 
-            <!-- LEFT: Evacuation Overview (Donut) -->
             <Border Grid.Column="0" Style="{DynamicResource Card}" Margin="0,0,12,0" Padding="24">
               <StackPanel>
                 <TextBlock Text="Evacuation Overview" Style="{DynamicResource CardTitle}" FontSize="16" Margin="0,0,0,20"/>
-
-                <!-- Donut Chart: Green=Available (bg ring), Red=Occupied (arc) -->
                 <Grid Width="180" Height="180" HorizontalAlignment="Center" Margin="0,0,0,20">
-                  <!-- Background ring = Green (Available) -->
                   <Ellipse Stroke="#22C55E" StrokeThickness="28" Width="160" Height="160"/>
-                  <!-- Foreground arc = Red (Occupied) -->
                   <Ellipse x:Name="OccupiedArc" Stroke="#EF4444" StrokeThickness="28" Width="160" Height="160"
                            RenderTransformOrigin="0.5,0.5">
                     <Ellipse.RenderTransform>
                       <RotateTransform Angle="-90"/>
                     </Ellipse.RenderTransform>
                   </Ellipse>
-                  <!-- Center label -->
                   <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock x:Name="DonutPctLabel" Text="0%" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
                     <TextBlock Text="Occupied" FontSize="11" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
                   </StackPanel>
                 </Grid>
-
-                <!-- Legend -->
                 <StackPanel Margin="0,4,0,0">
                   <Grid Margin="0,0,0,8">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
@@ -140,7 +129,6 @@
               </StackPanel>
             </Border>
 
-            <!-- RIGHT: Shelter Occupancy Bar Chart -->
             <Border Grid.Column="1" Style="{DynamicResource Card}" Margin="12,0,0,0" Padding="24">
               <StackPanel>
                 <Grid Margin="0,0,0,20">
@@ -153,13 +141,10 @@
                     <TextBlock x:Name="FullSheltersBadge" Text="0 shelters full" Foreground="{DynamicResource Accent}" FontSize="11" FontWeight="Bold"/>
                   </Border>
                 </Grid>
-
-                <!-- Horizontal bar items -->
                 <ItemsControl x:Name="BarChartItems" ItemsSource="{Binding Shelters}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate>
                       <StackPanel Margin="0,0,0,16">
-                        <!-- Label row -->
                         <Grid Margin="0,0,0,6">
                           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                           <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="{DynamicResource TextPrimary}" FontSize="13" FontWeight="SemiBold"/>
@@ -172,13 +157,10 @@
                             </Border.RenderTransform>
                           </Border>
                         </Border>
-                        <!-- Status row -->
                         <Grid Margin="0,4,0,0">
                           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                           <TextBlock Grid.Column="0" Text="{Binding PctFull}" Foreground="{Binding PctColor}" FontSize="11"/>
-                          <Border Grid.Column="1"
-                                  Background="{Binding StatusBadgeBg}"
-                                  CornerRadius="10" Padding="8,2">
+                          <Border Grid.Column="1" Background="{Binding StatusBadgeBg}" CornerRadius="10" Padding="8,2">
                             <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="Bold" Foreground="{Binding StatusTextColor}"/>
                           </Border>
                         </Grid>
@@ -190,26 +172,22 @@
             </Border>
           </Grid>
 
-          <!-- ═══ RECENT ACTIVITY (Optional info strip) ═══ -->
+          <!-- Summary strip -->
           <Border Style="{DynamicResource Card}" Padding="24">
             <Grid>
               <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              
               <StackPanel Grid.Column="0" HorizontalAlignment="Center">
                 <TextBlock Text="{Binding ReliefItems}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
                 <TextBlock Text="Relief Items" Foreground="{DynamicResource TextMuted}" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,0"/>
               </StackPanel>
-              
               <StackPanel Grid.Column="1" HorizontalAlignment="Center">
                 <TextBlock Text="{Binding ItemTypes}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
                 <TextBlock Text="Item Categories" Foreground="{DynamicResource TextMuted}" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,0"/>
               </StackPanel>
-              
               <StackPanel Grid.Column="2" HorizontalAlignment="Center">
                 <TextBlock Text="{Binding DispatchCount}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
                 <TextBlock Text="Dispatches" Foreground="{DynamicResource TextMuted}" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,0"/>
               </StackPanel>
-              
               <StackPanel Grid.Column="3" HorizontalAlignment="Center">
                 <TextBlock Text="{Binding FullShelterCount}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource Amber}" HorizontalAlignment="Center"/>
                 <TextBlock Text="Shelters Full" Foreground="{DynamicResource TextMuted}" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,0"/>

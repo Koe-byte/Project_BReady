@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
-using ProjectBReadyWPF.Backend.Services;
 using ProjectBReadyWPF.Backend.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectBReadyWPF.Backend.Models.Facilities;
 
 namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 {
-    // ── Helper classes para sa Dashboard bindings ──────────────────────
-
     public class ShelterDisplayItem
     {
         public string Name { get; set; } = "";
@@ -24,35 +20,29 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 var value = RawStatus?.Trim() ?? string.Empty;
                 if (value.Equals("UnderMaintenance", StringComparison.OrdinalIgnoreCase) ||
                     value.Equals("Under Maintenance", StringComparison.OrdinalIgnoreCase))
-                {
                     return "Under Maintenance";
-                }
                 if (value.Equals("Closed", StringComparison.OrdinalIgnoreCase)) return "Closed";
                 if (value.Equals("Full", StringComparison.OrdinalIgnoreCase)) return "Full";
                 return "Open";
             }
         }
 
-        // Bar chart
         public string OccupancyDisplay => $"{CurrentOccupancy} / {MaxCapacity}";
         public double FillPercent => MaxCapacity > 0 ? Math.Min((double)CurrentOccupancy / MaxCapacity, 1.0) : 0;
-        public double BarWidth => MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 300 : 0;
+
         public SolidColorBrush FillColor
         {
             get
             {
                 double pct = MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 100 : 0;
-                if (NormalizedStatus == "Closed" || NormalizedStatus == "Under Maintenance")
-                {
+                if (NormalizedStatus is "Closed" or "Under Maintenance")
                     return new SolidColorBrush(Color.FromRgb(148, 163, 184));
-                }
                 if (pct >= 90) return new SolidColorBrush(Color.FromRgb(239, 68, 68));
                 if (pct >= 70) return new SolidColorBrush(Color.FromRgb(234, 124, 60));
                 return new SolidColorBrush(Color.FromRgb(163, 230, 53));
             }
         }
 
-        // Table
         public string PctFull
         {
             get
@@ -61,27 +51,22 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 return $"{pct:F0}%";
             }
         }
+
         public SolidColorBrush PctColor
         {
             get
             {
                 double pct = MaxCapacity > 0 ? (double)CurrentOccupancy / MaxCapacity * 100 : 0;
-                if (NormalizedStatus == "Closed" || NormalizedStatus == "Under Maintenance")
-                {
+                if (NormalizedStatus is "Closed" or "Under Maintenance")
                     return new SolidColorBrush(Color.FromRgb(71, 85, 105));
-                }
                 if (pct >= 90) return new SolidColorBrush(Color.FromRgb(239, 68, 68));
                 if (pct >= 70) return new SolidColorBrush(Color.FromRgb(234, 124, 60));
                 return new SolidColorBrush(Color.FromRgb(22, 163, 74));
             }
         }
-        public string Status
-        {
-            get
-            {
-                return NormalizedStatus;
-            }
-        }
+
+        public string Status => NormalizedStatus;
+
         public SolidColorBrush StatusBadgeBg => Status switch
         {
             "Full" => new SolidColorBrush(Color.FromRgb(254, 226, 226)),
@@ -89,6 +74,7 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             "Under Maintenance" => new SolidColorBrush(Color.FromRgb(254, 243, 199)),
             _ => new SolidColorBrush(Color.FromRgb(209, 250, 229))
         };
+
         public SolidColorBrush StatusTextColor => Status switch
         {
             "Full" => new SolidColorBrush(Color.FromRgb(153, 27, 27)),
@@ -107,8 +93,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
         public string DateTimeDisplay => DispatchDate.ToString("MMM dd, yyyy  hh:mm tt");
     }
 
-    // ── Main ViewModel — Now wired to REAL services ───────────────────
-
     public class MainDashboardViewModel
     {
         public List<ShelterDisplayItem> Shelters { get; set; } = new();
@@ -123,7 +107,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
         public int DispatchCount { get; set; }
         public int ExpiringFoodCount { get; set; }
 
-        // Computed display properties
         public int AvailableSlots => Math.Max(TotalCapacity - TotalEvacuees, 0);
         public string ShelterCountNote => $"of {TotalShelters} total";
         public string CapacityNote => $"of {TotalCapacity} slots";
@@ -138,7 +121,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
         {
             try
             {
-                // ── Dashboard Stats (aggregated counts) ──
                 var dashService = App.ServiceProvider.GetRequiredService<IDashboardService>();
                 var stats = dashService.GetDashboardStats();
 
@@ -151,7 +133,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 DispatchCount = stats.DispatchCount;
                 ExpiringFoodCount = stats.ExpiringFoodCount;
 
-                // ── Shelter list (for bar chart) ──
                 var shelterService = App.ServiceProvider.GetRequiredService<IShelterService>();
                 var dbShelters = shelterService.GetAllShelters();
 
@@ -167,13 +148,10 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                         RawStatus = s.Status ?? "Open"
                     });
                     if ((s.Status ?? string.Empty).Trim().Equals("Full", StringComparison.OrdinalIgnoreCase))
-                    {
                         fullCount++;
-                    }
                 }
                 FullShelterCount = fullCount;
 
-                // ── Recent Dispatches ──
                 var dispatchService = App.ServiceProvider.GetRequiredService<IDispatchService>();
                 var dbDispatches = dispatchService.GetRecentDispatches(5);
 
@@ -191,7 +169,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             }
             catch (Exception ex)
             {
-                // Kung walang DB connection, fallback sa empty lists
                 System.Diagnostics.Debug.WriteLine($"Dashboard load error: {ex.Message}");
             }
         }
