@@ -58,7 +58,9 @@ Follow these instructions to set up the project on your local machine for develo
    `Tools > NuGet Package Manager > Manage NuGet Packages for Solution > Restore`
 
 3. **Configure Database**
-   The project uses a remote PostgreSQL database. Create an `appsettings.json` file in the root directory (if it doesn't exist) and add your connection string:
+   The project uses a remote PostgreSQL database. To protect sensitive credentials, `appsettings.json` is excluded from the repository.
+   - Rename `appsettings.Example.json` to `appsettings.json`.
+   - Update the connection string and Admin PIN hash with your local/development values.
    ```json
    {
      "ConnectionStrings": {
@@ -69,8 +71,9 @@ Follow these instructions to set up the project on your local machine for develo
      }
    }
    ```
-   > [!NOTE]
-   > Ensure `appsettings.json` is set to **Copy to Output Directory: Copy if newer** in the file properties.
+   > [!IMPORTANT]
+   > Never commit your real `appsettings.json` to a public repository. Always use the example file as a template.
+
 
 4. **Build and Run**
    Press `F5` or click **Start** in Visual Studio to launch the application in **Resident View**.
