@@ -1,112 +1,231 @@
-# 🚨 Project B-Ready: Digital Disaster Relief & Shelter Management
+<a id="top"></a>
 
-![Project Logo](Frontend/Assets/logo.jpg)
+<div align="center">
+  <img src="Frontend/Assets/logo.jpg" alt="Project B-Ready logo" width="240" />
 
-**Project B-Ready** is a professional desktop-based management system designed to assist barangay officials and disaster response teams in managing evacuation centers and relief operations. Built with modern .NET technologies, it provides a seamless transition from manual tracking to a robust, real-time digital solution.
+  <h1>Project B-Ready</h1>
 
----
+  <p>
+    <strong>A professional digital disaster relief and shelter management system designed for real-time barangay emergency response.</strong>
+  </p>
 
-## 🛠️ Tech Stack & Architecture
+  <p>
+    <a href="#instructions-on-how-to-run-the-application"><img alt="Platform: Windows" src="https://img.shields.io/badge/platform-Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white" /></a>
+    <a href="#quality"><img alt="Build: local verified" src="https://img.shields.io/badge/build-local%20verified-00C853?style=for-the-badge&logo=dotnet&logoColor=white" /></a>
+    <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-FFD600?style=for-the-badge&logo=readthedocs&logoColor=black" /></a>
+    <a href="#"><img alt="Version 1.0.0" src="https://img.shields.io/badge/version-1.0.0-6200EA?style=for-the-badge&logo=semver&logoColor=white" /></a>
+  </p>
 
-- **Framework:** .NET 8.0 (Windows Desktop)
-- **UI Technology:** Windows Presentation Foundation (WPF) with XAML
-- **Language:** C# 12
-- **Database:** PostgreSQL (Hosted on Supabase)
-- **Pattern:** N-Tier Architecture with Dependency Injection (DI)
-- **Real-time:** Custom PostgreSQL Notification Listener
-
----
-
-## ⚙️ Key Features
-
-### 🏢 Evacuation Shelter Management
-- Real-time monitoring of shelter capacities and occupancy.
-- Dynamic status tracking: **Open**, **Full**, **Closed**, or **Under Maintenance**.
-- Centralized database synchronization across all terminal instances.
-
-### 📦 Relief Goods & Inventory
-- Specialized management for stock-in and dispatch of essential supplies.
-- Automated logs for distribution to ensure transparency in relief operations.
-- Inventory trend tracking to predict supply needs.
-
-### 🖥️ Kiosk Mode & Secure Admin Access
-- **Resident View:** A read-only dashboard for public display in evacuation centers.
-- **Hidden Admin Panel:** Authorized personnel can access management tools via a secret shortcut: `Ctrl + Shift + O`.
-- **PIN Verification:** Secondary security layer for administrative actions.
+  <p>
+    <a href="#demo">Demo</a> •
+    <a href="#instructions-on-how-to-run-the-application">Run</a> •
+    <a href="#features-and-functionalities-of-the-system">Features</a> •
+    <a href="#uml-diagram">UML</a> •
+    <a href="#developers">Developers</a> •
+    <a href="#quality">Quality</a>
+  </p>
+</div>
 
 ---
 
-## 🚀 Getting Started
+<div align="center">
+  <img src="https://via.placeholder.com/900x400?text=Project+B-Ready+Social+Preview+Banner" alt="B-Ready social preview banner" width="900" />
+</div>
 
-Follow these instructions to set up the project on your local machine for development and testing.
+## Demo
 
-### Prerequisites
-- **Visual Studio 2022** (Community, Professional, or Enterprise)
-- **.NET 8 SDK**
-- **Desktop Development with .NET** workload (Install via VS Installer)
+<div align="center">
+  <img src="https://via.placeholder.com/900x500?text=Animated+Demo+GIF+Placeholder" alt="B-Ready demo showing dashboard, shelter management, and real-time updates" width="900" />
+</div>
 
-### Installation & Setup
+| Admin Dashboard | Resident Kiosk | Inventory Management |
+| --- | --- | --- |
+| <img src="https://via.placeholder.com/280x180?text=Admin+Dashboard" alt="Admin Dashboard" width="280" height="180" /> | <img src="https://via.placeholder.com/280x180?text=Resident+Kiosk" alt="Resident Kiosk" width="280" height="180" /> | <img src="https://via.placeholder.com/280x180?text=Inventory+Management" alt="Inventory Management" width="280" height="180" /> |
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/Koe-byte/Project_BReady.git
-   cd ProjectBReadyWPF
-   ```
+## Instructions on How to Run the Application
 
-2. **Restore NuGet Packages**
-   Open the solution (`ProjectBReadyWPF.sln`) in Visual Studio. NuGet packages should restore automatically. If not, go to:
-   `Tools > NuGet Package Manager > Manage NuGet Packages for Solution > Restore`
+### Requirements
 
-3. **Configure Database**
-   The project uses a remote PostgreSQL database. To protect sensitive credentials, `appsettings.json` is excluded from the repository.
-   - Rename `appsettings.Example.json` to `appsettings.json`.
-   - Update the connection string and Admin PIN hash with your local/development values.
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "YOUR_POSTGRES_CONNECTION_STRING"
-     },
-     "Security": {
-       "AdminPinHash": "YOUR_SHA256_PIN_HASH"
-     }
-   }
-   ```
-   > [!IMPORTANT]
-   > Never commit your real `appsettings.json` to a public repository. Always use the example file as a template.
+- **Windows 10/11**
+- **Visual Studio 2022** (with `.NET desktop development` workload)
+- **.NET 8.0 SDK**
+- **Git**
+- **PostgreSQL Instance** (or access to the project's Supabase instance)
 
+### Install From Source
 
-4. **Build and Run**
-   Press `F5` or click **Start** in Visual Studio to launch the application in **Resident View**.
+```bash
+git clone https://github.com/Koe-byte/Project_BReady.git
+cd Project_BReady
+dotnet restore
+dotnet build
+```
 
----
+### Run From Visual Studio
 
-## 🏗️ Project Structure
+1. Open `ProjectBReadyWPF.sln`.
+2. Rename `appsettings.Example.json` to `appsettings.json`.
+3. Update the connection string with valid PostgreSQL credentials.
+4. Set `ProjectBReadyWPF` as the startup project.
+5. Press `F5`.
 
-- **`Frontend/`**: Contains XAML Views, ViewModels, and UI Components.
-- **`Backend/`**: Core logic, Service implementations, and Interfaces.
-- **`Database/`**: Data access layer and database helper classes.
-- **`Models/`**: Domain entities (Shelters, Inventory, Persons).
+## Quick Start
 
----
+Copy and run this from your terminal:
 
-## 🎓 Object-Oriented Programming (OOP) Principles
+```bash
+# Clone and enter the directory
+git clone https://github.com/Koe-byte/Project_BReady.git; cd Project_BReady
 
-This project serves as a showcase for advanced OOP concepts:
-- **Abstraction:** Use of interfaces (`IShelterService`, `IAuthService`) to decouple logic from implementation.
-- **Encapsulation:** Data protection through private fields and robust property validation.
-- **Inheritance:** Hierarchical model structures for different facility and user types.
-- **Polymorphism:** Flexible service implementations and UI event handling.
+# Restore and run
+dotnet run --project ProjectBReadyWPF.csproj
+```
 
----
+> [!TIP]
+> **Admin Access:** Once the app is running in Resident Mode, press `Ctrl + Shift + O` and enter the secure PIN to access Admin Features.
 
-## 👥 Meet the Team (BSU Alangilan Devs)
+## Project Description and Purpose
 
-- **John Danver Manalo** - Project Manager / Lead Backend Developer
-- **Tristan Allen Cabral** - Logic Developer / Database Architect
-- **Nash Ibon** - Logic Developer / Quality Assurance
+**Project B-Ready** is born from the need to modernize disaster response at the grassroots level. Traditionally, barangay officials rely on manual logbooks to track evacuees and relief goods, leading to data delays and inaccuracies during critical hours.
+
+Our system digitizes this workflow, providing:
+- **Real-time transparency:** Residents see which shelters are open or full immediately.
+- **Resource Accountability:** Every item in the inventory is tracked from stock-in to dispatch.
+- **Dual-Layer Security:** Public-facing kiosks keep data safe while allowing access to authorized personnel via hidden shortcuts and PINs.
+
+## The Four Pillars of OOP in B-Ready
+
+This project was built to demonstrate industry-standard Object-Oriented Programming principles.
+
+### 1. Encapsulation
+Data is protected within models like `Shelter.cs`. We use properties with logic validation to ensure the system state remains consistent.
+```csharp
+public void UpdateOccupancy(int count) {
+    if (CurrentOccupancy + count <= MaxCapacity) {
+        CurrentOccupancy += count;
+        UpdateStatus();
+    } else {
+        throw new Exception("Shelter is at full capacity!");
+    }
+}
+```
+
+### 2. Inheritance
+We use a hierarchical user model. `BarangayOfficial` and `Resident` both inherit from a base `Person` class, sharing core attributes while extending specific functionality.
+
+### 3. Polymorphism
+Service interfaces like `IShelterService` allow for different implementations (e.g., a Mock service for testing vs. a Database service for production) without changing the UI logic.
+
+### 4. Abstraction
+Complexity is hidden behind clean interfaces. The UI doesn't know *how* the data is saved; it just interacts with the abstract service layer.
+
+## Features and Functionalities of the System
+
+| Area | What It Does |
+| --- | --- |
+| **Shelter Monitoring** | Real-time tracking of occupancy, capacity, and operational status (Open, Full, Closed). |
+| **Inventory System** | Manage relief goods with stock-in/stock-out logging and trend tracking. |
+| **Kiosk Mode** | A read-only informational display for residents in evacuation centers. |
+| **Admin Panel** | Hidden management suite accessible via `Ctrl + Shift + O`. |
+| **Real-time Sync** | Automatic updates across all connected terminals when data changes in the database. |
+| **Secure PIN** | Secondary authentication layer for administrative actions. |
+| **Data Persistence** | Robust PostgreSQL backend ensures data is never lost, even after a restart. |
+
+## Explanation of How the Program Works
+
+The application starts in **Resident View**, functioning as an information kiosk. The system establishes a connection to the PostgreSQL database and listens for real-time notifications. When an official updates a shelter's status on one computer, all other kiosks update instantly.
+
+```mermaid
+flowchart LR
+    A["Resident View"] --> B["View Shelter Status"]
+    A --> C["View Relief Logs"]
+    A --> D["Hidden Admin Trigger (Ctrl+Shift+O)"]
+    D --> E["PIN Verification"]
+    E --> F["Admin Dashboard"]
+    F --> G["Manage Shelters"]
+    F --> H["Manage Inventory"]
+    F --> I["Generate Reports"]
+
+    style A fill:#EAF9FF,stroke:#80D8FF,color:#1B4965
+    style F fill:#FFF0F6,stroke:#FF8FB1,color:#5A315B
+    style E fill:#F7F1FF,stroke:#C7A8FF,color:#3F315B
+```
+
+## Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| **Language** | C# 12 |
+| **Runtime** | .NET 8.0 |
+| **UI Framework** | WPF (Windows Presentation Foundation) |
+| **Database** | PostgreSQL / Supabase |
+| **Arch Pattern** | N-Tier / MVVM |
+| **Dependency Injection** | Microsoft.Extensions.DependencyInjection |
+
+## Architecture
+
+We follow a strict **N-Tier Architecture** to separate concerns and improve maintainability.
+
+```mermaid
+flowchart TD
+    UI["Frontend (WPF/XAML)"]
+    VM["ViewModels (MVVM)"]
+    Services["Backend Services (Business Logic)"]
+    Interfaces["Interfaces (Abstraction Layer)"]
+    Models["Models (Entities)"]
+    DB["Database Layer (DataAccess)"]
+
+    UI --> VM
+    VM --> Interfaces
+    Interfaces --> Services
+    Services --> Models
+    Services --> DB
+
+    style UI fill:#FFF0F6,stroke:#FF8FB1,color:#5A315B
+    style VM fill:#EAF9FF,stroke:#80D8FF,color:#1B4965
+    style Services fill:#EEFFFC,stroke:#7DDCCF,color:#24443F
+    style DB fill:#FFF7D6,stroke:#F8C85A,color:#5B4818
+```
+
+## Project Structure
+
+```text
+ProjectBReadyWPF/
+|-- Backend/              Core Business Logic
+|   |-- Interfaces/       Service Contracts
+|   |-- Models/           Data Entities (Shelter, Person, etc.)
+|   `-- Services/         Logic Implementation
+|-- Database/             Data Access Layer
+|   `-- DataAccess/       PostgreSQL Helper Classes
+|-- Frontend/             User Interface
+|   |-- Assets/           Logos, Styles, and Themes
+|   |-- ViewModels/       UI State Management
+|   `-- Views/            XAML Screens (Resident, Admin)
+|-- App.xaml              Application Entry Point
+`-- ProjectBReadyWPF.sln  Main Solution File
+```
+
+## Developers
+
+- **John Danver Manalo** - Project Manager
+- **Tristan Allen Cabral** - Logic Developer / Tester
+- **Nash Ibon** - Logic Developer / Tester
 - **Janna Alexis Raras** - Lead GUI Designer / UX Specialist
 
----
+## Contributing
 
-## 📜 License
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+<div align="center">
+  <sub>Built for the community, by the community. Stay safe, stay B-Ready.</sub>
+  <br />
+  <a href="#top">Back to top</a>
+</div>
