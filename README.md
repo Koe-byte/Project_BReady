@@ -27,15 +27,10 @@
 </div>
 
 ---
-
-<div align="center">
-  <img src="docs/brand/social-preview.png" alt="B-Ready social preview banner" width="900" />
-</div>
-
 ## Demo
 
 <div align="center">
-  <img src="docs/demo/demo.png" alt="B-Ready demo showing dashboard, shelter management, and real-time updates" width="900" />
+  <img src="docs/demo/B-Ready-demo.gif" alt="B-Ready demo showing dashboard, shelter management, and real-time updates" width="900" />
 </div>
 
 | Admin Dashboard | Resident Kiosk | Inventory Management |
