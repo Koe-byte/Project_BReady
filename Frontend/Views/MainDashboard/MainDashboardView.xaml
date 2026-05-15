@@ -33,6 +33,28 @@
               <TextBlock Text="LIVE" Style="{DynamicResource LiveStatusLabel}"/>
             </StackPanel>
           </Border>
+          <Button x:Name="ThemeToggleBtn" Margin="10,0,0,0" Cursor="Hand" Click="OnToggleTheme">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Border x:Name="ToggleBorder" CornerRadius="8" Padding="10,6"
+                        Background="{DynamicResource CardBg}"
+                        BorderBrush="{DynamicResource Border}" BorderThickness="1">
+                  <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="ToggleBorder" Property="Background" Value="{DynamicResource AccentLight}"/>
+                    <Setter TargetName="ToggleBorder" Property="BorderBrush" Value="{DynamicResource Accent}"/>
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock x:Name="ThemeIcon" Text="☀️" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+              <TextBlock x:Name="ThemeLabel" Text="Light Mode" FontSize="12" FontWeight="SemiBold"
+                         Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center"/>
+            </StackPanel>
+          </Button>
         </StackPanel>
       </Grid>
 

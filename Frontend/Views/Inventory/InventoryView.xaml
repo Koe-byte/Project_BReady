@@ -96,8 +96,6 @@
                             Foreground="{DynamicResource TextMuted}" FontSize="14"
                             Padding="20,10" Click="OnTabMedical"/>
                 </StackPanel>
-                <Border x:Name="TabUnderline" Height="2" Background="{DynamicResource Accent}"
-                        Margin="0,0,0,20" HorizontalAlignment="Left" Width="140"/>
 
                 <!-- FOOD TAB PANE -->
                 <Border x:Name="FoodPane" Style="{DynamicResource Card}">

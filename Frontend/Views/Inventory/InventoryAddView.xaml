@@ -6,6 +6,25 @@
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="800"
              Background="{DynamicResource MainBg}">
+    <UserControl.Resources>
+        <Style x:Key="TypeBtnStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="Transparent" CornerRadius="11">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#0D000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -70,6 +89,7 @@
                                         BorderBrush="{DynamicResource Accent}" BorderThickness="1"
                                         CornerRadius="12" Margin="0,0,5,0">
                                     <Button x:Name="BtnFood" Content="🍚  Food" Background="Transparent" BorderThickness="0"
+                                            Style="{StaticResource TypeBtnStyle}"
                                             Foreground="{DynamicResource Accent}" FontSize="14" FontWeight="Bold"
                                             Padding="12" Click="OnSelectFood"/>
                                 </Border>
@@ -78,6 +98,7 @@
                                         BorderBrush="{DynamicResource Border}" BorderThickness="1"
                                         CornerRadius="12" Margin="5,0,0,0">
                                     <Button x:Name="BtnMed" Content="💊  Medical Supply" Background="Transparent" BorderThickness="0"
+                                            Style="{StaticResource TypeBtnStyle}"
                                             Foreground="{DynamicResource TextSecondary}" FontSize="14"
                                             Padding="12" Click="OnSelectMedical"/>
                                 </Border>

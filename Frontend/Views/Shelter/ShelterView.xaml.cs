@@ -260,6 +260,35 @@ namespace ProjectBReadyWPF.Frontend.Views.Shelter
             LoadData();
         }
 
+        private void OnOccIncrement(object sender, RoutedEventArgs e)
+        {
+            var shelter = _allShelters.FirstOrDefault(s => s.ShelterID == _selectedShelterId);
+            if (shelter == null) return;
+
+            if (int.TryParse(EditOccInput.Text, out int current))
+            {
+                if (current < shelter.MaxCapacity)
+                    EditOccInput.Text = (current + 1).ToString();
+            }
+            else
+            {
+                EditOccInput.Text = "0";
+            }
+        }
+
+        private void OnOccDecrement(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(EditOccInput.Text, out int current))
+            {
+                if (current > 0)
+                    EditOccInput.Text = (current - 1).ToString();
+            }
+            else
+            {
+                EditOccInput.Text = "0";
+            }
+        }
+
         // ── Delete Modal ─────────────────────────────────────────────
 
         private void OnDeleteSelected(object sender, RoutedEventArgs e)
