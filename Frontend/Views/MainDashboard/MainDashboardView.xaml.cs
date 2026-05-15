@@ -37,22 +37,30 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 
         private void UpdateDonutChart(MainDashboardViewModel vm)
         {
-            double diameter = 160;
+            const double diameter = 132;
+            const double strokeThickness = 22;
             double circumference = Math.PI * diameter;
 
-            double pct = vm.TotalCapacity > 0
-                ? (double)vm.TotalEvacuees / vm.TotalCapacity
-                : 0;
-            pct = Math.Min(pct, 1.0);
+            double pct = vm.OccupancyFillPercent;
+            double availablePct = 1.0 - pct;
 
             double occupiedLength = circumference * pct;
-            double gapLength = circumference - occupiedLength;
-            double strokeThickness = 28.0;
+            double availableLength = circumference * availablePct;
+            double occupiedGap = circumference - occupiedLength;
+            double availableGap = circumference - availableLength;
+
             OccupiedArc.StrokeDashArray = new DoubleCollection
             {
                 occupiedLength / strokeThickness,
-                gapLength / strokeThickness
+                occupiedGap / strokeThickness
             };
+
+            AvailableArc.StrokeDashArray = new DoubleCollection
+            {
+                availableLength / strokeThickness,
+                availableGap / strokeThickness
+            };
+            AvailableArc.RenderTransform = new RotateTransform(-90 + pct * 360);
 
             DonutPctLabel.Text = $"{pct * 100:F0}%";
         }
@@ -64,14 +72,9 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
             LegendAvailable.Text = available.ToString();
             LegendTotal.Text = vm.TotalCapacity.ToString();
 
-            int fullCount = 0;
-            foreach (var s in vm.Shelters)
-            {
-                if (s.Status == "Full") fullCount++;
-            }
-            FullSheltersBadge.Text = fullCount == 0
+            FullSheltersBadge.Text = vm.FullShelterCount == 0
                 ? "All shelters open"
-                : $"{fullCount} shelter{(fullCount > 1 ? "s" : "")} full";
+                : $"{vm.FullShelterCount} shelter{(vm.FullShelterCount > 1 ? "s" : "")} full";
         }
     }
 }

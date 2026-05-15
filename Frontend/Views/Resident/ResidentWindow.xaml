@@ -6,7 +6,14 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MainBg}"
         PreviewKeyDown="Window_PreviewKeyDown">
-    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Frontend/Assets/ResidentTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <!-- Full-width kiosk: no sidebar, just the dashboard -->
     <dashboard:MainDashboardView x:Name="DashboardView"/>
 </Window>

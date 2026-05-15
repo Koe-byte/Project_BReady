@@ -41,8 +41,6 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
             this.PreviewMouseDown += (s, e) => ResetTimer();
             this.PreviewKeyDown += (s, e) => ResetTimer();
             this.PreviewTouchDown += (s, e) => ResetTimer();
-
-            ContentRendered += (_, _) => FitWindowToWorkArea();
         }
 
         private void ResetTimer()
@@ -90,28 +88,6 @@ namespace ProjectBReadyWPF.Frontend.Views.Admin
             _dashboardView ??= new AdminDashboardView();
             MainContentArea.Content = _dashboardView;
             _dashboardView.RefreshNow();
-        }
-
-        private void AdminWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            FitWindowToWorkArea();
-        }
-
-        private void FitWindowToWorkArea()
-        {
-            var area = SystemParameters.WorkArea;
-            const double margin = 24;
-            double maxW = area.Width - margin;
-            double maxH = area.Height - margin;
-
-            MaxWidth = maxW;
-            MaxHeight = maxH;
-
-            if (Width > maxW) Width = maxW;
-            if (Height > maxH) Height = maxH;
-
-            Left = area.Left + (area.Width - Width) / 2;
-            Top = area.Top + (area.Height - Height) / 2;
         }
 
         public void NavigateToShelters()
