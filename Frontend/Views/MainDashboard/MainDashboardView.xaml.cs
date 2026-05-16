@@ -10,7 +10,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
     public partial class MainDashboardView : UserControl
     {
         private readonly IRealTimeService _realTimeService;
-        private static bool _isDarkMode = true;
 
         public MainDashboardView()
         {
@@ -20,9 +19,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
 
             _realTimeService.OnTableUpdated += RealTime_OnTableUpdated;
             Unloaded += (s, e) => _realTimeService.OnTableUpdated -= RealTime_OnTableUpdated;
-
-            // Sync button label with current state
-            UpdateThemeButton();
         }
 
         private void RealTime_OnTableUpdated(object? sender, string tableName)
@@ -81,42 +77,6 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
                 : $"{vm.FullShelterCount} shelter{(vm.FullShelterCount > 1 ? "s" : "")} full";
         }
 
-        private void OnToggleTheme(object sender, RoutedEventArgs e)
-        {
-            _isDarkMode = !_isDarkMode;
 
-            var app = Application.Current;
-            var mergedDicts = app.Resources.MergedDictionaries;
-
-            // Remove the current theme dictionary (first one)
-            if (mergedDicts.Count > 0)
-                mergedDicts.RemoveAt(0);
-
-            // Add the appropriate theme
-            string themeUri = _isDarkMode
-                ? "Frontend/Assets/Styles.xaml"
-                : "Frontend/Assets/LightStyles.xaml";
-
-            mergedDicts.Insert(0, new ResourceDictionary
-            {
-                Source = new Uri(themeUri, UriKind.Relative)
-            });
-
-            UpdateThemeButton();
-        }
-
-        private void UpdateThemeButton()
-        {
-            if (_isDarkMode)
-            {
-                ThemeIcon.Text = "☀️";
-                ThemeLabel.Text = "Light Mode";
-            }
-            else
-            {
-                ThemeIcon.Text = "🌙";
-                ThemeLabel.Text = "Dark Mode";
-            }
-        }
     }
 }

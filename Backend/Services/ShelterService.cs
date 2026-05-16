@@ -131,6 +131,7 @@ namespace ProjectBReadyWPF.Backend.Services
         {
             try
             {
+                
                 using var conn = _dbHelper.GetConnection();
                 conn.Open();
                 using var cmd = new NpgsqlCommand(
