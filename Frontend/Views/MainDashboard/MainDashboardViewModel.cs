@@ -92,7 +92,7 @@ namespace ProjectBReadyWPF.Frontend.Views.MainDashboard
         public string Destination { get; set; } = "";
         public int Qty { get; set; }
         public DateTime DispatchDate { get; set; }
-        public string DateTimeDisplay => DispatchDate.ToString("MMM d, h:mm tt");
+        public string DateTimeDisplay => DispatchDate.ToLocalTime().ToString("MMM d, h:mm tt");
         public string TitleLine => string.IsNullOrWhiteSpace(ItemName) ? "Relief dispatch" : ItemName;
         public string DetailLine => Qty > 0
             ? $"{Qty:N0} units → {Destination}"
