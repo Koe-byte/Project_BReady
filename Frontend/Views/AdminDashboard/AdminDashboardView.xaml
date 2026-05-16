@@ -138,27 +138,37 @@
           </Border>
         </StackPanel>
 
-        <Border Grid.Column="1" Style="{DynamicResource Card}" Padding="20" Margin="0,0,12,0">
-          <StackPanel>
-            <TextBlock Text="SHELTER OCCUPANCY TREND (LAST 7 DAYS)" Style="{DynamicResource CardTitle}" FontSize="13" Margin="0,0,0,12"/>
-            <Canvas x:Name="LineChartCanvas" Height="200" HorizontalAlignment="Stretch"/>
-            <UniformGrid Columns="7" Margin="36,4,12,0">
-              <TextBlock Text="Day 1" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
-              <TextBlock Text="Day 2" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
-              <TextBlock Text="Day 3" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
-              <TextBlock Text="Day 4" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
-              <TextBlock Text="Day 5" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
-              <TextBlock Text="Day 6" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+        <Border Grid.Column="1" Style="{DynamicResource Card}" Padding="20" Margin="0,0,12,0" VerticalAlignment="Top">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="SHELTER OCCUPANCY TREND (LAST 7 DAYS)" Style="{DynamicResource CardTitle}" FontSize="13" Margin="0,0,0,12"/>
+            <Canvas Grid.Row="1" x:Name="LineChartCanvas" Height="220" HorizontalAlignment="Stretch" Margin="0,0,0,8"/>
+            <UniformGrid Grid.Row="2" Columns="7" Margin="36,4,12,0">
+              <TextBlock x:Name="Day1Label" Text="Day 1" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock x:Name="Day2Label" Text="Day 2" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock x:Name="Day3Label" Text="Day 3" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock x:Name="Day4Label" Text="Day 4" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock x:Name="Day5Label" Text="Day 5" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
+              <TextBlock x:Name="Day6Label" Text="Day 6" FontSize="10" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
               <TextBlock Text="Today" FontSize="10" Foreground="{DynamicResource Accent}" FontWeight="Bold" HorizontalAlignment="Center"/>
             </UniformGrid>
-          </StackPanel>
+          </Grid>
         </Border>
 
-        <Border Grid.Column="2" Style="{DynamicResource Card}" Padding="20">
-          <StackPanel>
-            <TextBlock Text="RELIEF STOCK ALLOCATION BY TYPE" Style="{DynamicResource CardTitle}" FontSize="12" Margin="0,0,0,12"/>
-            <Canvas x:Name="PieChartCanvas" Height="140" Width="140" HorizontalAlignment="Center" Margin="0,0,0,12"/>
-            <ItemsControl ItemsSource="{Binding InventoryLegend}">
+        <Border Grid.Column="2" Style="{DynamicResource Card}" Padding="20" VerticalAlignment="Top">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="RELIEF STOCK ALLOCATION BY TYPE" Style="{DynamicResource CardTitle}" FontSize="12" Margin="0,0,0,12"/>
+            <Canvas Grid.Row="1" x:Name="PieChartCanvas" Height="190" Width="190" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,12"/>
+            <ItemsControl Grid.Row="2" ItemsSource="{Binding InventoryLegend}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                   <Grid Margin="0,0,0,6">
@@ -174,7 +184,7 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-          </StackPanel>
+          </Grid>
         </Border>
       </Grid>
 

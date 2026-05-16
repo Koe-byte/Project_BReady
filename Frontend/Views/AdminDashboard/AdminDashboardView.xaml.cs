@@ -67,7 +67,14 @@ namespace ProjectBReadyWPF.Frontend.Views.AdminDashboard
 
         private void UpdateClock()
         {
-            ClockLabel.Text = DateTime.Now.ToString("dddd, MMM dd, yyyy  hh:mm tt");
+            var now = DateTime.Now;
+            ClockLabel.Text = now.ToString("dddd, MMM dd, yyyy  hh:mm tt");
+            Day1Label.Text = now.AddDays(-6).ToString("MMM dd");
+            Day2Label.Text = now.AddDays(-5).ToString("MMM dd");
+            Day3Label.Text = now.AddDays(-4).ToString("MMM dd");
+            Day4Label.Text = now.AddDays(-3).ToString("MMM dd");
+            Day5Label.Text = now.AddDays(-2).ToString("MMM dd");
+            Day6Label.Text = now.AddDays(-1).ToString("MMM dd");
         }
 
         private void RealTime_OnTableUpdated(object? sender, string tableName)
