@@ -40,7 +40,7 @@
   <SolidColorBrush x:Key="AlertCriticalText" Color="#FECACA"/>
 
   <SolidColorBrush x:Key="ChartAvailable" Color="#4ADE80"/>
-  <SolidColorBrush x:Key="ChartOccupied" Color="#F87171"/>
+  <SolidColorBrush x:Key="ChartOccupied" Color="#FCD34D"/>
   <SolidColorBrush x:Key="ChartTrack" Color="#1F3D2E"/>
 
   <Style x:Key="LiveStatusBadge" TargetType="Border">

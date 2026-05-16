@@ -145,7 +145,8 @@
           <Grid Margin="0,0,0,24">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="1.3*"/></Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Style="{DynamicResource Card}" Margin="0,0,12,0" Padding="20">
+            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+              <Border Style="{DynamicResource Card}" Margin="0,0,0,24" Padding="20">
               <Grid>
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto"/>
@@ -224,51 +225,8 @@
               </Grid>
             </Border>
 
-            <Border Grid.Column="1" Style="{DynamicResource Card}" Margin="12,0,0,0" Padding="24">
-              <StackPanel>
-                <Grid Margin="0,0,0,20">
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                  <StackPanel Grid.Column="0">
-                    <TextBlock Text="Shelter Occupancy" Style="{DynamicResource CardTitle}" FontSize="16"/>
-                    <TextBlock Text="Real-time capacity per shelter" Foreground="{DynamicResource TextMuted}" FontSize="12" Margin="0,3,0,0"/>
-                  </StackPanel>
-                  <Border Grid.Column="1" Background="{DynamicResource AccentLight}" CornerRadius="8" Padding="10,5" VerticalAlignment="Center">
-                    <TextBlock x:Name="FullSheltersBadge" Text="0 shelters full" Foreground="{DynamicResource Accent}" FontSize="11" FontWeight="Bold"/>
-                  </Border>
-                </Grid>
-                <ItemsControl x:Name="BarChartItems" ItemsSource="{Binding Shelters}">
-                  <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                      <StackPanel Margin="0,0,0,16">
-                        <Grid Margin="0,0,0,6">
-                          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                          <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="{DynamicResource TextPrimary}" FontSize="13" FontWeight="SemiBold"/>
-                          <TextBlock Grid.Column="1" Text="{Binding OccupancyDisplay}" Foreground="{DynamicResource TextMuted}" FontSize="12"/>
-                        </Grid>
-                        <Border Background="{DynamicResource BorderStrong}" CornerRadius="7" Height="14" ClipToBounds="True">
-                          <Border Background="{Binding FillColor}" CornerRadius="0" HorizontalAlignment="Stretch" RenderTransformOrigin="0,0.5">
-                            <Border.RenderTransform>
-                              <ScaleTransform ScaleX="{Binding FillPercent}"/>
-                            </Border.RenderTransform>
-                          </Border>
-                        </Border>
-                        <Grid Margin="0,4,0,0">
-                          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                          <TextBlock Grid.Column="0" Text="{Binding PctFull}" Foreground="{Binding PctColor}" FontSize="11"/>
-                          <Border Grid.Column="1" Background="{Binding StatusBadgeBg}" CornerRadius="10" Padding="8,2">
-                            <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="Bold" Foreground="{Binding StatusTextColor}"/>
-                          </Border>
-                        </Grid>
-                      </StackPanel>
-                    </DataTemplate>
-                  </ItemsControl.ItemTemplate>
-                </ItemsControl>
-              </StackPanel>
-            </Border>
-          </Grid>
-
           <!-- Recent relief activity -->
-          <Border Style="{DynamicResource Card}" Padding="24" Margin="0,0,0,24">
+          <Border Style="{DynamicResource Card}" Padding="24" Margin="0">
             <StackPanel>
               <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
@@ -339,6 +297,51 @@
               </Border>
             </StackPanel>
           </Border>
+
+            </StackPanel>
+
+            <Border Grid.Column="1" Style="{DynamicResource Card}" Margin="12,0,0,0" Padding="24">
+              <StackPanel>
+                <Grid Margin="0,0,0,20">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                  <StackPanel Grid.Column="0">
+                    <TextBlock Text="Shelter Occupancy" Style="{DynamicResource CardTitle}" FontSize="16"/>
+                    <TextBlock Text="Real-time capacity per shelter" Foreground="{DynamicResource TextMuted}" FontSize="12" Margin="0,3,0,0"/>
+                  </StackPanel>
+                  <Border Grid.Column="1" Background="{DynamicResource AccentLight}" CornerRadius="8" Padding="10,5" VerticalAlignment="Center">
+                    <TextBlock x:Name="FullSheltersBadge" Text="0 shelters full" Foreground="{DynamicResource Accent}" FontSize="11" FontWeight="Bold"/>
+                  </Border>
+                </Grid>
+                <ItemsControl x:Name="BarChartItems" ItemsSource="{Binding Shelters}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <StackPanel Margin="0,0,0,16">
+                        <Grid Margin="0,0,0,6">
+                          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                          <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="{DynamicResource TextPrimary}" FontSize="13" FontWeight="SemiBold"/>
+                          <TextBlock Grid.Column="1" Text="{Binding OccupancyDisplay}" Foreground="{DynamicResource TextMuted}" FontSize="12"/>
+                        </Grid>
+                        <Border Background="{DynamicResource BorderStrong}" CornerRadius="7" Height="14" ClipToBounds="True">
+                          <Border Background="{Binding FillColor}" CornerRadius="0" HorizontalAlignment="Stretch" RenderTransformOrigin="0,0.5">
+                            <Border.RenderTransform>
+                              <ScaleTransform ScaleX="{Binding FillPercent}"/>
+                            </Border.RenderTransform>
+                          </Border>
+                        </Border>
+                        <Grid Margin="0,4,0,0">
+                          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                          <TextBlock Grid.Column="0" Text="{Binding PctFull}" Foreground="{Binding PctColor}" FontSize="11"/>
+                          <Border Grid.Column="1" Background="{Binding StatusBadgeBg}" CornerRadius="10" Padding="8,2">
+                            <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="Bold" Foreground="{Binding StatusTextColor}"/>
+                          </Border>
+                        </Grid>
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Border>
+          </Grid>
 
           <!-- Summary strip -->
           <Border Style="{DynamicResource Card}" Padding="24">
